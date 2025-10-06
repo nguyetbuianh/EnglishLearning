@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "level": "beginner",
+    "sentence": "I’ll grab a coffee before the meeting.",
+    "translation": "Tôi sẽ lấy một ly cà phê trước khi họp.",
+    "word": {"text":"grab","meaning":"lấy, nắm nhanh"},
+    "audio_file": "audio/1.mp3"
+  },
+  {
+    "id": 2,
+    "level": "beginner",
+    "sentence": "Could you pass me the salt, please?",
+    "translation": "Bạn có thể chuyển giúp tôi lọ muối được không?",
+    "word": {"text":"pass","meaning":"trao, chuyển"},
+    "audio_file": "audio/2.mp3"
+  }
+]

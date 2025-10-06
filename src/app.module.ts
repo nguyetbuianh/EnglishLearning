@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { typeOrmConfig } from './config/typeorm.config'; 
+import { MezonModule } from './modules/mezon/mezon.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [TypeOrmModule.forRoot(typeOrmConfig as TypeOrmModuleOptions),
+    MezonModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+  ],
 })
 export class AppModule {}

@@ -61,6 +61,10 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 !.yarn/plugins
 !.yarn/sdks
 !.yarn/patches
+.yarn/cache
 
 # Yarn state files
 .pnp.*
+
+# Mezon cache
+/mezon-cache
