@@ -50,7 +50,7 @@ Study at least 15 minutes daily — your TOEIC score will soar 🚀
       await message.reply(parseMarkdown(welcomeMessage));
 
     } catch (error: any) {
-      await message.reply(parseMarkdown(`⚠️ Error displaying guide: ${error.message}`));
+      await message.reply(parseMarkdown(`Error displaying guide: ${error.message}`));
     }
   }
 }

@@ -3,14 +3,21 @@ import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChan
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
 import { parseMarkdown } from "../utils/parse-markdown";
 import { CommandFactory } from "./command-factory";
+import { ToeicService } from "src/modules/toeic/toeic.service";
 
 export class CommandRouter {
+  private commandFactory: CommandFactory;
+
+  constructor(toeicService: ToeicService) {
+    this.commandFactory = new CommandFactory(toeicService);
+  }
+
   async routeCommand(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
     const content = message.content.t?.trim();
     if (!content || !content.startsWith("*")) return;
 
     const command = content.slice(1).toLowerCase();
-    const handler = CommandFactory.getHandler(command);
+    const handler = this.commandFactory.getHandler(command);
 
     if (!handler) {
       await message.reply(parseMarkdown(`Unknown command: ${command}`));

@@ -2,6 +2,7 @@ import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
 import * as dotenv from "dotenv";
 import { CommandRouter } from "./commands/command.router";
+import { ToeicService } from "../toeic/toeic.service";
 
 dotenv.config();
 
@@ -11,8 +12,8 @@ export class MezonService implements OnModuleInit {
   private client: MezonClient;
   private readonly commandRouter: CommandRouter;
 
-  constructor() {
-    this.commandRouter = new CommandRouter();
+  constructor(private toeicService: ToeicService) {
+    this.commandRouter = new CommandRouter(this.toeicService);
   }
 
   async onModuleInit() {
@@ -40,7 +41,7 @@ export class MezonService implements OnModuleInit {
         }
       });
     } catch (error: any) {
-      this.logger.error(`Failed to connect to Mezon: ${error.message}`);
+      this.logger.error(`Mezon connection failed: ${error.message}`);
     }
   }
 }
