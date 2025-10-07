@@ -1,16 +1,16 @@
-import { CommandHandler } from './command-handler.interface';
+import { CommandHandler } from '../interfaces/command-handler.interface';
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
-import { ToeicService } from '../../toeic/toeic.service';
 import { parseMarkdown } from '../utils/parse-markdown';
 import { ChannelMessage } from "mezon-sdk";
+import { ToeicTestService } from 'src/modules/toeic/services/toeic-test.service';
 
 export class AllTestCommandHandler implements CommandHandler {
-  constructor(private toeicService: ToeicService) {}
+  constructor(private toeicTestService: ToeicTestService) {}
 
   async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
     try {
-      const tests = await this.toeicService.getAllTests();
+      const tests = await this.toeicTestService.getAllTests();
       const text = tests.map(t => `• ${t.title}`).join('\n');
 
       await message.reply(parseMarkdown(text));

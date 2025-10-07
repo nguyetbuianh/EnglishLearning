@@ -1,14 +1,17 @@
-import { ToeicService } from "src/modules/toeic/toeic.service";
 import { parseMarkdown } from "../utils/parse-markdown";
-import { CommandHandler } from "./command-handler.interface";
+import { CommandHandler } from "../interfaces/command-handler.interface";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
 import { ChannelMessage } from "mezon-sdk";
 import { UserService } from "src/modules/user/user.service";
+import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service";
+import { ToeicProgressService } from "src/modules/toeic/services/toeic-progress.service";
+import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 
 export class StartCommandHandler implements CommandHandler {
-  constructor(private readonly toeicService: ToeicService,
-              private readonly userService: UserService
+  constructor(private toeicQuestionService: ToeicQuestionService,
+              private toeicProgressService: ToeicProgressService,
+              private userService: UserService
   ) {}
 
   async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
@@ -36,7 +39,7 @@ export class StartCommandHandler implements CommandHandler {
         return;
       }
       const user = await this.userService.getOrCreateUserByMezonId(mezonUserId);
-      const existingProgress = await this.toeicService.getProgress(user.id, testId, partId);
+      const existingProgress = await this.toeicProgressService.getProgress(user.id, testId, partId);
 
       if (existingProgress) {
         await message.reply(
@@ -48,13 +51,13 @@ export class StartCommandHandler implements CommandHandler {
         return;
       }
 
-      const firstQuestion = await this.toeicService.getFirstQuestion(testId, partId);
+      const firstQuestion = await this.toeicQuestionService.getFirstQuestion(testId, partId);
       if (!firstQuestion) {
         await message.reply(parseMarkdown("⚠️ No questions found for this test/part."));
         return;
       }
 
-      await this.toeicService.createProgress({
+      await this.toeicProgressService.createProgress({
         userId: user.id,
         testId,
         partId,

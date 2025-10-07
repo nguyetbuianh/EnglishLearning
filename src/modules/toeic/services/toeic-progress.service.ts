@@ -1,34 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Question } from '../../entities/question.entity';
-import { ToeicPart } from '../../entities/toeic-part.entity';
-import { ToeicTest } from '../../entities/toeic-test.entity';
-import { Passage } from '../../entities/passage.entity';
 import { UserProgress } from 'src/entities/user-progress.entity';
-import { User } from 'src/entities/user.entity';
+
 
 @Injectable()
-export class ToeicService {
+export class ToeicProgressService {
   constructor(
-    @InjectRepository(Question)
-    private readonly questionRepo: Repository<Question>,
-    @InjectRepository(ToeicPart)
-    private readonly partRepo: Repository<ToeicPart>,
-    @InjectRepository(Passage)
-    private readonly passageRepo: Repository<Passage>,
-    @InjectRepository(ToeicTest)
-    private readonly testRepo: Repository<ToeicTest>,
     @InjectRepository(UserProgress)
     private readonly progressRepo: Repository<UserProgress>,
-    @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
   ) {}
-
-  // Fetch all existing tests
-  async getAllTests(): Promise<ToeicTest[]> {
-    return this.testRepo.find({ order: { id: 'ASC' } });
-  }
 
   // Fetch progress of the user
   async getProgress(userId: number, testId: number, partId: number): Promise<UserProgress | null> {
@@ -95,20 +76,7 @@ export class ToeicService {
       relations: ['test', 'part', 'currentQuestion'],
     });
   }
-
-  // Fetch the first question
-  async getFirstQuestion(testId: number, partId: number): Promise<Question | null> {
-    return this.questionRepo.findOne({
-      where: {
-        test: { id: testId },
-        part: { id: partId },
-      },
-      relations: ['options'],
-      order: { id: 'ASC' },
-    });
-  }
-
-  // // 
+  
   async startPart(userMezonId: string, testId: number, partId: number, firstQuestionId: number) {
     const progress = this.progressRepo.create({
       user: { mezon_user_id: userMezonId } as any,

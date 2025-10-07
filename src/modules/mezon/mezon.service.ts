@@ -1,9 +1,11 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
 import * as dotenv from "dotenv";
-import { CommandRouter } from "./commands/command.router"; 
-import { ToeicService } from "src/modules/toeic/toeic.service"; 
+import { CommandRouter } from "./router/command.router"; 
 import { UserService } from "src/modules/user/user.service";
+import { ToeicProgressService } from "../toeic/services/toeic-progress.service";
+import { ToeicQuestionService } from "../toeic/services/toeic-question.service";
+import { ToeicTestService } from "../toeic/services/toeic-test.service";
 
 dotenv.config();
 
@@ -13,8 +15,11 @@ export class MezonService implements OnModuleInit {
   private client: MezonClient;
   private readonly commandRouter: CommandRouter;
 
-  constructor(private toeicService: ToeicService, private userService: UserService) {
-    this.commandRouter = new CommandRouter(this.toeicService, this.userService);
+  constructor(private toeicProgressService: ToeicProgressService,
+        private userService: UserService,
+        private toeicQuestionService: ToeicQuestionService,
+        private toeicTestService: ToeicTestService) {
+    this.commandRouter = new CommandRouter(this.toeicProgressService, this.userService, this.toeicQuestionService, this.toeicTestService);
   }
 
   async onModuleInit() {

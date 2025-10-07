@@ -1,0 +1,24 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Question } from 'src/entities/question.entity'; 
+
+@Injectable()
+export class ToeicQuestionService {
+  constructor(
+    @InjectRepository(Question)
+    private readonly questionRepo: Repository<Question>,
+  ) {}
+
+  // Fetch the first question
+  async getFirstQuestion(testId: number, partId: number): Promise<Question | null> {
+    return this.questionRepo.findOne({
+      where: {
+        test: { id: testId },
+        part: { id: partId },
+      },
+      relations: ['options'],
+      order: { id: 'ASC' },
+    });
+  }
+}

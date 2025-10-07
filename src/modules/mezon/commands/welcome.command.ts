@@ -1,4 +1,4 @@
-import { CommandHandler } from "./command-handler.interface";
+import { CommandHandler } from "../interfaces/command-handler.interface";
 import { ChannelMessage } from "mezon-sdk";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
