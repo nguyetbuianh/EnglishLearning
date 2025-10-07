@@ -132,6 +132,7 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 25. *ask <favorite_question> : Gửi câu hỏi riêng để bot trả lời
 
 ## DataBase
+```bash
 -- USERS
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
@@ -275,7 +276,7 @@ CREATE TABLE user_questions (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   answered_at TIMESTAMP
 );
-
+```
 
 
 
