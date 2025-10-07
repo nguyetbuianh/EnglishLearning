@@ -4,9 +4,10 @@ import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
 import { parseMarkdown } from '../utils/parse-markdown';
 import { ChannelMessage } from "mezon-sdk";
 import { ToeicTestService } from 'src/modules/toeic/services/toeic-test.service';
+import { handleBotError } from '../utils/error-handler';
 
 export class AllTestCommandHandler implements CommandHandler {
-  constructor(private toeicTestService: ToeicTestService) {}
+  constructor(private toeicTestService: ToeicTestService) { }
 
   async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
     try {
@@ -16,7 +17,7 @@ export class AllTestCommandHandler implements CommandHandler {
       await message.reply(parseMarkdown(text));
 
     } catch (error: any) {
-      await message.reply(parseMarkdown(`Error displaying guide: ${error.message}`));
+      await handleBotError(channel, error);
     }
   }
 }

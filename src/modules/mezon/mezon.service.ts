@@ -1,11 +1,12 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
 import * as dotenv from "dotenv";
-import { CommandRouter } from "./router/command.router"; 
+import { CommandRouter } from "./router/command.router";
 import { UserService } from "src/modules/user/user.service";
 import { ToeicProgressService } from "../toeic/services/toeic-progress.service";
 import { ToeicQuestionService } from "../toeic/services/toeic-question.service";
 import { ToeicTestService } from "../toeic/services/toeic-test.service";
+import { handleBotError } from "./utils/error-handler";
 
 dotenv.config();
 
@@ -16,9 +17,9 @@ export class MezonService implements OnModuleInit {
   private readonly commandRouter: CommandRouter;
 
   constructor(private toeicProgressService: ToeicProgressService,
-        private userService: UserService,
-        private toeicQuestionService: ToeicQuestionService,
-        private toeicTestService: ToeicTestService) {
+    private userService: UserService,
+    private toeicQuestionService: ToeicQuestionService,
+    private toeicTestService: ToeicTestService) {
     this.commandRouter = new CommandRouter(this.toeicProgressService, this.userService, this.toeicQuestionService, this.toeicTestService);
   }
 
@@ -44,6 +45,8 @@ export class MezonService implements OnModuleInit {
           await this.commandRouter.routeCommand(channel, message);
         } catch (err: any) {
           this.logger.error("Error handling message:", err.message);
+          const channel = await this.client.channels.fetch(event.channel_id).catch(() => null);
+          handleBotError(channel, err);
         }
       });
     } catch (error: any) {

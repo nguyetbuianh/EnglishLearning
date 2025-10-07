@@ -6,11 +6,12 @@ import { ChannelMessage } from "mezon-sdk";
 import { UserService } from "src/modules/user/user.service";
 import { ToeicProgressService } from "src/modules/toeic/services/toeic-progress.service";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
+import { handleBotError } from "../utils/error-handler";
 
 export class StartTestCommandHandler implements CommandHandler {
   constructor(private toeicQuestionService: ToeicQuestionService,
-              private toeicProgressService: ToeicProgressService,
-              private userService: UserService) {}
+    private toeicProgressService: ToeicProgressService,
+    private userService: UserService) { }
 
   async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
     try {
@@ -36,7 +37,7 @@ export class StartTestCommandHandler implements CommandHandler {
         return;
       }
       const user = await this.userService.getOrCreateUserByMezonId(mezonUserId);
-      
+
       const existingProgress = await this.toeicProgressService.getProgress(user.id, testId, partId);
       if (existingProgress) {
         await message.reply(
@@ -60,7 +61,7 @@ export class StartTestCommandHandler implements CommandHandler {
         partId,
         currentQuestionId: firstQuestion.id,
       });
-      
+
       const optionsText = firstQuestion.options
         .map(opt => `${opt.option_label}. ${opt.option_text}`)
         .join('\n');
@@ -74,8 +75,7 @@ export class StartTestCommandHandler implements CommandHandler {
         )
       );
     } catch (error) {
-      console.error("Error in StartCommandHandler:", error);
-      await message.reply(parseMarkdown("❌ An error occurred while starting the test. Please try again later."));
+      await handleBotError(channel, error);
     }
   }
 }
