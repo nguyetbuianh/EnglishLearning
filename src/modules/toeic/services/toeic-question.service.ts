@@ -21,4 +21,12 @@ export class ToeicQuestionService {
       order: { id: 'ASC' },
     });
   }
+
+  // Fetch the question by question_id
+  async getQuestionById(questionId: number): Promise<Question | null> {
+    return this.questionRepo.findOne({
+      where: { id: questionId },
+      relations: ['options', 'test', 'part'],
+    });
+  }
 }

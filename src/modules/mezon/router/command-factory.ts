@@ -1,11 +1,12 @@
 import { AllTestCommandHandler } from "../commands/all-test.command";
 import { CommandHandler } from "../interfaces/command-handler.interface";
 import { WelcomeCommandHandler } from "../commands/welcome.command";
-import { StartCommandHandler } from "../commands/start.command"; 
+import { StartTestCommandHandler } from "../commands/start-test.command"; 
 import { UserService } from "src/modules/user/user.service";
 import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 import { ToeicProgressService } from "src/modules/toeic/services/toeic-progress.service";
+import { ContinueTestCommandHandler } from "../commands/continue-test.command";
 
 export class CommandFactory {
   constructor(private toeicProgressService: ToeicProgressService,
@@ -26,8 +27,11 @@ export class CommandFactory {
         return new AllTestCommandHandler(this.toeicTestService);
 
       case "start":
-        return new StartCommandHandler(this.toeicQuestionService, this.toeicProgressService, this.userService);
+        return new StartTestCommandHandler(this.toeicQuestionService, this.toeicProgressService, this.userService);
 
+       case "continue":
+        return new ContinueTestCommandHandler(this.toeicProgressService, this.toeicQuestionService);
+      
       default:
         return null;
     }

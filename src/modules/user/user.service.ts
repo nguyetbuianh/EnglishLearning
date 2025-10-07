@@ -10,16 +10,20 @@ export class UserService {
     private readonly userRepo: Repository<User>,
   ) {}
 
-  async getOrCreateUserByMezonId(mezonUserId: string): Promise<User> {
-    let user = await this.userRepo.findOne({ where: { mezon_user_id: mezonUserId } });
-    if (!user) {
-      user = this.userRepo.create({ mezon_user_id: mezonUserId });
-      user = await this.userRepo.save(user);
-    }
-    return user;
+  async findUserByMezonId(mezonUserId: string): Promise<User | null> {
+    return this.userRepo.findOne({ where: { mezon_user_id: mezonUserId } });
   }
 
-  async findByMezonId(mezonUserId: string): Promise<User | null> {
-    return this.userRepo.findOne({ where: { mezon_user_id: mezonUserId } });
+  async createUserByMezonId(mezonUserId: string): Promise<User> {
+    const newUser = this.userRepo.create({ mezon_user_id: mezonUserId });
+    return this.userRepo.save(newUser);
+  }
+
+  async getOrCreateUserByMezonId(mezonUserId: string): Promise<User> {
+    let user = await this.findUserByMezonId(mezonUserId);
+    if (!user) {
+      user = await this.createUserByMezonId(mezonUserId);
+    }
+    return user;
   }
 }

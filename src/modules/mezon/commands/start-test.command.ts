@@ -4,22 +4,19 @@ import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChan
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
 import { ChannelMessage } from "mezon-sdk";
 import { UserService } from "src/modules/user/user.service";
-import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service";
 import { ToeicProgressService } from "src/modules/toeic/services/toeic-progress.service";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 
-export class StartCommandHandler implements CommandHandler {
+export class StartTestCommandHandler implements CommandHandler {
   constructor(private toeicQuestionService: ToeicQuestionService,
               private toeicProgressService: ToeicProgressService,
-              private userService: UserService
-  ) {}
+              private userService: UserService) {}
 
   async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
     try {
       const content = message.content.t?.trim() ?? "";
       const args = content.split(/\s+/);
 
-      // Cú pháp: *start <test_id> <part_id>
       if (args.length < 3) {
         await message.reply(parseMarkdown("⚠️ Usage: *start <test_id> <part_id>"));
         return;
@@ -39,8 +36,8 @@ export class StartCommandHandler implements CommandHandler {
         return;
       }
       const user = await this.userService.getOrCreateUserByMezonId(mezonUserId);
+      
       const existingProgress = await this.toeicProgressService.getProgress(user.id, testId, partId);
-
       if (existingProgress) {
         await message.reply(
           parseMarkdown(
