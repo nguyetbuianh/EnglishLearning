@@ -127,9 +127,9 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 21. *gramma_topic <gramma_name>: liệt kê ngữ pháp theo chủ đề
 22. *gramma add <gramma>: lưu ngữ pháp vào bộ sưu tập cá nhân
 23. *gramma_my: xem danh sách ngữ pháp đã lưu
-24. *gramma remove <word<: xóa ngữ pháp đã lưu
+24. *gramma remove <word>: xóa ngữ pháp đã lưu
 ### E. Q&A
-25. *ask <question>: Gửi câu hỏi riêng để bot trả lời
+25. *ask <question> : Gửi câu hỏi riêng để bot trả lời
 
 ## DataBase
 -- USERS
