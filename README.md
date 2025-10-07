@@ -96,3 +96,188 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## Một số chức năng cơ bản của EnglishLearning Bot:
+### A. Giới thiệu
+1. *welcome: giới thiệu bot
+2. *help: hướng dẫn cách sử dụng bot
+3. *profile: thông tin và tiến độ của user
+### B. Luyện đề
+4. *list_tests: liệt kê các đề toeic hiện có
+5. *list_parts: liệt kê các part 
+6. *start_test <test_id> <part_id>: chọn đề và part để làm
+6. *test_continue: chọn tiếp tục khi user đang làm dang dở part đã chọn
+7. *test_restart: chọn làm lại từ đầu part user đã chọn
+8. *next_question: hiển thị câu hỏi tiếp theo
+9. *answer <option>: trả lời câu hỏi A/B/C/D
+10. *review_answers <test_id> <part_id>: xem lại các câu trả lời và giải thích
+11. *progress <test_id>: xem tiến độ làm đề toeic từng part
+### C. Học từ vựng
+12. *list_topics_vocab: liệt kê những chủ đề từ vựng đang có
+13. *vocab_random: học một từ vựng ngẫu nhiên
+13. *vocab_topic <topic_name>: liệt kê 10 từ vựng theo chủ đề
+14. *vocab_continue: liệt kê 10 từ tiếp theo của chủ đề đã chọn
+15. *vocab add <word>: lưu từ vựng vào bộ sưu tập cá nhân
+16. *vocab_my: xem danh sách từ đã lưu
+17. *vocab_voice: cách đọc từ
+18. *vocab remove <word<: xóa từ đã lưu
+### D. Học ngữ pháp
+19. *list_topics_gramma: liệt kê những chủ đề ngữ pháp đang có
+20. *gramma_random: học một ngữ pháp ngẫu nhiên
+21. *gramma_topic <gramma_name>: liệt kê ngữ pháp theo chủ đề
+22. *gramma add <gramma>: lưu ngữ pháp vào bộ sưu tập cá nhân
+23. *gramma_my: xem danh sách ngữ pháp đã lưu
+24. *gramma remove <word<: xóa ngữ pháp đã lưu
+### E. Q&A
+*ask <question>: Gửi câu hỏi riêng để bot trả lời
+
+## DataBase
+-- USERS
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  mezon_user_id BIGINT UNIQUE NOT NULL,
+  username VARCHAR(255),
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TOEIC tests
+CREATE TABLE toeic_tests (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(100) NOT NULL,         
+  description TEXT,                     
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TOEIC PARTS
+CREATE TABLE toeic_parts (
+  id SERIAL PRIMARY KEY,
+  part_number INT NOT NULL CHECK (part_number BETWEEN 1 AND 7),
+  title VARCHAR(100) NOT NULL,
+  description TEXT
+);
+
+-- PASSAGES (Part 6,7)
+CREATE TABLE passages (
+  id SERIAL PRIMARY KEY,
+  part_id INT REFERENCES toeic_parts(id) ON DELETE CASCADE,
+  title VARCHAR(255),
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- QUESTIONS
+CREATE TABLE questions (
+  id BIGSERIAL PRIMARY KEY,
+  test_id INT REFERENCES toeic_tests(id) ON DELETE CASCADE,  -- liên kết với đề
+  part_id INT REFERENCES toeic_parts(id) ON DELETE CASCADE,  -- liên kết Part
+  passage_id INT REFERENCES passages(id) ON DELETE SET NULL, -- đoạn văn (nếu có)
+  question_number INT NOT NULL,                              -- số thứ tự trong Part
+  question_text TEXT NOT NULL,
+  correct_option CHAR(1) NOT NULL CHECK (correct_option IN ('A','B','C','D')),
+  explanation TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (test_id, part_id, question_number)                  -- đảm bảo duy nhất trong mỗi đề
+);
+
+-- QUESTION OPTIONS
+CREATE TABLE question_options (
+  id SERIAL PRIMARY KEY,
+  question_id INT REFERENCES questions(id) ON DELETE CASCADE,
+  option_label CHAR(1) NOT NULL CHECK (option_label IN ('A','B','C','D')),
+  option_text TEXT NOT NULL
+);
+
+-- USER QUESTION HISTORY
+CREATE TABLE user_question (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  question_id INT REFERENCES questions(id),
+  chosen_option CHAR(1),
+  is_correct BOOLEAN,
+  answered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- USER PROGRESS
+CREATE TABLE user_progress (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  test_id INT REFERENCES toeic_tests(id),
+  part_id INT REFERENCES toeic_parts(id),
+  current_question_id INT REFERENCES questions(id),
+  last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (user_id, test_id, part_id)
+);
+
+CREATE TABLE user_part_results (
+  id SERIAL PRIMARY KEY,
+  user_id INT,
+  test_id INT,
+  part_id INT,
+  score INT,
+  taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE topics (
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  type VARCHAR(50) DEFAULT 'general',  -- có thể dùng để phân loại nếu cần: 'vocabulary', 'grammar', hoặc 'general'
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE vocabulary (
+  id BIGSERIAL PRIMARY KEY,
+  word VARCHAR(100) NOT NULL,
+  part_of_speech VARCHAR(50),
+  meaning TEXT NOT NULL,
+  example_sentence TEXT,
+  topic_id BIGINT REFERENCES topics(id) ON DELETE SET NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE grammar (
+  id BIGSERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  explanation TEXT NOT NULL,
+  example TEXT,
+  topic_id BIGINT REFERENCES topics(id) ON DELETE SET NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- USER VOCABULARY
+CREATE TABLE user_vocabulary (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  vocabulary_id INT REFERENCES vocabulary(id) ON DELETE CASCADE,
+  note TEXT,
+  added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (user_id, vocabulary_id)
+);
+
+-- USER GRAMMAR
+CREATE TABLE user_grammar (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  grammar_id INT REFERENCES grammar(id) ON DELETE CASCADE,
+  note TEXT,
+  saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (user_id, grammar_id)
+);
+
+CREATE TABLE user_questions (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  question TEXT NOT NULL,
+  answer TEXT,
+  status VARCHAR(20) DEFAULT 'pending',      -- pending | answered | rejected
+  category VARCHAR(50),                      -- grammar, vocabulary, toeic-listening...
+  similarity_score FLOAT DEFAULT 1.0,        -- để đo độ tương tự giữa câu hỏi mới và câu đã có
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  answered_at TIMESTAMP
+);
+
+
+
+
+
+
