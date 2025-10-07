@@ -20,7 +20,7 @@ export function createActionRow(...buttons: ButtonComponent[]): IMessageActionRo
   return { components: buttons };
 }
 
-// Tạo hàm helper gửi message có nút
+// Tạo hàm helper gửi message có button
 export function createMessageWithButtons(
   text: string,
   buttons: ButtonComponent[]
@@ -44,7 +44,7 @@ export function createEmbedMessage(
     fields,
     footer: {
       text: "Mezon TOEIC Bot",
-      icon_url: "https://cdn.mezon.vn/footer_icon.png",
+      // icon_url: "https://cdn.mezon.vn/footer_icon.png",
     },
     timestamp: new Date().toISOString(),
   };

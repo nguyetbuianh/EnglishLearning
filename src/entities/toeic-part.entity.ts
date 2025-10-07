@@ -7,8 +7,8 @@ export class ToeicPart {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  part_number: number;
+  @Column({ name: 'part_number' })
+  partNumber: number;
 
   @Column()
   title: string;

@@ -6,7 +6,7 @@ import { ChannelMessage } from "mezon-sdk";
 import { ToeicTestService } from 'src/modules/toeic/services/toeic-test.service';
 import { handleBotError } from '../utils/error-handler';
 
-export class AllTestCommandHandler implements CommandHandler {
+export class AllTestsCommandHandler implements CommandHandler {
   constructor(private toeicTestService: ToeicTestService) { }
 
   async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
