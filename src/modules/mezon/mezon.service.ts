@@ -7,6 +7,7 @@ import { ToeicProgressService } from "../toeic/services/toeic-progress.service";
 import { ToeicQuestionService } from "../toeic/services/toeic-question.service";
 import { ToeicTestService } from "../toeic/services/toeic-test.service";
 import { handleBotError } from "./utils/error-handler";
+import { UserPartResultService } from "../toeic/services/user-part-result.service";
 
 dotenv.config();
 
@@ -19,8 +20,9 @@ export class MezonService implements OnModuleInit {
   constructor(private toeicProgressService: ToeicProgressService,
     private userService: UserService,
     private toeicQuestionService: ToeicQuestionService,
-    private toeicTestService: ToeicTestService) {
-    this.commandRouter = new CommandRouter(this.toeicProgressService, this.userService, this.toeicQuestionService, this.toeicTestService);
+    private toeicTestService: ToeicTestService,
+    private userPartResultService: UserPartResultService) {
+    this.commandRouter = new CommandRouter(this.toeicProgressService, this.userService, this.toeicQuestionService, this.toeicTestService, this.userPartResultService);
   }
 
   async onModuleInit() {

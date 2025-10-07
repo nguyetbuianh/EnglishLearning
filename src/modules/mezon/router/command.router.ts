@@ -8,6 +8,7 @@ import { UserService } from "src/modules/user/user.service";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 import { ToeicProgressService } from "src/modules/toeic/services/toeic-progress.service";
 import { handleBotError } from "../utils/error-handler";
+import { UserPartResultService } from "src/modules/toeic/services/user-part-result.service";
 
 export class CommandRouter {
   private commandFactory: CommandFactory;
@@ -15,9 +16,10 @@ export class CommandRouter {
   constructor(private toeicProgressService: ToeicProgressService,
     private userService: UserService,
     private toeicQuestionService: ToeicQuestionService,
-    private toeicTestService: ToeicTestService
+    private toeicTestService: ToeicTestService,
+    private userPartResultService: UserPartResultService
   ) {
-    this.commandFactory = new CommandFactory(this.toeicProgressService, this.userService, this.toeicQuestionService, this.toeicTestService);
+    this.commandFactory = new CommandFactory(this.toeicProgressService, this.userService, this.toeicQuestionService, this.toeicTestService, this.userPartResultService);
   }
 
   async routeCommand(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {

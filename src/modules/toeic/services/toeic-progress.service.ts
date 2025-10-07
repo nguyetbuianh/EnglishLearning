@@ -9,7 +9,7 @@ export class ToeicProgressService {
   constructor(
     @InjectRepository(UserProgress)
     private readonly progressRepo: Repository<UserProgress>,
-  ) {}
+  ) { }
 
   // Fetch progress of the user
   async getProgress(userId: number, testId: number, partId: number): Promise<UserProgress | null> {
@@ -25,7 +25,7 @@ export class ToeicProgressService {
 
   // Update a progress of the user
   async updateProgress(data: {
-    userId: number; 
+    userId: number;
     testId: number;
     partId: number;
     currentQuestionId?: number;
@@ -76,15 +76,8 @@ export class ToeicProgressService {
       relations: ['test', 'part', 'currentQuestion'],
     });
   }
-  
-  async startPart(userMezonId: string, testId: number, partId: number, firstQuestionId: number) {
-    const progress = this.progressRepo.create({
-      user: { mezon_user_id: userMezonId } as any,
-      test: { id: testId } as any,
-      part: { id: partId } as any,
-      currentQuestion: { id: firstQuestionId } as any,
-    });
 
-    return this.progressRepo.save(progress);
+  async deleteProgress(userId: number, testId: number, partId: number) {
+    await this.progressRepo.delete({ user: { id: userId }, test: { id: testId }, part: { id: partId } });
   }
 }
