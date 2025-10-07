@@ -6,10 +6,14 @@ import { Question } from '../../entities/question.entity';
 import { ToeicPart } from '../../entities/toeic-part.entity';
 import { Passage } from '../../entities/passage.entity';
 import { ToeicTest } from '../../entities/toeic-test.entity';
+import { UserProgress } from 'src/entities/user-progress.entity';
+import { User } from 'src/entities/user.entity';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Question, ToeicPart, Passage, ToeicTest])
+    TypeOrmModule.forFeature([Question, ToeicPart, Passage, ToeicTest, UserProgress, User]),
+    UserModule
   ],
   providers: [ToeicService],
   controllers: [ToeicController],

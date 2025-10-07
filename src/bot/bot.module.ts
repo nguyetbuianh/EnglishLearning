@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { MezonService } from './mezon.service';
-import { ToeicModule } from '../toeic/toeic.module';
-
+import { BotService } from './bot.service'; 
+import { ToeicModule } from 'src/modules/toeic/toeic.module'; 
 @Module({
   imports: [ConfigModule, ToeicModule],
-  providers: [MezonService],
-  exports: [MezonService],
+  providers: [BotService],
+  exports: [BotService],
 })
 export class MezonModule {}

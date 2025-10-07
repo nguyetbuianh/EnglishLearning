@@ -20,7 +20,7 @@ export class CommandRouter {
     const handler = this.commandFactory.getHandler(command);
 
     if (!handler) {
-      await message.reply(parseMarkdown(`Unknown command: ${command}`));
+      await message.reply(parseMarkdown(`⚠️ Invalid command. Use *help to see the list of commands.`));
       return;
     }
 

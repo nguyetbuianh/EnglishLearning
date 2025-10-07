@@ -7,10 +7,10 @@ import { UserQA } from './user-qa.entity';
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' }) 
+  id: number; 
 
-  @Column({ unique: true })
+  @Column({ unique: true, type: 'varchar', length: 50 })
   mezon_user_id: string;
 
   @Column({ nullable: true })

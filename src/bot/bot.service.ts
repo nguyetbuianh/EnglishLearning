@@ -1,14 +1,14 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
 import * as dotenv from "dotenv";
-import { CommandRouter } from "./commands/command.router";
-import { ToeicService } from "../toeic/toeic.service";
+import { CommandRouter } from "./commands/command.router"; 
+import { ToeicService } from "src/modules/toeic/toeic.service"; 
 
 dotenv.config();
 
 @Injectable()
-export class MezonService implements OnModuleInit {
-  private readonly logger = new Logger(MezonService.name);
+export class BotService implements OnModuleInit {
+  private readonly logger = new Logger(BotService.name);
   private client: MezonClient;
   private readonly commandRouter: CommandRouter;
 
