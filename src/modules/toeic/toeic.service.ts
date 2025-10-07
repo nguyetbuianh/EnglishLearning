@@ -97,26 +97,26 @@ export class ToeicService {
   }
 
   // Fetch the first question
-  // async getFirstQuestion(testId: number, partId: number): Promise<Question | null> {
-  //   return this.questionRepo.findOne({
-  //     where: {
-  //       test: { id: testId },
-  //       part: { id: partId },
-  //     },
-  //     relations: ['options'],
-  //     order: { id: 'ASC' },
-  //   });
-  // }
+  async getFirstQuestion(testId: number, partId: number): Promise<Question | null> {
+    return this.questionRepo.findOne({
+      where: {
+        test: { id: testId },
+        part: { id: partId },
+      },
+      relations: ['options'],
+      order: { id: 'ASC' },
+    });
+  }
 
   // // 
-  // async startPart(userMezonId: string, testId: number, partId: number, firstQuestionId: number) {
-  //   const progress = this.progressRepo.create({
-  //     user: { mezon_user_id: userMezonId } as any,
-  //     test: { id: testId } as any,
-  //     part: { id: partId } as any,
-  //     currentQuestion: { id: firstQuestionId } as any,
-  //   });
+  async startPart(userMezonId: string, testId: number, partId: number, firstQuestionId: number) {
+    const progress = this.progressRepo.create({
+      user: { mezon_user_id: userMezonId } as any,
+      test: { id: testId } as any,
+      part: { id: partId } as any,
+      currentQuestion: { id: firstQuestionId } as any,
+    });
 
-  //   return this.progressRepo.save(progress);
-  // }
+    return this.progressRepo.save(progress);
+  }
 }

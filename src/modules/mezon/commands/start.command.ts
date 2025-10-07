@@ -54,7 +54,7 @@ export class StartCommandHandler implements CommandHandler {
         return;
       }
 
-      await this.toeicService.createUserProgress({
+      await this.toeicService.createProgress({
         userId: user.id,
         testId,
         partId,

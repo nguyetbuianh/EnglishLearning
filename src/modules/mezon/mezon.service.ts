@@ -3,17 +3,18 @@ import { MezonClient } from "mezon-sdk";
 import * as dotenv from "dotenv";
 import { CommandRouter } from "./commands/command.router"; 
 import { ToeicService } from "src/modules/toeic/toeic.service"; 
+import { UserService } from "src/modules/user/user.service";
 
 dotenv.config();
 
 @Injectable()
-export class BotService implements OnModuleInit {
-  private readonly logger = new Logger(BotService.name);
+export class MezonService implements OnModuleInit {
+  private readonly logger = new Logger(MezonService.name);
   private client: MezonClient;
   private readonly commandRouter: CommandRouter;
 
-  constructor(private toeicService: ToeicService) {
-    this.commandRouter = new CommandRouter(this.toeicService);
+  constructor(private toeicService: ToeicService, private userService: UserService) {
+    this.commandRouter = new CommandRouter(this.toeicService, this.userService);
   }
 
   async onModuleInit() {

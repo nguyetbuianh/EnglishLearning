@@ -1,7 +1,7 @@
 import { CommandHandler } from './command-handler.interface';
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
-import { ToeicService } from '../../modules/toeic/toeic.service';
+import { ToeicService } from '../../toeic/toeic.service';
 import { parseMarkdown } from '../utils/parse-markdown';
 import { ChannelMessage } from "mezon-sdk";
 
