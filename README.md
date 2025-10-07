@@ -109,7 +109,7 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 6. *test_continue: chọn tiếp tục khi user đang làm dang dở part đã chọn
 7. *test_restart: chọn làm lại từ đầu part user đã chọn
 8. *next_question: hiển thị câu hỏi tiếp theo
-9. *answer <option>: trả lời câu hỏi A/B/C/D
+9. *answer <option_answer>: trả lời câu hỏi A/B/C/D
 10. *review_answers <test_id> <part_id>: xem lại các câu trả lời và giải thích
 11. *progress <test_id>: xem tiến độ làm đề toeic từng part
 ### C. Học từ vựng
@@ -117,19 +117,19 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 13. *vocab_random: học một từ vựng ngẫu nhiên
 13. *vocab_topic <topic_name>: liệt kê 10 từ vựng theo chủ đề
 14. *vocab_continue: liệt kê 10 từ tiếp theo của chủ đề đã chọn
-15. *vocab add <word>: lưu từ vựng vào bộ sưu tập cá nhân
+15. *vocab add <favorite_word>: lưu từ vựng vào bộ sưu tập cá nhân
 16. *vocab_my: xem danh sách từ đã lưu
 17. *vocab_voice: cách đọc từ
-18. *vocab remove <word<: xóa từ đã lưu
+18. *vocab remove <favorite_word>>: xóa từ đã lưu
 ### D. Học ngữ pháp
 19. *list_topics_gramma: liệt kê những chủ đề ngữ pháp đang có
 20. *gramma_random: học một ngữ pháp ngẫu nhiên
 21. *gramma_topic <gramma_name>: liệt kê ngữ pháp theo chủ đề
-22. *gramma add <gramma>: lưu ngữ pháp vào bộ sưu tập cá nhân
+22. *gramma add <favorite_gramma>: lưu ngữ pháp vào bộ sưu tập cá nhân
 23. *gramma_my: xem danh sách ngữ pháp đã lưu
-24. *gramma remove <word>: xóa ngữ pháp đã lưu
+24. *gramma remove <favorite_word>: xóa ngữ pháp đã lưu
 ### E. Q&A
-25. *ask <question> : Gửi câu hỏi riêng để bot trả lời
+25. *ask <favorite_question> : Gửi câu hỏi riêng để bot trả lời
 
 ## DataBase
 -- USERS
