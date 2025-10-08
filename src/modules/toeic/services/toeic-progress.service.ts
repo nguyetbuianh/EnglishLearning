@@ -63,6 +63,7 @@ export class ToeicProgressService {
       test: { id: data.testId },
       part: { id: data.partId },
       currentQuestion: { id: data.currentQuestionId },
+      isCompleted: false
     });
 
     return this.progressRepo.save(progress);
@@ -79,5 +80,9 @@ export class ToeicProgressService {
 
   async deleteProgress(userId: number, testId: number, partId: number) {
     await this.progressRepo.delete({ user: { id: userId }, test: { id: testId }, part: { id: partId } });
+  }
+
+  async markCompleted(progressId: number) {
+    await this.progressRepo.update(progressId, { isCompleted: true });
   }
 }

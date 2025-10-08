@@ -66,16 +66,16 @@ export class StartTestCommandHandler implements CommandHandler {
       const buttons = firstQuestion.options.map(opt =>
         createButton(
           `answer_${opt.option_label}`,
-          `${opt.option_label}. ${opt.option_text}`, 
+          `${opt.option_label}. ${opt.option_text}`,
           EButtonMessageStyle.PRIMARY
         )
       );
 
       const messagePayload = createEmbedWithButtons(
-        `Start Test ${testId}, Part ${partId}`, 
-        firstQuestion.question_number,         
-        firstQuestion.question_text,           
-        buttons                              
+        `Start Test ${testId}, Part ${partId}`,
+        firstQuestion.question_number,
+        firstQuestion.question_text,
+        buttons
       );
 
       await message.reply(messagePayload);
