@@ -11,6 +11,7 @@ import { RestartTestCommandHandler } from "../commands/restart-test.command";
 import { UserPartResultService } from "src/modules/toeic/services/user-part-result.service";
 import { AllPartsCommandHandler } from "../commands/all-parts.command";
 import { ToeicPartService } from "src/modules/toeic/services/toeic-part.service";
+import { NextQuestionCommandHandler } from "../commands/next-question.command";
 
 export class CommandFactory {
   constructor(private toeicProgressService: ToeicProgressService,
@@ -52,6 +53,12 @@ export class CommandFactory {
 
       case "list_parts":
         return new AllPartsCommandHandler(this.toeicPartService);
+
+      case "next_question":
+        return new NextQuestionCommandHandler(
+          this.toeicQuestionService,
+          this.toeicProgressService,
+          this.userService);
 
       default:
         return null;
