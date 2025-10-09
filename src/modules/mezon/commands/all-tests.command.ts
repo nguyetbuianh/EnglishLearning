@@ -5,7 +5,9 @@ import { parseMarkdown } from '../utils/parse-markdown';
 import { ChannelMessage } from "mezon-sdk";
 import { ToeicTestService } from 'src/modules/toeic/services/toeic-test.service';
 import { handleBotError } from '../utils/error-handler';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class AllTestsCommandHandler implements CommandHandler {
   constructor(private toeicTestService: ToeicTestService) { }
 
