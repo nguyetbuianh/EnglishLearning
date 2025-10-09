@@ -9,6 +9,8 @@ import { ToeicTestService } from "../toeic/services/toeic-test.service";
 import { handleBotError } from "./utils/error-handler";
 import { UserPartResultService } from "../toeic/services/user-part-result.service";
 import { ToeicPartService } from "../toeic/services/toeic-part.service";
+import { registerButtonInteractionListener } from "./interactions/ButtonInteractionListener";
+import { registerSelectInteractionListener } from "./interactions/SelectInteractionListener";
 
 dotenv.config();
 
@@ -37,6 +39,8 @@ export class MezonService implements OnModuleInit {
     try {
       this.client = new MezonClient(process.env.MEZON_BOT_TOKEN!);
 
+      registerButtonInteractionListener(this.client);
+      registerSelectInteractionListener(this.client);
       await this.client.login();
 
       this.client.on("ready", () => {

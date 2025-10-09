@@ -1,7 +1,6 @@
 import { AllTestsCommandHandler } from "../commands/all-tests.command";
 import { CommandHandler } from "../interfaces/command-handler.interface";
 import { WelcomeCommandHandler } from "../commands/welcome.command";
-import { StartTestCommandHandler } from "../commands/start-test.command";
 import { UserService } from "src/modules/user/user.service";
 import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
@@ -12,6 +11,8 @@ import { UserPartResultService } from "src/modules/toeic/services/user-part-resu
 import { AllPartsCommandHandler } from "../commands/all-parts.command";
 import { ToeicPartService } from "src/modules/toeic/services/toeic-part.service";
 import { NextQuestionCommandHandler } from "../commands/next-question.command";
+import { ConfirmStartTestCommandHandler } from "../commands/confirm-start-test.command";
+import { StartTestCommandHandler } from "../commands/start-test.command";
 
 export class CommandFactory {
   constructor(private toeicProgressService: ToeicProgressService,
@@ -33,8 +34,8 @@ export class CommandFactory {
       case "list_tests":
         return new AllTestsCommandHandler(this.toeicTestService);
 
-      case "start":
-        return new StartTestCommandHandler(
+      case "confirm_start":
+        return new ConfirmStartTestCommandHandler(
           this.toeicQuestionService,
           this.toeicProgressService,
           this.userService);
@@ -59,6 +60,9 @@ export class CommandFactory {
           this.toeicQuestionService,
           this.toeicProgressService,
           this.userService);
+
+      case "start":
+        return new StartTestCommandHandler(this.toeicTestService, this.toeicPartService);
 
       default:
         return null;
