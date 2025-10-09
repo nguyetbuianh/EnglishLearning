@@ -11,23 +11,27 @@ import { ToeicProgressService } from './services/toeic-progress.service';
 import { ToeicPartService } from './services/toeic-part.service';
 import { ToeicQuestionService } from './services/toeic-question.service';
 import { ToeicTestService } from './services/toeic-test.service';
+import { UserPartResult } from 'src/entities/user-test-result.entity';
+import { UserPartResultService } from './services/user-part-result.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Question, ToeicPart, Passage, ToeicTest, UserProgress, User]),
+    TypeOrmModule.forFeature([Question, ToeicPart, Passage, ToeicTest, UserProgress, User, UserPartResult]),
     UserModule
   ],
   providers: [
     ToeicPartService,
     ToeicProgressService,
     ToeicQuestionService,
-    ToeicTestService
+    ToeicTestService,
+    UserPartResultService
   ],
   exports: [
     ToeicPartService,
     ToeicProgressService,
     ToeicQuestionService,
-    ToeicTestService
+    ToeicTestService,
+    UserPartResultService
   ],
 })
-export class ToeicModule {}
+export class ToeicModule { }

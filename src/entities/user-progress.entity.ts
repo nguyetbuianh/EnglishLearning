@@ -6,6 +6,7 @@ import {
   JoinColumn,
   UpdateDateColumn,
   Unique,
+  Column,
 } from 'typeorm';
 import { User } from './user.entity';
 import { ToeicTest } from './toeic-test.entity';
@@ -36,4 +37,7 @@ export class UserProgress {
 
   @UpdateDateColumn({ name: 'last_updated' })
   lastUpdated: Date;
+
+  @Column({ name: 'is_completed', default: false })
+  isCompleted: boolean;
 }

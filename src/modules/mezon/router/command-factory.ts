@@ -1,4 +1,4 @@
-import { AllTestCommandHandler } from "../commands/all-test.command";
+import { AllTestsCommandHandler } from "../commands/all-tests.command";
 import { CommandHandler } from "../interfaces/command-handler.interface";
 import { WelcomeCommandHandler } from "../commands/welcome.command";
 import { StartTestCommandHandler } from "../commands/start-test.command";
@@ -7,9 +7,8 @@ import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service"
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 import { ToeicProgressService } from "src/modules/toeic/services/toeic-progress.service";
 import { ContinueTestCommandHandler } from "../commands/continue-test.command";
-import ca from "zod/v4/locales/ca.js";
-import { AllTopicsCommand } from "../commands/all-topics.command";
 import { TopicVocabularyService } from "src/modules/topic-vocabulary/topic-vocabulary.service";
+import { AllTopicsCommand } from "../commands/all-topics.command";
 
 export class CommandFactory {
   constructor(
@@ -29,10 +28,13 @@ export class CommandFactory {
         return new WelcomeCommandHandler();
 
       case "list_tests":
-        return new AllTestCommandHandler(this.toeicTestService);
+        return new AllTestsCommandHandler(this.toeicTestService);
 
       case "start":
-        return new StartTestCommandHandler(this.toeicQuestionService, this.toeicProgressService, this.userService);
+        return new StartTestCommandHandler(
+          this.toeicQuestionService,
+          this.toeicProgressService,
+          this.userService);
 
       case "continue":
         return new ContinueTestCommandHandler(this.toeicProgressService, this.toeicQuestionService);

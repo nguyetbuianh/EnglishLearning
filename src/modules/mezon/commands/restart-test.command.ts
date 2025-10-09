@@ -7,48 +7,45 @@ import { UserService } from "src/modules/user/user.service";
 import { ToeicProgressService } from "src/modules/toeic/services/toeic-progress.service";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 import { handleBotError } from "../utils/error-handler";
-import { createButton, createEmbedWithButtons, createMessageWithButtons } from "../utils/embed.util";
+import { UserPartResultService } from "src/modules/toeic/services/user-part-result.service";
+import { createButton, createEmbedWithButtons } from "../utils/embed.util";
 
-export class StartTestCommandHandler implements CommandHandler {
-  constructor(private toeicQuestionService: ToeicQuestionService,
+export class RestartTestCommandHandler implements CommandHandler {
+  constructor(
+    private toeicQuestionService: ToeicQuestionService,
     private toeicProgressService: ToeicProgressService,
-    private userService: UserService) { }
+    private userService: UserService,
+    private userPartResultService: UserPartResultService
+  ) { }
 
   async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
     try {
       const content = message.content.t?.trim() ?? "";
       const args = content.split(/\s+/);
 
-      if (args.length < 3) {
-        await message.reply(parseMarkdown("⚠️ Usage: *start <test_id> <part_id>"));
-        return;
-      }
-
-      const testId = Number(args[1]);
-      const partId = Number(args[2]);
-
-      if (isNaN(testId) || isNaN(partId)) {
-        await message.reply(parseMarkdown("⚠️ test_id and part_id must be numbers."));
-        return;
-      }
-
       const mezonUserId = message.sender_id;
       if (!mezonUserId) {
-        await message.reply(parseMarkdown("A valid user ID could not be determined."));
+        await message.reply(parseMarkdown("⚠️ Cannot determine user ID."));
         return;
       }
+
       const user = await this.userService.getOrCreateUserByMezonId(mezonUserId);
 
-      const existingProgress = await this.toeicProgressService.getProgress(user.id, testId, partId);
-      if (existingProgress) {
+      let testId: number | null = null;
+      let partId: number | null = null;
+
+      const progress = await this.toeicProgressService.getLastProgress(message.sender_id);
+      if (!progress) {
         await message.reply(
-          parseMarkdown(
-            `🟡 You have started the Test ${testId} - Part ${partId}.\n` +
-            `Type *continue to continue or *restart to start over.`
-          )
+          parseMarkdown("⚠️ You have no active test. Please use *start <test_id> <part_id> first.")
         );
         return;
       }
+      testId = progress.test.id;
+      partId = progress.part.id;
+
+      await this.toeicProgressService.deleteProgress(user.id, testId, partId);
+      await this.userPartResultService.deletePartResult(user.id, testId, partId);
 
       const firstQuestion = await this.toeicQuestionService.getFirstQuestion(testId, partId);
       if (!firstQuestion) {
