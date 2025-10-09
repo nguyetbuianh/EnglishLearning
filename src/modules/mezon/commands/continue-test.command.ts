@@ -6,8 +6,9 @@ import { ToeicProgressService } from "src/modules/toeic/services/toeic-progress.
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 
 export class ContinueTestCommandHandler implements CommandHandler {
-  constructor(private toeicProgressService: ToeicProgressService,
-              private toeicQuestionService: ToeicQuestionService
+  constructor(
+    private toeicProgressService: ToeicProgressService,
+    private toeicQuestionService: ToeicQuestionService
   ) {}
 
   async handle(channel: TextChannel, message: Message): Promise<void> {
