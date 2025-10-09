@@ -6,7 +6,9 @@ import { ToeicProgressService } from "src/modules/toeic/services/toeic-progress.
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 import { createButton, createEmbedWithButtons } from "../utils/embed.util";
 import { EButtonMessageStyle } from "mezon-sdk";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class ContinueTestCommandHandler implements CommandHandler {
   constructor(private toeicProgressService: ToeicProgressService,
     private toeicQuestionService: ToeicQuestionService

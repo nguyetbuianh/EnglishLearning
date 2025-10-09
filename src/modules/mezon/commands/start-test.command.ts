@@ -12,8 +12,9 @@ import {
   EButtonMessageStyle,
 } from "mezon-sdk";
 import { parseMarkdown } from "../utils/parse-markdown";
-// inmemory storage
-// @Command("start")
+import { Injectable } from "@nestjs/common";
+
+@Injectable()
 export class StartTestCommandHandler implements CommandHandler {
   constructor(
     private toeicTestService: ToeicTestService,

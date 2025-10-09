@@ -8,7 +8,9 @@ import { createButton, createEmbedWithButtons } from "../utils/embed.util";
 import { UserService } from "src/modules/user/user.service";
 import { ToeicProgressService } from "src/modules/toeic/services/toeic-progress.service";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class NextQuestionCommandHandler implements CommandHandler {
   constructor(
     private toeicQuestionService: ToeicQuestionService,

@@ -4,7 +4,9 @@ import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
 import { handleBotError } from '../utils/error-handler';
 import { ToeicPartService } from 'src/modules/toeic/services/toeic-part.service';
 import { createEmbedMessage } from '../utils/embed.util';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class AllPartsCommandHandler implements CommandHandler {
   constructor(private toeicPartService: ToeicPartService) { }
 

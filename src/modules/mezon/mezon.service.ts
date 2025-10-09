@@ -18,22 +18,8 @@ dotenv.config();
 export class MezonService implements OnModuleInit {
   private readonly logger = new Logger(MezonService.name);
   private client: MezonClient;
-  private readonly commandRouter: CommandRouter;
 
-  constructor(private toeicProgressService: ToeicProgressService,
-    private userService: UserService,
-    private toeicQuestionService: ToeicQuestionService,
-    private toeicTestService: ToeicTestService,
-    private userPartResultService: UserPartResultService,
-    private toeicPartService: ToeicPartService) {
-    this.commandRouter = new CommandRouter(
-      this.toeicProgressService,
-      this.userService,
-      this.toeicQuestionService,
-      this.toeicTestService,
-      this.userPartResultService,
-      this.toeicPartService);
-  }
+  constructor(private commandRouter: CommandRouter) { }
 
   async onModuleInit() {
     try {

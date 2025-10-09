@@ -8,7 +8,9 @@ import { ToeicProgressService } from "src/modules/toeic/services/toeic-progress.
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 import { handleBotError } from "../utils/error-handler";
 import { createButton, createEmbedWithButtons, createMessageWithButtons } from "../utils/embed.util";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class ConfirmStartTestCommandHandler implements CommandHandler {
   constructor(private toeicQuestionService: ToeicQuestionService,
     private toeicProgressService: ToeicProgressService,

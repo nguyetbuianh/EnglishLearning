@@ -1,72 +1,51 @@
-import { AllTestsCommandHandler } from "../commands/all-tests.command";
+import { Injectable } from "@nestjs/common";
 import { CommandHandler } from "../interfaces/command-handler.interface";
+import { AllTestsCommandHandler } from "../commands/all-tests.command";
 import { WelcomeCommandHandler } from "../commands/welcome.command";
-import { UserService } from "src/modules/user/user.service";
-import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service";
-import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
-import { ToeicProgressService } from "src/modules/toeic/services/toeic-progress.service";
 import { ContinueTestCommandHandler } from "../commands/continue-test.command";
 import { RestartTestCommandHandler } from "../commands/restart-test.command";
-import { UserPartResultService } from "src/modules/toeic/services/user-part-result.service";
 import { AllPartsCommandHandler } from "../commands/all-parts.command";
-import { ToeicPartService } from "src/modules/toeic/services/toeic-part.service";
 import { NextQuestionCommandHandler } from "../commands/next-question.command";
 import { ConfirmStartTestCommandHandler } from "../commands/confirm-start-test.command";
 import { StartTestCommandHandler } from "../commands/start-test.command";
 
+@Injectable()
 export class CommandFactory {
-  constructor(private toeicProgressService: ToeicProgressService,
-    private userService: UserService,
-    private toeicQuestionService: ToeicQuestionService,
-    private toeicTestService: ToeicTestService,
-    private userPartResultService: UserPartResultService,
-    private toeicPartService: ToeicPartService
+  constructor(
+    private readonly welcomeCommandHandler: WelcomeCommandHandler,
+    private readonly allTestsCommandHandler: AllTestsCommandHandler,
+    private readonly confirmStartTestCommandHandler: ConfirmStartTestCommandHandler,
+    private readonly continueTestCommandHandler: ContinueTestCommandHandler,
+    private readonly restartTestCommandHandler: RestartTestCommandHandler,
+    private readonly allPartsCommandHandler: AllPartsCommandHandler,
+    private readonly nextQuestionCommandHandler: NextQuestionCommandHandler,
+    private readonly startTestCommandHandler: StartTestCommandHandler
   ) { }
 
   getHandler(rawCommand: string): CommandHandler | null {
     if (!rawCommand) return null;
 
     const command = rawCommand.trim().replace(/^\*/, "").split(/\s+/)[0].toLowerCase();
-    switch (command.toLowerCase()) {
+
+    switch (command) {
       case "welcome":
-        return new WelcomeCommandHandler();
-
+        return this.welcomeCommandHandler;
       case "list_tests":
-        return new AllTestsCommandHandler(this.toeicTestService);
-
+        return this.allTestsCommandHandler;
       case "confirm_start":
-        return new ConfirmStartTestCommandHandler(
-          this.toeicQuestionService,
-          this.toeicProgressService,
-          this.userService);
-
+        return this.confirmStartTestCommandHandler;
       case "continue":
-        return new ContinueTestCommandHandler(
-          this.toeicProgressService,
-          this.toeicQuestionService);
-
+        return this.continueTestCommandHandler;
       case "restart":
-        return new RestartTestCommandHandler(
-          this.toeicQuestionService,
-          this.toeicProgressService,
-          this.userService,
-          this.userPartResultService);
-
+        return this.restartTestCommandHandler;
       case "list_parts":
-        return new AllPartsCommandHandler(this.toeicPartService);
-
+        return this.allPartsCommandHandler;
       case "next_question":
-        return new NextQuestionCommandHandler(
-          this.toeicQuestionService,
-          this.toeicProgressService,
-          this.userService);
-
+        return this.nextQuestionCommandHandler;
       case "start":
-        return new StartTestCommandHandler(this.toeicTestService, this.toeicPartService);
-
+        return this.startTestCommandHandler;
       default:
         return null;
     }
   }
 }
-
