@@ -23,7 +23,7 @@ export class CommandRouter {
     }
 
     try {
-      await handler.handle(channel, message, channelMsg);
+      await handler.handle(channel, message);
     } catch (error: any) {
       await handleBotError(channel, error);
     }

@@ -1,6 +1,6 @@
 import { MezonClient } from "mezon-sdk";
 import { MessageButtonClicked } from "mezon-sdk/dist/cjs/rtapi/realtime";
-import { CancelTestButtonHandler } from "./buttons/CancelTestButtonHandler";
+import { CancelTestButtonHandler } from "./buttons/cancel-test-button.handler";
 
 export function registerButtonInteractionListener(client: MezonClient) {
   client.onMessageButtonClicked(async (event: MessageButtonClicked) => {

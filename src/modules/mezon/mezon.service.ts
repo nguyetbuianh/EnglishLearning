@@ -2,13 +2,7 @@ import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
 import * as dotenv from "dotenv";
 import { CommandRouter } from "./router/command.router";
-import { UserService } from "src/modules/user/user.service";
-import { ToeicProgressService } from "../toeic/services/toeic-progress.service";
-import { ToeicQuestionService } from "../toeic/services/toeic-question.service";
-import { ToeicTestService } from "../toeic/services/toeic-test.service";
 import { handleBotError } from "./utils/error-handler";
-import { UserPartResultService } from "../toeic/services/user-part-result.service";
-import { ToeicPartService } from "../toeic/services/toeic-part.service";
 import { registerButtonInteractionListener } from "./interactions/ButtonInteractionListener";
 import { registerSelectInteractionListener } from "./interactions/SelectInteractionListener";
 

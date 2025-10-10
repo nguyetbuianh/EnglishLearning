@@ -13,9 +13,9 @@ export const typeOrmConfig: DataSourceOptions = {
   database: EnvConfig.DB_NAME,
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-  synchronize: false, 
+  synchronize: false,
   logging: false,
   ssl: {
-    rejectUnauthorized: false, 
+    rejectUnauthorized: false,
   },
 };

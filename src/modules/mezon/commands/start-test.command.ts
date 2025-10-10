@@ -13,8 +13,10 @@ import {
 } from "mezon-sdk";
 import { parseMarkdown } from "../utils/parse-markdown";
 import { Injectable } from "@nestjs/common";
+import { Command } from "../decorators/command.decorator";
 
 @Injectable()
+@Command('start')
 export class StartTestCommandHandler implements CommandHandler {
   constructor(
     private toeicTestService: ToeicTestService,

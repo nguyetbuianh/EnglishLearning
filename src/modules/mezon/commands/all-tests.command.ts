@@ -6,8 +6,10 @@ import { ChannelMessage } from "mezon-sdk";
 import { ToeicTestService } from 'src/modules/toeic/services/toeic-test.service';
 import { handleBotError } from '../utils/error-handler';
 import { Injectable } from '@nestjs/common';
+import { Command } from '../decorators/command.decorator';
 
 @Injectable()
+@Command('all_tests')
 export class AllTestsCommandHandler implements CommandHandler {
   constructor(private toeicTestService: ToeicTestService) { }
 
