@@ -8,9 +8,9 @@ import { IInteractiveMessageProps } from "mezon-sdk";
 import { Command } from "../decorators/command.decorator";
 import { Inject, Injectable } from "@nestjs/common";
 
-@Command('welcome')
+@Command(CommandType.WELCOME)
 @Injectable()
-export class WelcomeCommandHandler implements CommandHandler {
+export class WelcomeCommandHandler extends CommandHandler {
   async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
     try {
       const embed: IInteractiveMessageProps = {
@@ -64,7 +64,7 @@ export class WelcomeCommandHandler implements CommandHandler {
       await message.reply(messagePayload);
 
     } catch (error: any) {
-      await handleBotError(channel, error);
+      handleBotError(channel, error);
     }
   }
 }

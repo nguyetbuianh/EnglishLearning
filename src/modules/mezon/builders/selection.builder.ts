@@ -3,16 +3,16 @@ import {
   SelectComponent,
 } from "mezon-sdk";
 
-export interface ISelectOption {
+export interface ISelectionOption {
   label: string;
   value: string;
   description?: string;
 }
 
-export class SelectBuilder {
+export class SelectionBuilder {
   private id!: string;
   private placeholder?: string;
-  private options: ISelectOption[] = [];
+  private options: ISelectionOption[] = [];
   private minValues?: number;
   private maxValues?: number;
 
@@ -31,7 +31,7 @@ export class SelectBuilder {
     return this;
   }
 
-  addOptions(options: ISelectOption[]): this {
+  addOptions(options: ISelectionOption[]): this {
     this.options.push(...options);
     return this;
   }

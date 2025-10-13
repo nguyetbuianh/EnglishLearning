@@ -1,5 +1,5 @@
 import { CommandHandler } from "../interfaces/command-handler.abstract";
-import { COMMAND_METADATA, getCommandMetadata } from '../decorators/command.decorator';
+import { getCommandMetadata } from '../decorators/command.decorator';
 
 export class CommandFactory {
   private readonly commandMap = new Map<string, CommandHandler>();

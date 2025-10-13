@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { MezonService } from './mezon.service';
 import { CommandFactory } from './router/command-factory';
 import { CommandRouter } from './router/command.router';
@@ -9,9 +8,7 @@ import { CommandHandler } from 'src/modules/mezon/interfaces/command-handler.abs
 const commandHandlers = [WelcomeCommandHandler];
 
 @Module({
-  imports: [ConfigModule],
   providers: [
-    CommandFactory,
     CommandRouter,
     MezonService,
     ...commandHandlers,

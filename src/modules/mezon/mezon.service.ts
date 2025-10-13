@@ -3,8 +3,7 @@ import { MezonClient } from "mezon-sdk";
 import * as dotenv from "dotenv";
 import { CommandRouter } from "./router/command.router";
 import { handleBotError } from "./utils/error-handler";
-
-dotenv.config();
+import { appConfig } from "src/config";
 
 @Injectable()
 export class MezonService implements OnModuleInit {
@@ -15,7 +14,7 @@ export class MezonService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      this.client = new MezonClient(process.env.MEZON_BOT_TOKEN!);
+      this.client = new MezonClient(appConfig.bot.token);
 
       await this.client.login();
 

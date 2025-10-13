@@ -1,16 +1,14 @@
-import { ChannelMessage } from "mezon-sdk";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
 import { parseMarkdown } from "../utils/parse-markdown";
 import { CommandFactory } from "./command-factory";
-import { handleBotError } from "../utils/error-handler";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class CommandRouter {
   constructor(private commandFactory: CommandFactory) { }
 
-  async routeCommand(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
+  async routeCommand(channel: TextChannel, message: Message): Promise<void> {
     const content = message.content.t?.trim();
     if (!content || !content.startsWith("*")) return;
 
@@ -24,8 +22,8 @@ export class CommandRouter {
 
     try {
       await handler.handle(channel, message);
-    } catch (error: any) {
-      await handleBotError(channel, error);
+    } catch (error) {
+      await message.reply('⚠️ Something went wrong. Please try again later.')
     }
   }
 }
