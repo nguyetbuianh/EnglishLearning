@@ -3,7 +3,6 @@ import { MezonClient } from "mezon-sdk";
 import * as dotenv from "dotenv";
 import { CommandRouter } from "./router/command.router";
 import { handleBotError } from "./utils/error-handler";
-import { registerSelectInteractionListener } from "./interactions/listeners.interaction";
 
 dotenv.config();
 
@@ -17,7 +16,7 @@ export class MezonService implements OnModuleInit {
   async onModuleInit() {
     try {
       this.client = new MezonClient(process.env.MEZON_BOT_TOKEN!);
-      registerSelectInteractionListener(this.client);
+
       await this.client.login();
 
       this.client.on("ready", () => {
@@ -25,7 +24,7 @@ export class MezonService implements OnModuleInit {
       });
 
       this.client.onChannelMessage(async (event) => {
-        const text = event?.content?.t?.toLowerCase().trim();
+        const text = event?.content?.t?.toLowerCase();
 
         if (!text) return;
 
@@ -36,7 +35,7 @@ export class MezonService implements OnModuleInit {
           await this.commandRouter.routeCommand(channel, message);
         } catch (err: any) {
           this.logger.error("Error handling message:", err.message);
-          const channel = await this.client.channels.fetch(event.channel_id);
+          const channel = await this.client.channels.fetch(event.channel_id).catch(() => null);
           handleBotError(channel, err);
         }
       });
@@ -44,5 +43,4 @@ export class MezonService implements OnModuleInit {
       this.logger.error(`Mezon connection failed: ${error.message}`);
     }
   }
-
 }

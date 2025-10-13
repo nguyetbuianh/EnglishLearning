@@ -21,5 +21,11 @@ export class CommandRouter {
       await message.reply(parseMarkdown(`⚠️ Invalid command. Use *help to see the list of commands.`));
       return;
     }
+
+    try {
+      await handler.handle(channel, message);
+    } catch (error: any) {
+      await handleBotError(channel, error);
+    }
   }
 }

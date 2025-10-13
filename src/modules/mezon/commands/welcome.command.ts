@@ -6,8 +6,10 @@ import { handleBotError } from "../utils/error-handler";
 import { CommandType } from "../enums/commands.enum";
 import { IInteractiveMessageProps } from "mezon-sdk";
 import { Command } from "../decorators/command.decorator";
+import { Inject, Injectable } from "@nestjs/common";
 
-@Command(CommandType.WELCOME)
+@Command('welcome')
+@Injectable()
 export class WelcomeCommandHandler implements CommandHandler {
   async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
     try {
