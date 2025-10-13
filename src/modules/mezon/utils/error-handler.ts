@@ -1,6 +1,6 @@
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 
-export function handleBotError(channel: TextChannel | null, error: any) {
+export function handleBotError(channel: TextChannel | null, error: Error) {
   console.error("❌ Bot Error:", error);
 
   try {

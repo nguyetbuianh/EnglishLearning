@@ -2,15 +2,8 @@ import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
 import * as dotenv from "dotenv";
 import { CommandRouter } from "./router/command.router";
-import { UserService } from "src/modules/user/user.service";
-import { ToeicProgressService } from "../toeic/services/toeic-progress.service";
-import { ToeicQuestionService } from "../toeic/services/toeic-question.service";
-import { ToeicTestService } from "../toeic/services/toeic-test.service";
 import { handleBotError } from "./utils/error-handler";
-import { UserPartResultService } from "../toeic/services/user-part-result.service";
-import { ToeicPartService } from "../toeic/services/toeic-part.service";
-import { registerButtonInteractionListener } from "./interactions/ButtonInteractionListener";
-import { registerSelectInteractionListener } from "./interactions/SelectInteractionListener";
+import { registerSelectInteractionListener } from "./interactions/listeners.interaction";
 
 dotenv.config();
 
@@ -24,8 +17,6 @@ export class MezonService implements OnModuleInit {
   async onModuleInit() {
     try {
       this.client = new MezonClient(process.env.MEZON_BOT_TOKEN!);
-
-      registerButtonInteractionListener(this.client);
       registerSelectInteractionListener(this.client);
       await this.client.login();
 
@@ -34,7 +25,7 @@ export class MezonService implements OnModuleInit {
       });
 
       this.client.onChannelMessage(async (event) => {
-        const text = event?.content?.t?.toLowerCase();
+        const text = event?.content?.t?.toLowerCase().trim();
 
         if (!text) return;
 
@@ -45,7 +36,7 @@ export class MezonService implements OnModuleInit {
           await this.commandRouter.routeCommand(channel, message);
         } catch (err: any) {
           this.logger.error("Error handling message:", err.message);
-          const channel = await this.client.channels.fetch(event.channel_id).catch(() => null);
+          const channel = await this.client.channels.fetch(event.channel_id);
           handleBotError(channel, err);
         }
       });
@@ -53,4 +44,5 @@ export class MezonService implements OnModuleInit {
       this.logger.error(`Mezon connection failed: ${error.message}`);
     }
   }
+
 }

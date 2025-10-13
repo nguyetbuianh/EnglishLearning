@@ -1,14 +1,17 @@
-import { CommandHandler } from "../interfaces/command-handler.interface";
+import { CommandHandler } from "../interfaces/command-handler.abstract";
 import { ChannelMessage, ChannelMessageContent } from "mezon-sdk";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
 import { handleBotError } from "../utils/error-handler";
-import { IEmbedProps } from "../interfaces/embed.interface";
+import { CommandType } from "../enums/commands.enum";
+import { IInteractiveMessageProps } from "mezon-sdk";
+import { Command } from "../decorators/command.decorator";
 
+@Command(CommandType.WELCOME)
 export class WelcomeCommandHandler implements CommandHandler {
   async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
     try {
-      const embed: IEmbedProps = {
+      const embed: IInteractiveMessageProps = {
         color: "#1abc9c",
         title: "🎓 ENGLISH MASTER BOT",
         description:
