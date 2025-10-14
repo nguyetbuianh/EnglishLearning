@@ -1,11 +1,12 @@
 import { Topic } from "src/entities/topic.entity";
-import { ITopicService } from "./interfaces/topic.service";
 import { Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
-export class TopicService implements ITopicService {
+export class TopicService {
   constructor(
+    @InjectRepository(Topic)
     private readonly topicRepo: Repository<Topic>
   ) { }
   async getAllTopics(): Promise<Topic[]> {

@@ -35,7 +35,7 @@ export class ToeicQuestionService {
       where: {
         test: { id: testId },
         part: { id: partId },
-        question_number: currentQuestionNumber + 1
+        questionNumber: currentQuestionNumber + 1
       },
       relations: ["options"],
     });

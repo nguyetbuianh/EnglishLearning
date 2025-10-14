@@ -72,7 +72,7 @@ export class ToeicProgressService {
   // Fetch the last progress
   async getLastProgress(userMezonId: string): Promise<UserProgress | null> {
     return this.progressRepo.findOne({
-      where: { user: { mezon_user_id: userMezonId } },
+      where: { user: { mezonUserId: userMezonId } },
       order: { lastUpdated: 'DESC' },
       relations: ['test', 'part', 'currentQuestion'],
     });

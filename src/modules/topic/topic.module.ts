@@ -10,6 +10,8 @@ import { TopicService } from "./topic.service";
   providers: [
     TopicService
   ],
-  exports: []
+  exports: [
+    TopicService
+  ]
 })
 export class TopicModule { }

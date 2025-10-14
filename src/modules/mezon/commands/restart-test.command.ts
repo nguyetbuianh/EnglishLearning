@@ -10,8 +10,10 @@ import { handleBotError } from "../utils/error-handler";
 import { UserPartResultService } from "src/modules/toeic/services/user-part-result.service";
 import { createButton, createEmbedWithButtons } from "../utils/embed.util";
 import { Injectable } from "@nestjs/common";
+import { Command } from "../decorators/command.decorator";
 
 @Injectable()
+@Command('restart')
 export class RestartTestCommandHandler implements CommandHandler {
   constructor(
     private toeicQuestionService: ToeicQuestionService,

@@ -15,7 +15,7 @@ import { QuestionOption } from './question-option.entity';
 import { UserQuestionHistory } from './user-answer.entity';
 
 @Entity('questions')
-@Unique(['test', 'part', 'question_number'])
+@Unique(['test', 'part', 'questionNumber'])
 export class Question {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   id: number;

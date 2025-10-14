@@ -6,8 +6,10 @@ import { parseMarkdown } from "../utils/parse-markdown";
 import { handleBotError } from "../utils/error-handler";
 import { CommandHandler } from "../interfaces/command-handler.interface";
 import { ChannelMessage } from "mezon-sdk";
+import { Command } from "../decorators/command.decorator";
 
 @Injectable()
+@Command('all_topics')
 export class AllTopicCommandHandler implements CommandHandler {
   constructor(
     private readonly topicService: TopicService

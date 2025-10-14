@@ -13,8 +13,10 @@ import {
 } from "mezon-sdk";
 import { parseMarkdown } from "../utils/parse-markdown";
 import { Injectable } from "@nestjs/common";
+import { Command } from "../decorators/command.decorator";
 
 @Injectable()
+@Command('start')
 export class StartTestCommandHandler implements CommandHandler {
   constructor(
     private toeicTestService: ToeicTestService,
@@ -33,7 +35,7 @@ export class StartTestCommandHandler implements CommandHandler {
 
       const testSelect: SelectComponent = {
         type: EMessageComponentType.SELECT,
-        id: "toeic_test_select",
+        id: "select_toeic_test",
         component: {
           placeholder: "Select test...",
           options: tests.map((t) => ({
@@ -45,7 +47,7 @@ export class StartTestCommandHandler implements CommandHandler {
 
       const partSelect: SelectComponent = {
         type: EMessageComponentType.SELECT,
-        id: "toeic_part_select",
+        id: "select_toeic_part",
         component: {
           placeholder: "Select part...",
           options: parts.map((p) => ({
@@ -57,7 +59,7 @@ export class StartTestCommandHandler implements CommandHandler {
 
       const startButton: ButtonComponent = {
         type: EMessageComponentType.BUTTON,
-        id: "toeic_start_test",
+        id: "button_start_test",
         component: {
           label: "✅ Start Test",
           style: EButtonMessageStyle.SUCCESS,
@@ -66,7 +68,7 @@ export class StartTestCommandHandler implements CommandHandler {
 
       const cancelButton: ButtonComponent = {
         type: EMessageComponentType.BUTTON,
-        id: "toeic_cancel_test",
+        id: "button_cancel_test",
         component: {
           label: "❌ Cancel",
           style: EButtonMessageStyle.DANGER,
