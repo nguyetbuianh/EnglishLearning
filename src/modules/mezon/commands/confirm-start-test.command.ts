@@ -9,8 +9,11 @@ import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.
 import { handleBotError } from "../utils/error-handler";
 import { createButton, createEmbedWithButtons, createMessageWithButtons } from "../utils/embed.util";
 import { Injectable } from "@nestjs/common";
+import { Command } from "../decorators/command.decorator";
+import { ToeicSessionStore } from "../session/toeic-session.store";
 
 @Injectable()
+@Command('confirm_start_test')
 export class ConfirmStartTestCommandHandler implements CommandHandler {
   constructor(private toeicQuestionService: ToeicQuestionService,
     private toeicProgressService: ToeicProgressService,
@@ -18,27 +21,21 @@ export class ConfirmStartTestCommandHandler implements CommandHandler {
 
   async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
     try {
-      const content = message.content.t?.trim() ?? "";
-      const args = content.split(/\s+/);
-
-      if (args.length < 3) {
-        await message.reply(parseMarkdown("⚠️ Usage: *start <test_id> <part_id>"));
-        return;
-      }
-
-      const testId = Number(args[1]);
-      const partId = Number(args[2]);
-
-      if (isNaN(testId) || isNaN(partId)) {
-        await message.reply(parseMarkdown("⚠️ test_id and part_id must be numbers."));
-        return;
-      }
-
       const mezonUserId = message.sender_id;
       if (!mezonUserId) {
-        await message.reply(parseMarkdown("A valid user ID could not be determined."));
+        await message.reply(parseMarkdown("⚠️ Không thể xác định user."));
         return;
       }
+
+      const session = ToeicSessionStore.get(mezonUserId);
+      if (!session?.testId || !session?.partId) {
+        await message.reply(
+          parseMarkdown("⚠️ Bạn chưa chọn Test hoặc Part. Hãy chọn trước khi bắt đầu.")
+        );
+        return;
+      }
+
+      const { testId, partId } = session;
       const user = await this.userService.getOrCreateUserByMezonId(mezonUserId);
 
       const existingProgress = await this.toeicProgressService.getProgress(user.id, testId, partId);
@@ -67,16 +64,16 @@ export class ConfirmStartTestCommandHandler implements CommandHandler {
 
       const buttons = firstQuestion.options.map(opt =>
         createButton(
-          `answer_${opt.option_label}`,
-          `${opt.option_label}. ${opt.option_text}`,
+          `answer_${opt.optionLabel}`,
+          `${opt.optionLabel}. ${opt.optionText}`,
           EButtonMessageStyle.PRIMARY
         )
       );
 
       const messagePayload = createEmbedWithButtons(
         `Start Test ${testId}, Part ${partId}`,
-        firstQuestion.question_number,
-        firstQuestion.question_text,
+        firstQuestion.questionNumber,
+        firstQuestion.questionText,
         buttons
       );
 

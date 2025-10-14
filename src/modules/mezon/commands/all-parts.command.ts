@@ -5,8 +5,10 @@ import { handleBotError } from '../utils/error-handler';
 import { ToeicPartService } from 'src/modules/toeic/services/toeic-part.service';
 import { createEmbedMessage } from '../utils/embed.util';
 import { Injectable } from '@nestjs/common';
+import { Command } from '../decorators/command.decorator';
 
 @Injectable()
+@Command('all_parts')
 export class AllPartsCommandHandler implements CommandHandler {
   constructor(private toeicPartService: ToeicPartService) { }
 

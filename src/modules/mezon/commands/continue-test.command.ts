@@ -7,8 +7,10 @@ import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.
 import { createButton, createEmbedWithButtons } from "../utils/embed.util";
 import { EButtonMessageStyle } from "mezon-sdk";
 import { Injectable } from "@nestjs/common";
+import { Command } from "../decorators/command.decorator";
 
 @Injectable()
+@Command('continue')
 export class ContinueTestCommandHandler implements CommandHandler {
   constructor(private toeicProgressService: ToeicProgressService,
     private toeicQuestionService: ToeicQuestionService
