@@ -8,6 +8,7 @@ import { AllPartsCommandHandler } from "../commands/all-parts.command";
 import { NextQuestionCommandHandler } from "../commands/next-question.command";
 import { ConfirmStartTestCommandHandler } from "../commands/confirm-start-test.command";
 import { StartTestCommandHandler } from "../commands/start-test.command";
+import { AllTopicCommandHandler } from "../commands/all-topic.command";
 
 @Injectable()
 export class CommandFactory {
@@ -19,7 +20,8 @@ export class CommandFactory {
     private readonly restartTestCommandHandler: RestartTestCommandHandler,
     private readonly allPartsCommandHandler: AllPartsCommandHandler,
     private readonly nextQuestionCommandHandler: NextQuestionCommandHandler,
-    private readonly startTestCommandHandler: StartTestCommandHandler
+    private readonly startTestCommandHandler: StartTestCommandHandler,
+    private readonly allTopicCommandHandler: AllTopicCommandHandler
   ) { }
 
   getHandler(rawCommand: string): CommandHandler | null {
@@ -44,6 +46,8 @@ export class CommandFactory {
         return this.nextQuestionCommandHandler;
       case "start":
         return this.startTestCommandHandler;
+      case "list_topics":
+        return this.allTopicCommandHandler;
       default:
         return null;
     }

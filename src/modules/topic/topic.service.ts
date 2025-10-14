@@ -1,7 +1,7 @@
 import { Topic } from "src/entities/topic.entity";
 import { ITopicService } from "./interfaces/topic.service";
-import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class TopicService implements ITopicService {

@@ -43,7 +43,7 @@ export class NextQuestionCommandHandler implements CommandHandler {
       const nextQuestion = await this.toeicQuestionService.getNextQuestion(
         progress.test.id,
         progress.part.id,
-        currentQuestion.question_number
+        currentQuestion.questionNumber
       );
 
       if (!nextQuestion) {
@@ -65,16 +65,16 @@ export class NextQuestionCommandHandler implements CommandHandler {
       // Tạo nút cho các lựa chọn
       const buttons = nextQuestion.options.map(opt =>
         createButton(
-          `answer_${opt.option_label}`,
-          `${opt.option_label}. ${opt.option_text}`,
+          `answer_${opt.optionLabel}`,
+          `${opt.optionLabel}. ${opt.optionText}`,
           EButtonMessageStyle.PRIMARY
         )
       );
 
       const messagePayload = createEmbedWithButtons(
         `Test ${progress.test.id}, Part ${progress.test.id}`,
-        nextQuestion.question_number,
-        nextQuestion.question_text,
+        nextQuestion.questionNumber,
+        nextQuestion.questionText,
         buttons
       );
 

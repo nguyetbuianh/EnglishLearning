@@ -15,7 +15,7 @@ export class ToeicPart {
   id: number;
 
   @Column({ name: 'part_number', type: 'int', nullable: false })
-  partumber: number;
+  partNumber: number;
 
   @Column({ type: "varchar", length: 100, nullable: false })
   title: string;

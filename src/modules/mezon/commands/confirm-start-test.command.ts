@@ -67,16 +67,16 @@ export class ConfirmStartTestCommandHandler implements CommandHandler {
 
       const buttons = firstQuestion.options.map(opt =>
         createButton(
-          `answer_${opt.option_label}`,
-          `${opt.option_label}. ${opt.option_text}`,
+          `answer_${opt.optionLabel}`,
+          `${opt.optionLabel}. ${opt.optionText}`,
           EButtonMessageStyle.PRIMARY
         )
       );
 
       const messagePayload = createEmbedWithButtons(
         `Start Test ${testId}, Part ${partId}`,
-        firstQuestion.question_number,
-        firstQuestion.question_text,
+        firstQuestion.questionNumber,
+        firstQuestion.questionText,
         buttons
       );
 
