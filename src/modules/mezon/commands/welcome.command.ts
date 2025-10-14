@@ -3,14 +3,22 @@ import { ChannelMessage, ChannelMessageContent } from "mezon-sdk";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
 import { handleBotError } from "../utils/error-handler";
+<<<<<<< HEAD
 import { Command } from "../decorators/command.decorator";
 import { IInteractiveMessageProps } from "mezon-sdk";
+=======
+import { IEmbedProps } from "../interfaces/embed.interface";
+>>>>>>> 7346320aac4830aeeaf520f4435c2b160358634d
 
 @Command('welcome')
 export class WelcomeCommandHandler implements CommandHandler {
   async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
     try {
+<<<<<<< HEAD
       const embed: IInteractiveMessageProps = {
+=======
+      const embed: IEmbedProps = {
+>>>>>>> 7346320aac4830aeeaf520f4435c2b160358634d
         color: "#1abc9c",
         title: "🎓 ENGLISH MASTER BOT",
         description:

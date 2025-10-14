@@ -8,11 +8,15 @@ import { createButton, createEmbedWithButtons } from "../utils/embed.util";
 import { UserService } from "src/modules/user/user.service";
 import { ToeicProgressService } from "src/modules/toeic/services/toeic-progress.service";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
+<<<<<<< HEAD
 import { Injectable } from "@nestjs/common";
 import { Command } from "../decorators/command.decorator";
 
 @Injectable()
 @Command('next_question')
+=======
+
+>>>>>>> 7346320aac4830aeeaf520f4435c2b160358634d
 export class NextQuestionCommandHandler implements CommandHandler {
   constructor(
     private toeicQuestionService: ToeicQuestionService,
@@ -45,7 +49,11 @@ export class NextQuestionCommandHandler implements CommandHandler {
       const nextQuestion = await this.toeicQuestionService.getNextQuestion(
         progress.test.id,
         progress.part.id,
+<<<<<<< HEAD
         currentQuestion.questionNumber
+=======
+        currentQuestion.question_number
+>>>>>>> 7346320aac4830aeeaf520f4435c2b160358634d
       );
 
       if (!nextQuestion) {
@@ -67,16 +75,26 @@ export class NextQuestionCommandHandler implements CommandHandler {
       // Tạo nút cho các lựa chọn
       const buttons = nextQuestion.options.map(opt =>
         createButton(
+<<<<<<< HEAD
           `answer_${opt.optionLabel}`,
           `${opt.optionLabel}. ${opt.optionText}`,
+=======
+          `answer_${opt.option_label}`,
+          `${opt.option_label}. ${opt.option_text}`,
+>>>>>>> 7346320aac4830aeeaf520f4435c2b160358634d
           EButtonMessageStyle.PRIMARY
         )
       );
 
       const messagePayload = createEmbedWithButtons(
         `Test ${progress.test.id}, Part ${progress.test.id}`,
+<<<<<<< HEAD
         nextQuestion.questionNumber,
         nextQuestion.questionText,
+=======
+        nextQuestion.question_number,
+        nextQuestion.question_text,
+>>>>>>> 7346320aac4830aeeaf520f4435c2b160358634d
         buttons
       );
 

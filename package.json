@@ -71,4 +71,8 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 7346320aac4830aeeaf520f4435c2b160358634d

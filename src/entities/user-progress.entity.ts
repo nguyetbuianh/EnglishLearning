@@ -38,6 +38,10 @@ export class UserProgress {
   @Column({ name: 'last_updated', type: 'timestamp' })
   lastUpdated: Date;
 
+<<<<<<< HEAD
   @Column({ name: 'is_completed', type: "boolean", default: false })
+=======
+  @Column({ name: 'is_completed', default: false })
+>>>>>>> 7346320aac4830aeeaf520f4435c2b160358634d
   isCompleted: boolean;
 }
