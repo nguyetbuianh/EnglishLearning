@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MezonService } from './mezon.service';
-import { CommandFactory } from './router/command-factory';
+import { InteractionFactory } from './router/interaction-factory';
 import { CommandRouter } from './router/command.router';
 import { WelcomeCommandHandler } from './commands/welcome.command';
-import { CommandHandler } from 'src/modules/mezon/utils/command-handler.abstract'; // <-- đảm bảo đúng path
+import { InteractionHandler } from 'src/modules/mezon/utils/Interaction-handler.abstract';
 
 const commandHandlers = [WelcomeCommandHandler];
 
@@ -13,9 +13,9 @@ const commandHandlers = [WelcomeCommandHandler];
     MezonService,
     ...commandHandlers,
     {
-      provide: CommandFactory,
-      useFactory: (...handlers: CommandHandler[]): CommandFactory =>
-        new CommandFactory(handlers),
+      provide: InteractionFactory,
+      useFactory: (...handlers: InteractionHandler[]): InteractionFactory =>
+        new InteractionFactory(handlers),
       inject: [...commandHandlers],
     },
   ],
