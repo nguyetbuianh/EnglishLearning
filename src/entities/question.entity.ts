@@ -1,9 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, OneToMany, JoinColumn, Unique } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  OneToMany,
+  JoinColumn,
+  Unique
+} from 'typeorm';
 import { ToeicTest } from './toeic-test.entity';
 import { ToeicPart } from './toeic-part.entity';
 import { Passage } from './passage.entity';
 import { QuestionOption } from './question-option.entity';
-import { UserQuestionHistory } from './user-question.entity';
+import { UserQuestionHistory } from './user-answer.entity';
 
 @Entity('questions')
 @Unique(['test', 'part', 'question_number'])
@@ -23,20 +32,20 @@ export class Question {
   @JoinColumn({ name: 'passage_id' })
   passage: Passage;
 
-  @Column()
-  question_number: number;
+  @Column({ name: 'question_number', type: 'int', nullable: false })
+  questionNumber: number;
 
-  @Column()
-  question_text: string;
+  @Column({ name: "question_text", type: 'text', nullable: false })
+  questionText: string;
 
-  @Column({ type: 'char', length: 1 })
-  correct_option: 'A' | 'B' | 'C' | 'D';
+  @Column({ name: "correct_option", type: 'char', length: 1 })
+  correctOption: 'A' | 'B' | 'C' | 'D';
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   explanation: string;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @Column({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
 
   @OneToMany(() => QuestionOption, (opt) => opt.question)
   options: QuestionOption[];

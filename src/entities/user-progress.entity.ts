@@ -35,9 +35,9 @@ export class UserProgress {
   @JoinColumn({ name: 'current_question_id' })
   currentQuestion: Question;
 
-  @UpdateDateColumn({ name: 'last_updated' })
+  @Column({ name: 'last_updated', type: 'timestamp' })
   lastUpdated: Date;
 
-  @Column({ name: 'is_completed', default: false })
+  @Column({ name: 'is_completed', type: "boolean", default: false })
   isCompleted: boolean;
 }
