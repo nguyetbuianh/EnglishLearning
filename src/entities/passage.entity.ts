@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn
+} from 'typeorm';
 import { ToeicPart } from './toeic-part.entity';
 import { Question } from './question.entity';
 
@@ -11,14 +18,14 @@ export class Passage {
   @JoinColumn({ name: 'part_id' })
   part: ToeicPart;
 
-  @Column({ nullable: true })
+  @Column({ type: "varchar", length: 225, nullable: true })
   title: string;
 
-  @Column()
+  @Column({ type: "text", nullable: false })
   content: string;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @Column({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
 
   @OneToMany(() => Question, (q) => q.passage)
   questions: Question[];

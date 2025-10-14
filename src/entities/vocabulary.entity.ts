@@ -6,20 +6,20 @@ export class Vocabulary {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   id: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100, nullable: false })
   word: string;
 
-  @Column({ nullable: true })
-  part_of_speech: string;
+  @Column({ name: "part_of_speech", type: "varchar", length: 50, nullable: true })
+  partOfSpeech: string;
 
-  @Column()
+  @Column({ type: 'text', nullable: true })
   meaning: string;
 
-  @Column({ nullable: true })
-  example_sentence: string;
+  @Column({ name: "example_sentence", type: "text", nullable: true })
+  exampleSentence: string;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @Column({ name: "created_at", type: "timestamp" })
+  createdAt: Date;
 
   @OneToMany(() => UserVocabulary, (uv) => uv.vocabulary)
   userVocabulary: UserVocabulary[];

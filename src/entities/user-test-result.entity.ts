@@ -17,9 +17,9 @@ export class UserPartResult {
   @ManyToOne(() => ToeicPart)
   part: ToeicPart;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', nullable: true })
   score: number;
 
-  @CreateDateColumn()
-  taken_at: Date;
+  @Column({ name: "taken_at", type: "timestamp" })
+  takenAt: Date;
 }

@@ -16,9 +16,9 @@ export class UserVocabulary {
   @JoinColumn({ name: 'vocabulary_id' })
   vocabulary: Vocabulary;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   note: string;
 
-  @CreateDateColumn()
-  added_at: Date;
+  @Column({ name: "added_at", type: "timestamp" })
+  addedAt: Date;
 }
