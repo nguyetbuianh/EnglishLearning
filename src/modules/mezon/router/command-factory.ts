@@ -1,4 +1,4 @@
-import { CommandHandler } from "../interfaces/command-handler.abstract";
+import { CommandHandler } from "../utils/command-handler.abstract";
 import { getCommandMetadata } from '../decorators/command.decorator';
 
 export class CommandFactory {
@@ -15,8 +15,6 @@ export class CommandFactory {
 
   getHandler(rawCommand: string): CommandHandler | null {
     if (!rawCommand) return null;
-
-    const command = rawCommand.trim().replace(/^\*/, '').split(/\s+/)[0].toLowerCase();
-    return this.commandMap.get(command) ?? null;
+    return this.commandMap.get(rawCommand) ?? null;
   }
 }

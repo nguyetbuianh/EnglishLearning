@@ -1,8 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
-import * as dotenv from "dotenv";
 import { CommandRouter } from "./router/command.router";
-import { handleBotError } from "./utils/error-handler";
 import { appConfig } from "src/config";
 
 @Injectable()
@@ -14,7 +12,7 @@ export class MezonService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      this.client = new MezonClient(appConfig.bot.token);
+      this.client = new MezonClient({ botId: appConfig.bot.id, token: appConfig.bot.token });
 
       await this.client.login();
 
@@ -34,8 +32,6 @@ export class MezonService implements OnModuleInit {
           await this.commandRouter.routeCommand(channel, message);
         } catch (err: any) {
           this.logger.error("Error handling message:", err.message);
-          const channel = await this.client.channels.fetch(event.channel_id).catch(() => null);
-          handleBotError(channel, err);
         }
       });
     } catch (error: any) {

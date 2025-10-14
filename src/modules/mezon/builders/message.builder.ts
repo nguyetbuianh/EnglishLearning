@@ -3,12 +3,12 @@ import {
   ChannelMessageContent,
   IMessageActionRow,
 } from "mezon-sdk";
-import { IEmbedProps } from "../interfaces/embed.interface";
-import { ButtonBuilder } from "./button.util";
+import { IInteractiveMessageProps } from "mezon-sdk";
+import { ButtonBuilder } from "mezon-sdk";
 
 export class MessageBuilder {
   private text?: string;
-  private embeds: IEmbedProps[] = [];
+  private embeds: IInteractiveMessageProps[] = [];
   private components: IMessageActionRow[] = [];
 
   setText(text: string): this {
@@ -16,14 +16,14 @@ export class MessageBuilder {
     return this;
   }
 
-  addEmbed(embed: IEmbedProps): this {
+  addEmbed(embed: IInteractiveMessageProps): this {
     this.embeds.push(embed);
     return this;
   }
 
   addButtons(buttons: (ButtonBuilder | ButtonComponent)[]): this {
-    const builtButtons: ButtonComponent[] = buttons.map((b) =>
-      b instanceof ButtonBuilder ? b.build() : (b as ButtonComponent)
+    const builtButtons: ButtonComponent[] = buttons.flatMap((b) =>
+      b instanceof ButtonBuilder ? b.build() : [b as ButtonComponent]
     );
 
     this.components.push({ components: builtButtons });

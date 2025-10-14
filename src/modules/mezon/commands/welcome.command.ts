@@ -1,8 +1,7 @@
-import { CommandHandler } from "../interfaces/command-handler.abstract";
+import { CommandHandler } from "../utils/command-handler.abstract";
 import { ChannelMessage, ChannelMessageContent } from "mezon-sdk";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
-import { handleBotError } from "../utils/error-handler";
 import { CommandType } from "../enums/commands.enum";
 import { IInteractiveMessageProps } from "mezon-sdk";
 import { Command } from "../decorators/command.decorator";
@@ -64,7 +63,9 @@ export class WelcomeCommandHandler extends CommandHandler {
       await message.reply(messagePayload);
 
     } catch (error: any) {
-      handleBotError(channel, error);
+      await message.reply({
+        t: '⚠️ Something went wrong. Please try again later.'
+      })
     }
   }
 }
