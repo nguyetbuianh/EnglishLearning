@@ -16,9 +16,9 @@ export class UserGrammar {
   @JoinColumn({ name: 'grammar_id' })
   grammar: Grammar;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   note: string;
 
-  @CreateDateColumn()
-  saved_at: Date;
+  @Column({ name: "saved_at", type: "timestamp" })
+  savedAt: Date;
 }

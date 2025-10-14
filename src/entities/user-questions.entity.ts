@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, Jo
 import { User } from './user.entity';
 
 @Entity('user_questions')
-export class UserQA {
+export class UserQuestion {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -10,7 +10,7 @@ export class UserQA {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column()
+  @Column({ type: 'text', nullable: false })
   question: string;
 
   @Column({ nullable: true })
@@ -19,15 +19,15 @@ export class UserQA {
   @Column({ default: 'pending' })
   status: 'pending' | 'answered' | 'rejected';
 
-  @Column({ nullable: true })
+  @Column({ type: "varchar", length: 50, nullable: true })
   category: string;
 
-  @Column({ type: 'float', default: 1.0 })
-  similarity_score: number;
+  @Column({ name: "similarity_score", type: 'float', default: 1.0 })
+  similarityScore: number;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @Column({ name: "created_at", type: "timestamp" })
+  createdAt: Date;
 
-  @Column({ nullable: true, type: 'timestamp' })
-  answered_at: Date;
+  @Column({ name: "answered_at", nullable: true, type: 'timestamp' })
+  answeredAt: Date;
 }

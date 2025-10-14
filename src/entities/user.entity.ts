@@ -1,23 +1,23 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
-import { UserQuestionHistory } from './user-question.entity';
+import { UserQuestionHistory } from './user-answer.entity';
 import { UserProgress } from './user-progress.entity';
 import { UserVocabulary } from './user-vocabulary.entity';
 import { UserGrammar } from './user-grammar.entity';
-import { UserQA } from './user-qa.entity';
+import { UserQuestion } from './user-questions.entity';
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' }) 
-  id: number; 
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  id: number;
 
-  @Column({ unique: true, type: 'varchar', length: 50 })
-  mezon_user_id: string;
+  @Column({ name: "mezonUserId", unique: true, type: 'bigint' })
+  mezon_user_id: number;
 
-  @Column({ nullable: true })
+  @Column({ type: "varchar", length: 255, nullable: true })
   username: string;
 
-  @CreateDateColumn()
-  joined_at: Date;
+  @Column({ name: "joined_at", type: "timestamp" })
+  joinedAt: Date;
 
   @OneToMany(() => UserQuestionHistory, (uq) => uq.user)
   questionHistory: UserQuestionHistory[];
@@ -31,6 +31,6 @@ export class User {
   @OneToMany(() => UserGrammar, (ug) => ug.user)
   grammar: UserGrammar[];
 
-  @OneToMany(() => UserQA, (qa) => qa.user)
-  userQuestions: UserQA[];
+  @OneToMany(() => UserQuestion, (qa) => qa.user)
+  userQuestions: UserQuestion[];
 }

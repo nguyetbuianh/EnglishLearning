@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, Jo
 import { User } from './user.entity';
 import { Question } from './question.entity';
 
-@Entity('user_question')
+@Entity('user_answer')
 export class UserQuestionHistory {
   @PrimaryGeneratedColumn()
   id: number;
@@ -15,12 +15,12 @@ export class UserQuestionHistory {
   @JoinColumn({ name: 'question_id' })
   question: Question;
 
-  @Column({ type: 'char', length: 1, nullable: true })
-  chosen_option: 'A' | 'B' | 'C' | 'D';
+  @Column({ name: "chosen_option", type: 'char', length: 1, nullable: true })
+  chosenOption: 'A' | 'B' | 'C' | 'D';
 
-  @Column({ nullable: true })
-  is_correct: boolean;
+  @Column({ name: "is_correct", type: "boolean", nullable: true })
+  isCorrect: boolean;
 
-  @CreateDateColumn()
-  answered_at: Date;
+  @Column({ name: "answered_at", type: "timestamp" })
+  answeredAt: Date;
 }
