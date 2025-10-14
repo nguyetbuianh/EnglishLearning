@@ -1,17 +1,17 @@
 import { MezonClient } from "mezon-sdk";
 import { MessageButtonClicked } from "mezon-sdk/dist/cjs/rtapi/realtime";
 import { CancelTestButtonHandler } from "../buttons/cancel-test-button.handler";
-import { StartTestCommandHandler } from "../../commands/start-test.command";
+import { StartTestButtonHandler } from "../buttons/start-test-button.handler";
 
-export async function handleButtonEvent(client: MezonClient, event: MessageButtonClicked) {
+export async function handleButtonEvent(client: MezonClient, event: MessageButtonClicked, startHandler: StartTestButtonHandler) {
   const customId = event.button_id;
   const channel = await client.channels.fetch(event.channel_id);
 
   switch (customId) {
-    case "toeic_start_test":
-      await StartTestCommandHandler;
+    case "button_start_test":
+      await startHandler.execute(client, event);
       break;
-    case "toeic_cancel_test":
+    case "button_cancel_test":
       await CancelTestButtonHandler(client, event);
       break;
     default:

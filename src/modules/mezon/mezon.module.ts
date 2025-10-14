@@ -14,6 +14,7 @@ import { RestartTestCommandHandler } from './commands/restart-test.command';
 import { StartTestCommandHandler } from './commands/start-test.command';
 import { WelcomeCommandHandler } from './commands/welcome.command';
 import { CommandHandler } from './interfaces/command-handler.interface';
+import { StartTestButtonHandler } from './interactions/buttons/start-test-button.handler';
 
 const commandHandlers = [
   AllPartsCommandHandler,
@@ -31,6 +32,7 @@ const commandHandlers = [
   providers: [
     CommandRouter,
     MezonService,
+    StartTestButtonHandler,
     ...commandHandlers,
     {
       provide: CommandFactory,

@@ -3073,17 +3073,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.2":
-  version: 1.12.2
-  resolution: "axios@npm:1.12.2"
-  dependencies:
-    follow-redirects: ^1.15.6
-    form-data: ^4.0.4
-    proxy-from-env: ^1.1.0
-  checksum: f0331594fe053a4bbff04104edb073973a3aabfad2e56b0aa18de82428aa63f6f0839ca3d837258ec739cb4528014121793b1649a21e5115ffb2bf8237eadca3
-  languageName: node
-  linkType: hard
-
 "babel-jest@npm:30.2.0":
   version: 30.2.0
   resolution: "babel-jest@npm:30.2.0"
@@ -5075,16 +5064,6 @@ __metadata:
     locate-path: ^5.0.0
     path-exists: ^4.0.0
   checksum: 4c172680e8f8c1f78839486e14a43ef82e9decd0e74145f40707cc42e7420506d5ec92d9a11c22bd2c48fb0c384ea05dd30e10dd152fefeec6f2f75282a8b844
-  languageName: node
-  linkType: hard
-
-"follow-redirects@npm:^1.15.6":
-  version: 1.15.11
-  resolution: "follow-redirects@npm:1.15.11"
-  peerDependenciesMeta:
-    debug:
-      optional: true
-  checksum: 20bf55e9504f59e6cc3743ba27edb2ebf41edea1baab34799408f2c050f73f0c612728db21c691276296d2795ea8a812dc532a98e8793619fcab91abe06d017f
   languageName: node
   linkType: hard
 
@@ -7727,19 +7706,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mezon-sdk@npm:^2.8.14":
-  version: 2.8.14
-  resolution: "mezon-sdk@npm:2.8.14"
+"mezon-sdk@npm:2.8.20":
+  version: 2.8.20
+  resolution: "mezon-sdk@npm:2.8.20"
   dependencies:
     "@types/ws": ^8.5.12
     base64-arraybuffer: ^1.0.2
     better-sqlite3: ^11.10.0
     jest-cucumber: ^3.0.1
     js-base64: ^3.7.4
-    mmn-client-js: ^1.0.4
+    mmn-client-js: ^1.0.10
     npm-run-all: ^4.1.5
     ws: ^8.18.0
-  checksum: 443d9554cd2c9c0ad8e0dce3ff79fc13ab955bb19df8062de5e6aa57a5e03e1a9c63554f380dcfe15b97ea1c947274997f20c5b6d40a0d1beaf0d2dd898f751b
+  checksum: 5bcb17ec49a4dbf37eedfa13d2589b96858892f78b02f9cd963cb82a0b67da6f4adcef9fb0a5b881ffe2ed10fadcc726a80a669ebf502445cdcd62b021d8d520
   languageName: node
   linkType: hard
 
@@ -7976,16 +7955,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mmn-client-js@npm:^1.0.4":
-  version: 1.0.5
-  resolution: "mmn-client-js@npm:1.0.5"
+"mmn-client-js@npm:^1.0.10":
+  version: 1.0.10
+  resolution: "mmn-client-js@npm:1.0.10"
   dependencies:
-    axios: ^1.6.2
     bip39: ^3.1.0
     bs58: ^5.0.0
     crypto-js: ^4.2.0
     tweetnacl: ^1.0.3
-  checksum: d86f9986b1238757d93d21b585f8e7a00835ffeceb2876cec68dd63a097e818d1fbe8cb6f9b2f8438ba5d112495cadf5eb6d58a0d64110f09cdd4aa207ff7f78
+  checksum: 9f78d89e1dcfef98ff6010fb877f6ea774421a1405fa678a4d08fc24a8b844b5a9617898a5d0a7e05695091042638f975071db7be3fa7a9e7f3cde01daf18148
   languageName: node
   linkType: hard
 
@@ -8098,7 +8076,7 @@ __metadata:
     "@types/node": ^24.6.2
     "@types/supertest": ^6.0.3
     jest: ^30.0.0
-    mezon-sdk: ^2.8.14
+    mezon-sdk: 2.8.20
     pg: ^8.16.3
     prettier: ^3.4.2
     reflect-metadata: ^0.2.2
@@ -8904,13 +8882,6 @@ __metadata:
     forwarded: 0.2.0
     ipaddr.js: 1.9.1
   checksum: 29c6990ce9364648255454842f06f8c46fcd124d3e6d7c5066df44662de63cdc0bad032e9bf5a3d653ff72141cc7b6019873d685708ac8210c30458ad99f2b74
-  languageName: node
-  linkType: hard
-
-"proxy-from-env@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "proxy-from-env@npm:1.1.0"
-  checksum: ed7fcc2ba0a33404958e34d95d18638249a68c430e30fcb6c478497d72739ba64ce9810a24f53a7d921d0c065e5b78e3822759800698167256b04659366ca4d4
   languageName: node
   linkType: hard
 

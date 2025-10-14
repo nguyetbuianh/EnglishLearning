@@ -1,27 +1,25 @@
-import { MezonClient, EMessageComponentType } from "mezon-sdk";
+import { MezonClient } from "mezon-sdk";
+import { ToeicSessionStore } from "../../session/toeic-session.store";
 
-export async function handleSelectEvent(client: MezonClient, interaction: any) {
-  if (interaction.componentType !== EMessageComponentType.SELECT) return;
+export async function handleSelectEvent(interaction: any) {
+  const userId = interaction.sender_id;
 
-  switch (interaction.customId) {
-    case "toeic_test_select":
-      await interaction.reply({
-        content: `📘 You selected test ID: ${interaction.values[0]}`,
-        ephemeral: true,
+  switch (interaction.button_id) {
+    case "select_toeic_test":
+      ToeicSessionStore.set(userId, {
+        ...(ToeicSessionStore.get(userId) ?? {}),
+        testId: Number(interaction.extra_data),
       });
       break;
 
-    case "toeic_part_select":
-      await interaction.reply({
-        content: `🧩 You selected part ID: ${interaction.values[0]}`,
-        ephemeral: true,
+    case "select_toeic_part":
+      ToeicSessionStore.set(userId, {
+        ...(ToeicSessionStore.get(userId) ?? {}),
+        partId: Number(interaction.extra_data),
       });
       break;
 
     default:
-      await interaction.reply({
-        content: "⚠️ Unknown select menu.",
-        ephemeral: true,
-      });
+      break;
   }
 }
