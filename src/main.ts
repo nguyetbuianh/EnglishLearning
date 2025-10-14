@@ -1,6 +1,4 @@
-
-import * as dotenv from 'dotenv';
-dotenv.config();
+import { appConfig } from 'src/config';
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -8,7 +6,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  await app.listen(3000);
+  await app.listen(appConfig.server.port);
   console.log(`🚀 Application is running on: ${await app.getUrl()}`);
 }
 
