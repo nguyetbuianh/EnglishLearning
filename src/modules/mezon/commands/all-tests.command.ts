@@ -5,15 +5,11 @@ import { parseMarkdown } from '../utils/parse-markdown';
 import { ChannelMessage } from "mezon-sdk";
 import { ToeicTestService } from 'src/modules/toeic/services/toeic-test.service';
 import { handleBotError } from '../utils/error-handler';
-<<<<<<< HEAD
 import { Injectable } from '@nestjs/common';
 import { Command } from '../decorators/command.decorator';
 
 @Injectable()
 @Command('all_tests')
-=======
-
->>>>>>> 7346320aac4830aeeaf520f4435c2b160358634d
 export class AllTestsCommandHandler implements CommandHandler {
   constructor(private toeicTestService: ToeicTestService) { }
 
