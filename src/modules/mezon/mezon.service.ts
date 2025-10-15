@@ -1,41 +1,18 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import { MezonClient } from "mezon-sdk";
-import { CommandRouter } from "./router/command.router";
-import { appConfig } from "src/config";
+import { EventRouter } from "./router/event.router";
 
 @Injectable()
 export class MezonService implements OnModuleInit {
   private readonly logger = new Logger(MezonService.name);
-  private client: MezonClient;
 
-  constructor(private commandRouter: CommandRouter) { }
+  constructor(private readonly eventRouter: EventRouter) { }
 
   async onModuleInit() {
     try {
-      this.client = new MezonClient({ botId: appConfig.bot.id, token: appConfig.bot.token });
-
-      await this.client.login();
-
-      this.client.on("ready", () => {
-        this.logger.log("Mezon bot connected successfully");
-      });
-
-      this.client.onChannelMessage(async (event) => {
-        const text = event?.content?.t?.toLowerCase();
-
-        if (!text) return;
-
-        try {
-          const channel = await this.client.channels.fetch(event.channel_id);
-          const message = await channel.messages.fetch(String(event.message_id));
-
-          await this.commandRouter.routeCommand(channel, message);
-        } catch (err: any) {
-          this.logger.error("Error handling message:", err.message);
-        }
-      });
+      this.eventRouter.registerListeners();
+      this.logger.log("🚀 MezonService initialized and listeners attached.");
     } catch (error: any) {
-      this.logger.error(`Mezon connection failed: ${error.message}`);
+      this.logger.error(`❌ Failed to register listeners: ${error.message}`);
     }
   }
 }

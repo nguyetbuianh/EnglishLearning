@@ -1,6 +1,6 @@
 export const interactionRegistry = new Map<Function, string>();
 
-export function interaction(interactionName: string): ClassDecorator {
+export function Interaction(interactionName: string): ClassDecorator {
   return (target: Function) => {
     interactionRegistry.set(target, interactionName);
   };

@@ -1,16 +1,18 @@
-import { InteractionHandler } from "../utils/Interaction-handler.abstract";
-import { ChannelMessage, ChannelMessageContent } from "mezon-sdk";
-import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
-import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
+import { BaseHandler } from "./base";
+import { ChannelMessage, ChannelMessageContent, MezonClient } from "mezon-sdk";
 import { CommandType } from "../enums/commands.enum";
 import { IInteractiveMessageProps } from "mezon-sdk";
-import { interaction } from "../decorators/interaction.decorator";
+import { Interaction } from "../decorators/interaction.decorator";
 import { Injectable } from "@nestjs/common";
 
-@interaction(CommandType.WELCOME)
+@Interaction(CommandType.WELCOME)
 @Injectable()
-export class WelcomeCommandHandler extends InteractionHandler {
-  async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
+export class WelcomeCommandHandler extends BaseHandler<ChannelMessage> {
+  constructor(protected readonly client: MezonClient) {
+    super(client);
+  }
+
+  async handle(): Promise<void> {
     try {
       const embed: IInteractiveMessageProps = {
         color: "#1abc9c",
@@ -60,10 +62,10 @@ export class WelcomeCommandHandler extends InteractionHandler {
         embed: [embed],
       };
 
-      await message.reply(messagePayload);
+      await this.mezonMessage.reply(messagePayload);
 
     } catch (error: any) {
-      await message.reply({
+      await this.mezonMessage.reply({
         t: '⚠️ Something went wrong. Please try again later.'
       })
     }
