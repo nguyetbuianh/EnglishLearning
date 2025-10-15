@@ -4,6 +4,7 @@ import { CommandType } from "../enums/commands.enum";
 import { IInteractiveMessageProps } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
 import { Injectable } from "@nestjs/common";
+import { BaseHandler } from "./base";
 
 @Interaction(CommandType.WELCOME)
 @Injectable()
