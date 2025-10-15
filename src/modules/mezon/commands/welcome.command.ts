@@ -1,4 +1,3 @@
-import { InteractionHandler } from "../utils/Interaction-handler.abstract";
 import { ChannelMessage, ChannelMessageContent } from "mezon-sdk";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
@@ -6,10 +5,11 @@ import { CommandType } from "../enums/commands.enum";
 import { IInteractiveMessageProps } from "mezon-sdk";
 import { interaction } from "../decorators/interaction.decorator";
 import { Injectable } from "@nestjs/common";
+import { BaseHandler } from "./base";
 
 @interaction(CommandType.WELCOME)
 @Injectable()
-export class WelcomeCommandHandler extends InteractionHandler {
+export class WelcomeCommandHandler extends BaseHandler {
   async handle(channel: TextChannel, message: Message, channelMsg?: ChannelMessage): Promise<void> {
     try {
       const embed: IInteractiveMessageProps = {

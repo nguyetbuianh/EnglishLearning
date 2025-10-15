@@ -1,5 +1,5 @@
 {
-  "name": "nestjs-demo",
+  "name": "english-learning-bot",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -42,6 +42,5 @@
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.20.6",
     "typescript": "^5.7.3"
-  },
-  "packageManager": "yarn@3.6.4+sha512.e70835d4d6d62c07be76b3c1529cb640c7443f0fe434ef4b6478a5a399218cbaf1511b396b3c56eb03bc86424cff2320f6167ad2fde273aa0df6e60b7754029f"
+  }
 }

@@ -1,11 +1,11 @@
+import { BaseHandler } from "../commands/base";
 import { getInteractionName } from "../decorators/interaction.decorator";
-import { InteractionHandler } from "../utils/Interaction-handler.abstract";
 
 
 export class InteractionFactory {
-  private readonly interactionMap = new Map<string, InteractionHandler>();
+  private readonly interactionMap = new Map<string, BaseHandler>();
 
-  constructor(handlers: InteractionHandler[]) {
+  constructor(handlers: BaseHandler[]) {
     for (const handler of handlers) {
       const commandName = getInteractionName(handler.constructor);
       if (commandName) {
@@ -14,7 +14,7 @@ export class InteractionFactory {
     }
   }
 
-  getHandler(rawInteraction: string): InteractionHandler | null {
+  getHandler(rawInteraction: string): BaseHandler | null {
     if (!rawInteraction) return null;
     return this.interactionMap.get(rawInteraction) ?? null;
   }

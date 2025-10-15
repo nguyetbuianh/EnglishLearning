@@ -3,7 +3,7 @@ import { MezonService } from './mezon.service';
 import { InteractionFactory } from './router/interaction-factory';
 import { CommandRouter } from './router/command.router';
 import { WelcomeCommandHandler } from './commands/welcome.command';
-import { InteractionHandler } from 'src/modules/mezon/utils/Interaction-handler.abstract';
+import { BaseHandler } from './commands/base';
 
 const commandHandlers = [WelcomeCommandHandler];
 
@@ -14,7 +14,7 @@ const commandHandlers = [WelcomeCommandHandler];
     ...commandHandlers,
     {
       provide: InteractionFactory,
-      useFactory: (...handlers: InteractionHandler[]): InteractionFactory =>
+      useFactory: (...handlers: BaseHandler[]): InteractionFactory =>
         new InteractionFactory(handlers),
       inject: [...commandHandlers],
     },
