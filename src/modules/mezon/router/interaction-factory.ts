@@ -1,5 +1,5 @@
 import { getInteractionName } from "../decorators/interaction.decorator";
-import { InteractionHandler } from "../utils/Interaction-handler.abstract";
+import { InteractionHandler } from "../utils/interaction-handler.abstract";
 
 
 export class InteractionFactory {

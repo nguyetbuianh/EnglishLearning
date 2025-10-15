@@ -1,4 +1,4 @@
-import { InteractionHandler } from "../utils/Interaction-handler.abstract";
+import { InteractionHandler } from "../utils/interaction-handler.abstract";
 import { ChannelMessage, ChannelMessageContent } from "mezon-sdk";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
