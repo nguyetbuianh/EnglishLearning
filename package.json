@@ -1,5 +1,5 @@
 {
-  "name": "nestjs-demo",
+  "name": "english-learning-bot",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -11,7 +11,11 @@
     "start": "nest start",
     "start:dev": "ts-node-dev --respawn --transpile-only src/main.ts",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main"
+    "start:prod": "node dist/main",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d ./src/config/data-source.ts",
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d ./src/config/data-source.ts",
+    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d ./src/config/data-source.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
