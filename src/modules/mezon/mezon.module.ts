@@ -6,12 +6,12 @@ import { BaseHandler, InteractionEvent } from 'src/modules/mezon/commands/base';
 import { MezonClient } from 'mezon-sdk';
 import { appConfig } from 'src/appConfig';
 import { EventRouter } from './router/event.router';
-import { InitCommandHandler } from './commands/confirm-start-test.command';
+import { InitializationCommandHandler } from './commands/initialization.command';
 import { UserModule } from '../user/user.module';
 
 const commandHandlers = [
   WelcomeCommandHandler,
-  InitCommandHandler
+  InitializationCommandHandler
 ];
 
 @Module({

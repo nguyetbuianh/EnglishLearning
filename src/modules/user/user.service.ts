@@ -18,12 +18,4 @@ export class UserService {
     const newUser = this.userRepo.create({ mezonUserId: mezonUserId });
     return this.userRepo.save(newUser);
   }
-
-  async getOrCreateUserByMezonId(mezonUserId: string): Promise<User> {
-    let user = await this.findUserByMezonId(mezonUserId);
-    if (!user) {
-      user = await this.createUserByMezonId(mezonUserId);
-    }
-    return user;
-  }
 }

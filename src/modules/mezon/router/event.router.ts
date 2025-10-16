@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
 import { InteractionFactory } from "./interaction-factory";
 import { InteractionEvent } from "../commands/base";
+import { UserService } from "src/modules/user/user.service";
 
 @Injectable()
 export class EventRouter {
@@ -9,7 +10,8 @@ export class EventRouter {
 
   constructor(
     private readonly client: MezonClient,
-    private readonly interactionFactory: InteractionFactory
+    private readonly interactionFactory: InteractionFactory,
+    private readonly userService: UserService
   ) { }
 
   public registerListeners() {
@@ -24,6 +26,16 @@ export class EventRouter {
     try {
       const eventName = this.getEventName(event);
       if (!eventName) return;
+
+      if (!["welcome", "help", "init"].includes(eventName.toLowerCase())) {
+        const userId = this.getUserIdFromEvent(event);
+        const registered = await this.userService.findUserByMezonId(userId);
+        if (!registered) {
+          const channel = await this.client.channels.fetch(event.channel_id);
+          await channel.send({ t: "You are not registered, please use *init to start." });
+          return;
+        }
+      }
 
       const handler = this.interactionFactory.getHandler(eventName);
 
@@ -51,5 +63,9 @@ export class EventRouter {
     }
 
     return "";
+  }
+
+  private getUserIdFromEvent(event: InteractionEvent): string {
+    return "user_id" in event ? event.sender_id : "";
   }
 }
