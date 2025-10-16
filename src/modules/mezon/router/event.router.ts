@@ -1,8 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
 import { InteractionFactory } from "./interaction-factory";
-import { InteractionEvent } from "../commands/base";
+import { InteractionEvent } from "../handlers/base";
 import { UserService } from "src/modules/user/user.service";
+import { MessageButtonClicked } from "mezon-sdk/dist/cjs/rtapi/realtime";
 
 @Injectable()
 export class EventRouter {
@@ -27,18 +28,26 @@ export class EventRouter {
       const eventName = this.getEventName(event);
       if (!eventName) return;
 
-      if (!["welcome", "help"].includes(eventName.toLowerCase())) {
-        const userId = this.getUserIdFromEvent(event);
-        const registered = await this.userService.isRegistered(userId);
-        if (!registered) {
-          const channel = await this.client.channels.fetch(event.channel_id);
-          await channel.send({ t: "You are not registered, please use *init to start." });
+      const userId = (event as MessageButtonClicked).user_id;
+      const channel = await this.client.channels.fetch(event.channel_id);
+
+      if (this.isCommandEvent(event)) {
+        if (!["welcome", "help"].includes(eventName)) {
+          const existingUser = await this.userService.findUserByMezonId(userId);
+          if (!existingUser) {
+            await this.sendWarning(channel, "⚠️ You are not registered. Use *init to start.");
+            return;
+          }
+        }
+      } else {
+        const ownerId = this.extractOwnerId(event);
+        if (ownerId && userId !== ownerId) {
+          await this.sendWarning(channel, "❌ You are not allowed to interact with this form.");
           return;
         }
       }
 
       const handler = this.interactionFactory.getHandler(eventName);
-
       if (!handler) {
         this.logger.warn(`⚠️ No handler found for event: ${eventName}`);
         return;
@@ -52,7 +61,7 @@ export class EventRouter {
 
   private getEventName(event: InteractionEvent): string | undefined {
     if ("button_id" in event && typeof event.button_id === "string") {
-      return event.button_id;
+      return event.button_id.split("_").slice(0, 3).join("_");
     }
 
     if ("content" in event && typeof event.content?.t === "string") {
@@ -62,10 +71,26 @@ export class EventRouter {
       }
     }
 
-    return "";
+    return undefined;
   }
 
-  private getUserIdFromEvent(event: InteractionEvent): string {
-    return "user_id" in event ? event.sender_id : "";
+  private isCommandEvent(event: InteractionEvent) {
+    return (
+      "content" in event &&
+      typeof event.content?.t === "string" &&
+      /^\*[a-zA-Z]/.test(event.content.t.trim())
+    );
+  }
+
+  private extractOwnerId(event: InteractionEvent): string | undefined {
+    if ("button_id" in event && typeof event.button_id === "string") {
+      const parts = event.button_id.split("_");
+      return parts.length > 0 ? parts[parts.length - 1] : undefined;
+    }
+    return undefined;
+  }
+
+  private async sendWarning(channel: any, message: string) {
+    await channel.send({ t: message });
   }
 }

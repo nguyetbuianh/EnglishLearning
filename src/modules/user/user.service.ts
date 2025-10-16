@@ -10,8 +10,7 @@ export class UserService {
     private readonly userRepo: Repository<User>
   ) { }
 
-  async isRegistered(mezonUserId: string): Promise<boolean> {
-    const user = await this.userRepo.findOne({ where: { mezonUserId } });
-    return !!user;
+  async findUserByMezonId(mezonUserId: string): Promise<User | null> {
+    return this.userRepo.findOne({ where: { mezonUserId: mezonUserId } });
   }
 }

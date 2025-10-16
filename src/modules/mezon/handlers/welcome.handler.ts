@@ -64,7 +64,7 @@ export class WelcomeCommandHandler extends BaseHandler<ChannelMessage> {
 
       await this.mezonMessage.reply(messagePayload);
 
-    } catch (error: any) {
+    } catch (error) {
       await this.mezonMessage.reply({
         t: '⚠️ Something went wrong. Please try again later.'
       })
