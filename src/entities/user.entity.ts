@@ -11,6 +11,6 @@ export class User {
   @Column({ type: "varchar", length: 255, nullable: true })
   username: string;
 
-  @Column({ name: "joined_at", type: "timestamp" })
+  @CreateDateColumn({ name: "joined_at", type: 'timestamp' })
   joinedAt: Date;
 }
