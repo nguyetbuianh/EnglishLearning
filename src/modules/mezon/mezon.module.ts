@@ -4,7 +4,7 @@ import { InteractionFactory } from './router/interaction-factory';
 import { WelcomeCommandHandler } from './commands/welcome.command';
 import { BaseHandler, InteractionEvent } from 'src/modules/mezon/commands/base';
 import { MezonClient } from 'mezon-sdk';
-import { appConfig } from 'src/config';
+import { appConfig } from 'src/appConfig';
 import { EventRouter } from './router/event.router';
 
 const commandHandlers = [

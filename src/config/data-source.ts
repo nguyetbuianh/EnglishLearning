@@ -1,7 +1,8 @@
 import { DataSource } from 'typeorm';
-import { appConfig } from '../config';
+import { DataSourceOptions } from 'typeorm';
+import { appConfig } from '../appConfig';
 
-export const AppDataSource = new DataSource({
+export const typeOrmConfig: DataSourceOptions = {
   type: 'postgres',
   host: appConfig.db.host,
   port: appConfig.db.port,
@@ -15,4 +16,6 @@ export const AppDataSource = new DataSource({
   ssl: {
     rejectUnauthorized: false,
   },
-});
+};
+
+export const AppDataSource = new DataSource(typeOrmConfig);
