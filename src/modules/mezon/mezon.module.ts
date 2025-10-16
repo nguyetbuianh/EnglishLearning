@@ -1,18 +1,20 @@
 import { Module } from '@nestjs/common';
 import { MezonService } from './mezon.service';
 import { InteractionFactory } from './router/interaction-factory';
-import { WelcomeCommandHandler } from './handlers/welcome.handler';
+import { WelcomeHandler } from './handlers/welcome.handler';
 import { BaseHandler, InteractionEvent } from 'src/modules/mezon/handlers/base';
 import { MezonClient } from 'mezon-sdk';
 import { appConfig } from 'src/appConfig';
 import { EventRouter } from './router/event.router';
+import { InitializationHandler } from './handlers/initialization.handler';
 import { UserModule } from '../user/user.module';
 import { ToeicModule } from '../toeic/toeic.module';
-import { StartTestCommandHandler } from './handlers/start-test.handler';
+import { StartTestHandler } from './handlers/start-test.handler';
 
 const commandHandlers = [
-  WelcomeCommandHandler,
-  StartTestCommandHandler
+  WelcomeHandler,
+  StartTestHandler,
+  InitializationHandler
 ];
 
 @Module({

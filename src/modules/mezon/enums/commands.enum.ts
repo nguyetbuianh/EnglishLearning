@@ -1,4 +1,5 @@
 export enum CommandType {
   WELCOME = 'welcome',
-  START = 'start'
+  START = 'start',
+  INIT = 'init'
 }

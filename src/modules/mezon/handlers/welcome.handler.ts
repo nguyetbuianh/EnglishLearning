@@ -7,7 +7,7 @@ import { Injectable } from "@nestjs/common";
 
 @Interaction(CommandType.WELCOME)
 @Injectable()
-export class WelcomeCommandHandler extends BaseHandler<ChannelMessage> {
+export class WelcomeHandler extends BaseHandler<ChannelMessage> {
   constructor(protected readonly client: MezonClient) {
     super(client);
   }

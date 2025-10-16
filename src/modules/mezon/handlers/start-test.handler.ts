@@ -12,11 +12,10 @@ import { CommandType } from "../enums/commands.enum";
 import { BaseHandler } from "./base";
 import { SelectionBuilder } from "../builders/selection.builder";
 import { ButtonBuilder } from "../builders/button.builder";
-import { Error } from "mezon-sdk/dist/cjs/rtapi/realtime";
 
 @Injectable()
 @Interaction(CommandType.START)
-export class StartTestCommandHandler extends BaseHandler<ChannelMessage> {
+export class StartTestHandler extends BaseHandler<ChannelMessage> {
   constructor(
     protected readonly client: MezonClient,
     private toeicTestService: ToeicTestService,
