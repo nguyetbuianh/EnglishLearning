@@ -7,7 +7,7 @@ import { UserService } from "src/modules/user/user.service";
 
 @Interaction("init")
 @Injectable()
-export class InitializationCommandHandler extends BaseHandler<ChannelMessage> {
+export class InitializationHandler extends BaseHandler<ChannelMessage> {
   constructor(
     protected readonly client: MezonClient,
     private readonly userService: UserService,

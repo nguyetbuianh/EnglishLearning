@@ -1,4 +1,4 @@
-import { BaseHandler, InteractionEvent } from "../commands/base";
+import { BaseHandler, InteractionEvent } from "../handlers/base";
 import { getInteractionName } from "../decorators/interaction.decorator";
 
 export class InteractionFactory {

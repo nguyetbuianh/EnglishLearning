@@ -7,7 +7,7 @@ import { Injectable } from "@nestjs/common";
 
 @Interaction(CommandType.WELCOME)
 @Injectable()
-export class WelcomeCommandHandler extends BaseHandler<ChannelMessage> {
+export class WelcomeHandler extends BaseHandler<ChannelMessage> {
   constructor(protected readonly client: MezonClient) {
     super(client);
   }
@@ -64,7 +64,7 @@ export class WelcomeCommandHandler extends BaseHandler<ChannelMessage> {
 
       await this.mezonMessage.reply(messagePayload);
 
-    } catch (error: any) {
+    } catch (error) {
       await this.mezonMessage.reply({
         t: '⚠️ Something went wrong. Please try again later.'
       })
