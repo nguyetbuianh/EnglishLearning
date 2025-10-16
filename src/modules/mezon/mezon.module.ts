@@ -6,12 +6,14 @@ import { BaseHandler, InteractionEvent } from 'src/modules/mezon/commands/base';
 import { MezonClient } from 'mezon-sdk';
 import { appConfig } from 'src/appConfig';
 import { EventRouter } from './router/event.router';
+import { UserModule } from '../user/user.module';
 
 const commandHandlers = [
   WelcomeCommandHandler,
 ];
 
 @Module({
+  imports: [UserModule],
   providers: [
     MezonService,
     EventRouter,
