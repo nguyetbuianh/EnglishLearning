@@ -1,3 +1,4 @@
 export enum CommandType {
-  WELCOME = 'welcome'
+  WELCOME = 'welcome',
+  INIT = 'init'
 }

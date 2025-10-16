@@ -27,9 +27,9 @@ export class EventRouter {
       const eventName = this.getEventName(event);
       if (!eventName) return;
 
-      if (!["welcome", "help"].includes(eventName.toLowerCase())) {
+      if (!["welcome", "help", "init"].includes(eventName.toLowerCase())) {
         const userId = this.getUserIdFromEvent(event);
-        const registered = await this.userService.isRegistered(userId);
+        const registered = await this.userService.findUserByMezonId(userId);
         if (!registered) {
           const channel = await this.client.channels.fetch(event.channel_id);
           await channel.send({ t: "You are not registered, please use *init to start." });
