@@ -14,7 +14,7 @@ import { Question } from './question.entity';
 export class Passage {
   @PrimaryGeneratedColumn()
   id: number;
-
+  
   @ManyToOne(() => ToeicTest, (test) => test.passages, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'test_id' })
   test: ToeicTest;
