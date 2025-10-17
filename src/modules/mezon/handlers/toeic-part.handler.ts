@@ -26,10 +26,9 @@ export class ToeicPartHandler extends BaseHandler<ChannelMessage> {
         return;
       }
 
-      const fields = parts.map((part) => ({
+      const partList = parts.map((part) => ({
         name: `📘 Part ${part.partNumber}: ${part.title}`,
-        value: part.description || "_(No description provided)_",
-        inline: false,
+        value: part.description || "_(No description provided)_"
       }));
 
       const embed: IInteractiveMessageProps = {
@@ -38,7 +37,7 @@ export class ToeicPartHandler extends BaseHandler<ChannelMessage> {
         description:
           "Here are all available TOEIC parts in the system.\n" +
           "Each part focuses on a specific English skill for the TOEIC test.",
-        fields,
+        fields: partList,
         footer: {
           text: "Welcome! Choose a TOEIC section and start improving your skills.",
         },
