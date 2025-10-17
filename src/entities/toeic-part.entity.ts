@@ -3,7 +3,10 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Check,
+  OneToMany,
 } from 'typeorm';
+import { Question } from './question.entity';
+import { Passage } from './passage.entity';
 
 @Entity('toeic_parts')
 @Check(`"part_number" >= 1 AND "part_number" <= 7`)
@@ -19,4 +22,10 @@ export class ToeicPart {
 
   @Column({ type: "text", nullable: true })
   description: string;
+
+  @OneToMany(() => Question, (q) => q.part)
+  questions: Question[];
+
+  @OneToMany(() => Passage, (p) => p.part)
+  passages: Passage[];
 }

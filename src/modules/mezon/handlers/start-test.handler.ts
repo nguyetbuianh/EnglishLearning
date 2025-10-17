@@ -12,6 +12,7 @@ import { CommandType } from "../enums/commands.enum";
 import { BaseHandler } from "./base";
 import { SelectionBuilder } from "../builders/selection.builder";
 import { ButtonBuilder } from "../builders/button.builder";
+import { MessageBuilder } from "../builders/message.builder";
 
 @Injectable()
 @Interaction(CommandType.START)
@@ -72,14 +73,16 @@ export class StartTestHandler extends BaseHandler<ChannelMessage> {
         .setStyle(EButtonMessageStyle.DANGER)
         .build();
 
-      const payload: ChannelMessageContent = {
-        t: "🎯 Select the test and section you want to take:",
-        components: [
-          { components: [testSelect] },
-          { components: [partSelect] },
-          { components: [startButton, cancelButton] },
-        ],
-      };
+      const payload = new MessageBuilder()
+        .createEmbed({
+          color: "#3498db",
+          title: "🎯 TOEIC Test Selection",
+          description: "Select the test and part you want to take below:",
+        })
+        .addSelectRow([testSelect])
+        .addSelectRow([partSelect])
+        .addButtonsRow([startButton, cancelButton])
+        .build();
 
       await this.mezonMessage.reply(payload);
     } catch (error) {

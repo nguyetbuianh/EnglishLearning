@@ -1,7 +1,7 @@
 import {
   EMessageComponentType,
   SelectComponent,
-} from "mezon-sdk";
+} from "mezon-sdk"; 
 
 export interface ISelectionOption {
   label: string;
