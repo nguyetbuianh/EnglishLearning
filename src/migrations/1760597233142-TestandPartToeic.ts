@@ -12,5 +12,4 @@ export class TestnadPartToeic1760597233142 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "toeic_tests"`);
         await queryRunner.query(`DROP TABLE "toeic_parts"`);
     }
-
 }

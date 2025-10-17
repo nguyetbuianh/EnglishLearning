@@ -12,13 +12,19 @@ import { ToeicModule } from '../toeic/toeic.module';
 import { StartTestHandler } from './handlers/start-test.handler';
 import { ToeicPartHandler } from './handlers/toeic-part.handler';
 import { ToeicTestHandler } from './handlers/toeic-test.handler';
+import { ConfirmStartTestHandler } from './handlers/confirm-start-test.handler';
+import { SelectPartHandler } from './handlers/select-part.handler';
+import { SelectTestHandler } from './handlers/select-test.handler';
 
 const commandHandlers = [
   WelcomeHandler,
   StartTestHandler,
   InitializationHandler,
   ToeicPartHandler,
-  ToeicTestHandler
+  ToeicTestHandler,
+  ConfirmStartTestHandler,
+  SelectPartHandler,
+  SelectTestHandler
 ];
 
 @Module({

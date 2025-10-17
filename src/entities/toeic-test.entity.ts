@@ -2,7 +2,10 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
+  OneToMany,
 } from 'typeorm';
+import { Question } from './question.entity';
+import { Passage } from './passage.entity';
 
 @Entity('toeic_tests')
 export class ToeicTest {
@@ -17,4 +20,10 @@ export class ToeicTest {
 
   @Column({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
+
+  @OneToMany(() => Question, (q) => q.test)
+  questions: Question[];
+
+  @OneToMany(() => Passage, (p) => p.part)
+  passages: Passage[];
 }
