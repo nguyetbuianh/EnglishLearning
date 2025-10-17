@@ -28,11 +28,14 @@ export class EventRouter {
       const eventName = this.getEventName(event);
       if (!eventName) return;
 
-      const userId = (event as MessageButtonClicked).user_id;
       const channel = await this.client.channels.fetch(event.channel_id);
 
       if (this.isCommandEvent(event)) {
         if (!["welcome", "help"].includes(eventName)) {
+          const userId = event.sender_id;
+          if (!userId) {
+            return;
+          }
           const existingUser = await this.userService.findUserByMezonId(userId);
           if (!existingUser) {
             await this.sendWarning(channel, "⚠️ You are not registered. Use *init to start.");
@@ -41,6 +44,7 @@ export class EventRouter {
         }
       } else {
         const ownerId = this.extractOwnerId(event);
+        const userId = (event as MessageButtonClicked).user_id;
         if (ownerId && userId !== ownerId) {
           await this.sendWarning(channel, "❌ You are not allowed to interact with this form.");
           return;

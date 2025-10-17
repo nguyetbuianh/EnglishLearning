@@ -59,7 +59,7 @@ export class ConfirmStartTestHandler extends BaseHandler<MessageButtonClicked> {
 
       const buttons = firstQuestion.options.map((opt) =>
         new ButtonBuilder()
-          .setId(`answer_${opt.optionLabel}`)
+          .setId(`answer_${opt.optionLabel}_${mezonUserId}`)
           .setLabel(`${opt.optionLabel}. ${opt.optionText}`)
           .setStyle(EButtonMessageStyle.PRIMARY)
           .build()
