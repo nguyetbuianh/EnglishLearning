@@ -10,11 +10,13 @@ import { InitializationHandler } from './handlers/initialization.handler';
 import { UserModule } from '../user/user.module';
 import { ToeicModule } from '../toeic/toeic.module';
 import { StartTestHandler } from './handlers/start-test.handler';
+import { ToeicPartHandler } from './handlers/toeic-part.handler';
 
 const commandHandlers = [
   WelcomeHandler,
   StartTestHandler,
-  InitializationHandler
+  InitializationHandler,
+  ToeicPartHandler
 ];
 
 @Module({
