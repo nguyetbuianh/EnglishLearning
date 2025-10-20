@@ -15,6 +15,7 @@ import { ToeicTestHandler } from './handlers/toeic-test.handler';
 import { ConfirmStartTestHandler } from './handlers/confirm-start-test.handler';
 import { SelectPartHandler } from './handlers/select-part.handler';
 import { SelectTestHandler } from './handlers/select-test.handler';
+import { UserAnswerHandler } from './handlers/user-answer.handler';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -24,7 +25,8 @@ const commandHandlers = [
   ToeicTestHandler,
   ConfirmStartTestHandler,
   SelectPartHandler,
-  SelectTestHandler
+  SelectTestHandler,
+  UserAnswerHandler
 ];
 
 @Module({

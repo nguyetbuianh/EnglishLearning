@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Question } from './question.entity';
 import { Passage } from './passage.entity';
+import { UserAnswer } from './user-answer.entity';
 
 @Entity('toeic_parts')
 @Check(`"part_number" >= 1 AND "part_number" <= 7`)
@@ -28,4 +29,7 @@ export class ToeicPart {
 
   @OneToMany(() => Passage, (p) => p.part)
   passages: Passage[];
+
+  @OneToMany(() => UserAnswer, (ua) => ua.toeicPart)
+  userAnswers: UserAnswer[];
 }

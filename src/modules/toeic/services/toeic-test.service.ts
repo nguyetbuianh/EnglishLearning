@@ -13,4 +13,10 @@ export class ToeicTestService {
   async getAllTests(): Promise<ToeicTest[]> {
     return this.testRepo.find({ order: { id: 'ASC' } });
   }
+
+  async findTestById(testId: number): Promise<ToeicTest | null> {
+    return await this.testRepo.findOne({
+      where: { id: testId }
+    });
+  }
 }

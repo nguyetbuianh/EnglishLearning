@@ -20,4 +20,11 @@ export class ToeicQuestionService {
       order: { id: 'ASC' },
     });
   }
+
+  async findQuestionById(questionId: number): Promise<Question | null> {
+    return await this.questionRepo.findOne({
+      where: { id: questionId },
+      relations: ['part', 'test']
+    });
+  }
 }
