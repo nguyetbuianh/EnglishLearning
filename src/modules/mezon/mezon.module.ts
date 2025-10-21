@@ -17,6 +17,7 @@ import { SelectPartHandler } from './handlers/select-part.handler';
 import { SelectTestHandler } from './handlers/select-test.handler';
 import { UserAnswerHandler } from './handlers/user-answer.handler';
 import { NextQuestionHandler } from './handlers/next-question.handler';
+import { CancelTestHandler } from './handlers/cancel-test.handler';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -28,7 +29,8 @@ const commandHandlers = [
   SelectPartHandler,
   SelectTestHandler,
   UserAnswerHandler,
-  NextQuestionHandler
+  NextQuestionHandler,
+  CancelTestHandler,
 ];
 
 @Module({
