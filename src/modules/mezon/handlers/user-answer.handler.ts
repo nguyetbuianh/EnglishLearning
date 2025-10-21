@@ -14,8 +14,9 @@ import { MMessageButtonClicked } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
 import { Question } from "src/entities/question.entity";
 import { ButtonBuilder } from "../builders/button.builder";
+import { CommandType } from "../enums/commands.enum";
 
-@Interaction("answer")
+@Interaction(CommandType.BUTTON_USER_ANSWER)
 @Injectable()
 export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
@@ -31,11 +32,15 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
 
   async handle(): Promise<void> {
     try {
-      const buttonId = this.event.button_id;
-      const [prefix, questionId, optionLabelString, mezonId] = buttonId.split("_")
+      const { questionId, answerOption, mezonId } = this.parseButtonId(this.event.button_id);
+
+      if (!questionId || !answerOption || !mezonId) {
+        await this.mezonMessage.reply({ t: "⚠️ Invalid button ID format." });
+        return;
+      }
 
       const questionIdNumber = Number(questionId);
-      const chosenOption = parseOption(optionLabelString);
+      const chosenOption = parseOption(answerOption);
 
       if (!chosenOption) {
         await this.mezonMessage.reply({ t: "⚠️ Invalid option selected." });
@@ -74,6 +79,21 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       });
     }
   }
+
+  private parseButtonId(buttonId: string): {
+    questionId?: string;
+    answerOption?: string;
+    mezonId?: string;
+  } {
+    const parts = buttonId.split("_");
+
+    const questionId = parts.find((p) => p.startsWith("q:"))?.split(":")[1];
+    const answerOption = parts.find((p) => p.startsWith("a:"))?.split(":")[1];
+    const mezonId = parts.find((p) => p.startsWith("id:"))?.split(":")[1];
+
+    return { questionId, answerOption, mezonId };
+  }
+
   private async saveUserAnswer(
     userId: number,
     chosenOption: OptionEnum,
@@ -133,7 +153,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
           : question.questionText;
 
       const buttons = new ButtonBuilder()
-        .setId(`button_next_question_${mezonId}`)
+        .setId(`next-question_id:${mezonId}`)
         .setLabel("Next Question")
         .setStyle(EButtonMessageStyle.PRIMARY)
         .build();

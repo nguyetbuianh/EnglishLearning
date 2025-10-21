@@ -6,7 +6,7 @@ import { BaseHandler } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
 import { MChannelMessage } from "./base";
 
-@Interaction(CommandType.WELCOME)
+@Interaction(CommandType.COMMAND_WELCOME)
 @Injectable()
 export class WelcomeHandler extends BaseHandler<MChannelMessage> {
   constructor(protected readonly client: MezonClient) {

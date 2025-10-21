@@ -5,8 +5,9 @@ import { ChannelMessageContent, IInteractiveMessageProps, MezonClient } from "me
 import { ToeicPartService } from "src/modules/toeic/services/toeic-part.service";
 import { MChannelMessage } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
+import { CommandType } from "../enums/commands.enum";
 
-@Interaction("all-part")
+@Interaction(CommandType.COMMAND_ALL_PART)
 @Injectable()
 export class ToeicPartHandler extends BaseHandler<MChannelMessage> {
   constructor(
