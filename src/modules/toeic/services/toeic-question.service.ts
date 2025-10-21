@@ -21,26 +21,25 @@ export class ToeicQuestionService {
     });
   }
 
-  async getNextQuestion(
+  async getQuestion(
     testId: number,
     partId: number,
-    currentQuestionNumber: number
+    questionNumber: number
   ): Promise<Question | null> {
     return this.questionRepo.findOne({
       where: {
         test: { id: testId },
         part: { id: partId },
-        questionNumber: MoreThan(currentQuestionNumber),
+        questionNumber: questionNumber,
       },
-      order: { questionNumber: "ASC" },
       relations: ["options", "test", "part"],
     });
   }
 
-  async getNextQuestionWithPassage(
+  async getQuestionWithPassage(
     testId: number,
     partId: number,
-    currentQuestionNumber: number,
+    questionNumber: number,
     passageId?: number
   ): Promise<Question | null> {
     return this.questionRepo.findOne({
@@ -48,9 +47,8 @@ export class ToeicQuestionService {
         test: { id: testId },
         part: { id: partId },
         passage: { id: passageId },
-        questionNumber: MoreThan(currentQuestionNumber),
+        questionNumber: questionNumber,
       },
-      order: { questionNumber: "ASC" },
       relations: ["options", "passage", "test", "part"],
     });
   }

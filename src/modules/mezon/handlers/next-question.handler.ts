@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler } from "./base";
-import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
+import { ChannelMessage, EButtonMessageStyle, MezonClient } from "mezon-sdk";
 import { CommandType } from "../enums/commands.enum";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 import { PassageService } from "src/modules/toeic/services/passage.service";
@@ -9,11 +9,33 @@ import { ToeicSessionStore } from "../session/toeic-session.store";
 import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
 import { Question } from "src/entities/question.entity";
-import { MessageButtonClicked } from "mezon-sdk/dist/cjs/rtapi/realtime";
+import { Passage } from "src/entities/passage.entity";
+
+interface PartWithPassageParams {
+  mezonUserId: string;
+  testId: number;
+  partId: number;
+  currentQuestionNumber: number;
+  currentPassageNumber?: number;
+}
+
+interface NormalPartParams {
+  mezonUserId: string;
+  testId: number;
+  partId: number;
+  currentQuestionNumber: number;
+}
+
+interface ReplyMessageParams {
+  question: Question;
+  partId: number;
+  testId: number;
+  passage?: Passage;
+}
 
 @Injectable()
 @Interaction(CommandType.NEXT_QUESTION)
-export class NextQuestionHandler extends BaseHandler<MessageButtonClicked> {
+export class NextQuestionHandler extends BaseHandler<ChannelMessage> {
   private static readonly COMPLETED_MESSAGE = { t: "✅ You have completed this part!" };
 
   constructor(
@@ -25,7 +47,8 @@ export class NextQuestionHandler extends BaseHandler<MessageButtonClicked> {
   }
 
   async handle(): Promise<void> {
-    const mezonUserId = this.event.user_id;
+    const mezonUserId = this.mezonMessage.sender_id;
+    if (!mezonUserId) return;
     const session = ToeicSessionStore.get(mezonUserId);
     if (!session) return;
 
@@ -37,31 +60,46 @@ export class NextQuestionHandler extends BaseHandler<MessageButtonClicked> {
     }
 
     if (partId === 6 || partId === 7) {
-      await this.handlePartWithPassage(mezonUserId, testId, partId, currentQuestionNumber, currentPassageNumber);
+      await this.handlePartWithPassage({
+        mezonUserId: mezonUserId,
+        testId: testId,
+        partId: partId,
+        currentQuestionNumber: currentQuestionNumber,
+        currentPassageNumber: currentPassageNumber,
+      });
     } else {
-      await this.handleNormalPart(mezonUserId, testId, partId, currentQuestionNumber);
+      await this.handleNormalPart({
+        mezonUserId: mezonUserId,
+        testId: testId,
+        partId: partId,
+        currentQuestionNumber: currentQuestionNumber
+      });
     }
   }
 
-  private async handlePartWithPassage(
-    mezonUserId: string,
-    testId: number,
-    partId: number,
-    currentQuestionNumber: number,
-    currentPassageNumber?: number
-  ) {
-    let question = await this.toeicQuestionService.getNextQuestionWithPassage(
+  private async handlePartWithPassage(partWithPassageParams: PartWithPassageParams) {
+    const {
+      mezonUserId,
       testId,
       partId,
       currentQuestionNumber,
+      currentPassageNumber,
+    } = partWithPassageParams;
+
+    const nextQuestionNumber = currentQuestionNumber + 1;
+    let question = await this.toeicQuestionService.getQuestionWithPassage(
+      testId,
+      partId,
+      nextQuestionNumber,
       currentPassageNumber
     );
 
     if (!question) {
+      const nextPassageNumber = currentPassageNumber! + 1;
       const nextPassage = await this.passageService.getPassageDetail(
         testId,
         partId,
-        (currentPassageNumber ?? 1) + 1
+        nextPassageNumber
       );
       if (!nextPassage) {
         await this.mezonMessage.reply(NextQuestionHandler.COMPLETED_MESSAGE);
@@ -75,28 +113,45 @@ export class NextQuestionHandler extends BaseHandler<MessageButtonClicked> {
       }
 
       this.updateSession(mezonUserId, firstQuestion, nextPassage.passageNumber);
-      await this.replyMessage(firstQuestion, partId, testId, nextPassage);
+      await this.replyMessage({
+        question: firstQuestion,
+        partId: partId,
+        testId: testId,
+        passage: nextPassage,
+      });
       return;
     }
 
     this.updateSession(mezonUserId, question, question.passage?.passageNumber);
-    await this.replyMessage(question, partId, testId, question.passage);
+    await this.replyMessage({
+      question: question,
+      partId: partId,
+      testId: testId,
+      passage: question.passage,
+    });
   }
 
-  private async handleNormalPart(
-    mezonUserId: string,
-    testId: number,
-    partId: number,
-    currentQuestionNumber: number
-  ) {
-    const question = await this.toeicQuestionService.getNextQuestion(testId, partId, currentQuestionNumber);
+  private async handleNormalPart(normalPartParams: NormalPartParams) {
+    const {
+      mezonUserId,
+      testId,
+      partId,
+      currentQuestionNumber
+    } = normalPartParams;
+
+    const nextQuestionNumber = currentQuestionNumber + 1;
+    const question = await this.toeicQuestionService.getQuestion(testId, partId, nextQuestionNumber);
     if (!question) {
       await this.mezonMessage.reply(NextQuestionHandler.COMPLETED_MESSAGE);
       return;
     }
 
     this.updateSession(mezonUserId, question);
-    await this.replyMessage(question, partId, testId);
+    await this.replyMessage({
+      question: question,
+      partId: partId,
+      testId: testId,
+    });
   }
 
   private updateSession(mezonUserId: string, question: Question, passageNumber?: number) {
@@ -108,7 +163,8 @@ export class NextQuestionHandler extends BaseHandler<MessageButtonClicked> {
     });
   }
 
-  private async replyMessage(question: Question, partId: number, testId: number, passage?: any) {
+  private async replyMessage(replyMessageParams: ReplyMessageParams) {
+    const { question, partId, testId, passage } = replyMessageParams;
     const passageContent = passage
       ? `📖 *Passage ${passage.passageNumber}*\n${passage.title ? `**${passage.title}**\n` : ""}${passage.content}`
       : "";
