@@ -176,8 +176,7 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
 
     const buttons = question.options.map(opt =>
       new ButtonBuilder()
-        .setId(`answer_${opt.optionLabel}`)
-        .setId(`answer_${question.id}_${opt.optionLabel}_${mezonUserId}`)
+        .setId(`user-answer_q:${question.id}_a:${opt.optionLabel}_id:${mezonUserId}`)
         .setLabel(`${opt.optionLabel}. ${opt.optionText}`)
         .setStyle(EButtonMessageStyle.PRIMARY)
         .build()
