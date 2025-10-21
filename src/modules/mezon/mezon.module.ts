@@ -18,6 +18,8 @@ import { SelectTestHandler } from './handlers/select-test.handler';
 import { UserAnswerHandler } from './handlers/user-answer.handler';
 import { NextQuestionHandler } from './handlers/next-question.handler';
 import { CancelTestHandler } from './handlers/cancel-test.handler';
+import { TopicVocabularyModule } from '../topic-vocabulary/topic-vocabulary.module';
+import { AllTopicVocabularyHandler } from './handlers/all-topic-vocabulary.handler';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -31,12 +33,14 @@ const commandHandlers = [
   UserAnswerHandler,
   NextQuestionHandler,
   CancelTestHandler,
+  AllTopicVocabularyHandler
 ];
 
 @Module({
   imports: [
     UserModule,
-    ToeicModule
+    ToeicModule,
+    TopicVocabularyModule
   ],
   providers: [
     MezonService,
@@ -59,6 +63,7 @@ const commandHandlers = [
         new InteractionFactory(handlers),
       inject: [...commandHandlers],
     },
+
   ],
   exports: [MezonService],
 })
