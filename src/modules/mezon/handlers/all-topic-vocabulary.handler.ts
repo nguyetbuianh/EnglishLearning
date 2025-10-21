@@ -3,6 +3,7 @@ import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { ChannelMessageContent, IInteractiveMessageProps, MezonClient } from "mezon-sdk";
 import { TopicVocabularyService } from "src/modules/topic-vocabulary/topic-vocabulary.service";
+import { MessageBuilder } from "../builders/message.builder";
 
 @Injectable()
 @Interaction("all-topic")
@@ -30,26 +31,19 @@ export class AllTopicVocabularyHandler extends BaseHandler<MMessageButtonClicked
         type: topic.type || "_(No category provided)_",
         value: topic.description || "_(No description available)_",
       }));
-
-      const embed: IInteractiveMessageProps = {
-        color: "#3b82f6", // Màu xanh dịu hơn cho dễ nhìn
-        title: "📚 TOEIC Topic Vocabulary Overview",
-        description:
-          "Here are all the available **TOEIC Vocabulary Topics** in the system.\n\n" +
-          "Each topic helps you focus on specific vocabulary areas commonly tested in the TOEIC exam. " +
-          "Select a topic to start exploring useful words and phrases.",
-        fields: listTopicVocabularies,
-        footer: {
-          text: "Expand your vocabulary one topic at a time 💪",
-        },
-        timestamp: new Date().toISOString(),
-      };
-
-      const messagePayload: ChannelMessageContent = {
-        t: "✨ TOEIC Vocabulary Topics",
-        embed: [embed],
-      };
-
+      const messagePayload = new MessageBuilder()
+        .createEmbed({
+          color: "#3498db",
+          title: "📚 TOEIC Topic Vocabulary Overview",
+          description:
+            "Here are all the available **TOEIC Vocabulary Topics** in the system.\n\n" +
+            "Each topic helps you focus on specific vocabulary areas commonly tested in the TOEIC exam. " +
+            "Select a topic to start exploring useful words and phrases.",
+          fields: listTopicVocabularies,
+          footer: "Expand your vocabulary one topic at a time 💪",
+          timestamp: true,
+        })
+        .build();
       await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       await this.mezonMessage.reply({
