@@ -47,7 +47,7 @@ export class ToeicTestHandler extends BaseHandler<MChannelMessage> {
     } catch (error) {
       console.error("ToeicTestHandler Error:", error);
       await this.mezonMessage.reply({
-        t: "⚠️ An error occurred while fetching TOEIC tests. Please try again later.",
+        t: "😢 Oops! Something went wrong. Please try again later!",
       });
     }
   }

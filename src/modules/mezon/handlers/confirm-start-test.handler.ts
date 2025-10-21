@@ -39,11 +39,6 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
       }
 
       const { testId, partId } = session;
-      const existingUser = await this.userService.findUserByMezonId(mezonUserId);
-      if (!existingUser) {
-        await this.userService.createUserByMezonId(mezonUserId);
-      }
-
       let passageContent = "";
       if (partId === 6 || partId === 7) {
         const passage = await this.passageService.getPassageDetail(testId, partId, 1);
@@ -87,11 +82,11 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
         .addButtonsRow(buttons)
         .build();
 
-      await this.mezonMessage.reply(
+      await this.mezonMessage.update(
         messagePayload,
-        undefined, // mentions
+        undefined,
         messagePayload.attachments
-      );
+      );;
     } catch (error) {
       await this.mezonMessage.reply({
         t: 'Something went wrong. Please try again later.'

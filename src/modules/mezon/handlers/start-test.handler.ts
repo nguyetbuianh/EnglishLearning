@@ -84,7 +84,7 @@ export class StartTestHandler extends BaseHandler<MChannelMessage> {
     } catch (error) {
       console.error("StartTestCommandHandler Error:", error);
       await this.mezonMessage.reply({
-        t: ("❌ Something is wrong.")
+        t: ("😢 Oops! Something went wrong. Please try again later!")
       });
     }
   }

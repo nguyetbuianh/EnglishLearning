@@ -14,8 +14,8 @@ export class UserService {
     return this.userRepo.findOne({ where: { mezonUserId: mezonUserId } });
   }
 
-  async createUserByMezonId(mezonUserId: string): Promise<User> {
-    const newUser = this.userRepo.create({ mezonUserId: mezonUserId });
+  async createUserByMezonId(mezonUserId: string, displayName: string): Promise<User> {
+    const newUser = this.userRepo.create({ mezonUserId: mezonUserId, username: displayName });
     return this.userRepo.save(newUser);
   }
 

@@ -4,6 +4,7 @@ import { BaseHandler } from "./base";
 import { ChannelMessageContent, IInteractiveMessageProps, MezonClient } from "mezon-sdk";
 import { ToeicPartService } from "src/modules/toeic/services/toeic-part.service";
 import { MChannelMessage } from "./base";
+import { MessageBuilder } from "../builders/message.builder";
 
 @Interaction("all-part")
 @Injectable()
@@ -31,29 +32,24 @@ export class ToeicPartHandler extends BaseHandler<MChannelMessage> {
         value: part.description || "_(No description provided)_"
       }));
 
-      const embed: IInteractiveMessageProps = {
-        color: "#3498db",
-        title: "📋 TOEIC PARTS OVERVIEW",
-        description:
-          "Here are all available TOEIC parts in the system.\n" +
-          "Each part focuses on a specific English skill for the TOEIC test.",
-        fields: partList,
-        footer: {
-          text: "Welcome! Choose a TOEIC section and start improving your skills.",
-        },
-        timestamp: new Date().toISOString(),
-      };
-
-      const messagePayload: ChannelMessageContent = {
-        t: "✨ TOEIC Parts List",
-        embed: [embed],
-      };
+      const messagePayload = new MessageBuilder()
+        .createEmbed({
+          color: "#3498db",
+          title: `📋 TOEIC PARTS OVERVIEW`,
+          description:
+            "Here are all available TOEIC parts in the system.\n" +
+            "Each part focuses on a specific English skill for the TOEIC test.",
+          fields: partList,
+          footer: "Welcome! Choose a TOEIC section and start improving your skills.",
+          timestamp: true,
+        })
+        .build();
 
       await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       console.error("ToeicPartHandler Error:", error);
       await this.mezonMessage.reply({
-        t: "⚠️ An error occurred while fetching TOEIC parts. Please try again later.",
+        t: "😢 Oops! Something went wrong. Please try again later!",
       });
     }
   }

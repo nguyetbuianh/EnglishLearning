@@ -4,6 +4,7 @@ import { Injectable } from "@nestjs/common";
 import { BaseHandler } from "./base";
 import { UserService } from "src/modules/user/user.service";
 import { MChannelMessage } from "./base";
+import { MessageBuilder } from "../builders/message.builder";
 
 @Interaction("init")
 @Injectable()
@@ -17,9 +18,10 @@ export class InitializationHandler extends BaseHandler<MChannelMessage> {
   async handle(): Promise<void> {
     try {
       const mezonUserId = this.mezonMessage.sender_id;
+      const displayName = this.event.display_name;
       if (!mezonUserId) {
         await this.mezonMessage.reply({
-          t: "Unable to determine user."
+          t: "⚠️ I couldn’t identify your account. Please try again!"
         });
         return;
       }
@@ -27,25 +29,33 @@ export class InitializationHandler extends BaseHandler<MChannelMessage> {
       const existingUser = await this.userService.findUserByMezonId(mezonUserId);
       if (existingUser) {
         await this.mezonMessage.reply({
-          t: "You already have an account !"
+          t: "👋 Welcome back! You already have an account."
         });
         return;
       }
 
-      const user = await this.userService.createUserByMezonId(mezonUserId);
+      const user = await this.userService.createUserByMezonId(mezonUserId, displayName!);
       if (!user) {
         await this.mezonMessage.reply({
-          t: "Failed to create user. Please try again later."
+          t: "💥 Something went wrong! Please try again later."
         });
         return;
       }
 
-      await this.mezonMessage.reply({
-        t: `Initialization successful! Hello <@${mezonUserId}>`,
-      });
+      const messagePayload = new MessageBuilder()
+        .createEmbed({
+          color: "#2ecc71",
+          title: `🎉 Initialization Successful!`,
+          description: `Hello ${displayName || "there"}! 
+                  Your account has been created successfully.  
+                  Let’s start improving your English together! 💪`,
+          footer: "English Learning Bot",
+        })
+        .build();
+      await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       await this.mezonMessage.reply({
-        t: 'Something went wrong. Please try again later.'
+        t: '😢 Oops! Something went wrong. Please try again later!'
       })
     }
   }

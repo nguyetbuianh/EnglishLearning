@@ -57,7 +57,7 @@ export class WelcomeHandler extends BaseHandler<MChannelMessage> {
       await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       await this.mezonMessage.reply({
-        t: "⚠️ Something went wrong. Please try again later.",
+        t: "😢 Oops! Something went wrong. Please try again later!",
       });
     }
   }
