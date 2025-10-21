@@ -57,6 +57,13 @@ export class ConfirmStartTestHandler extends BaseHandler<MessageButtonClicked> {
         return;
       }
 
+      ToeicSessionStore.set(mezonUserId, {
+        testId: firstQuestion.test.id,
+        partId: firstQuestion.part.id,
+        currentQuestionNumber: firstQuestion.questionNumber,
+        currentPassageNumber: partId === 6 || partId === 7 ? 1 : undefined,
+      });
+
       const buttons = firstQuestion.options.map((opt) =>
         new ButtonBuilder()
           .setId(`answer_${firstQuestion.id}_${opt.optionLabel}_${mezonUserId}`)
