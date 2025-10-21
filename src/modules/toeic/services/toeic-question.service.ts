@@ -66,7 +66,7 @@ export class ToeicQuestionService {
   async findQuestionById(questionId: number): Promise<Question | null> {
     return await this.questionRepo.findOne({
       where: { id: questionId },
-      relations: ['part', 'test']
+      relations: ['part', 'test', 'options', 'passage'],
     });
   }
 }

@@ -162,14 +162,26 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
         .createEmbed({
           color: "#9fc117",
           title: `Question ${question.questionNumber}`,
-          description: `${questionContent}\n\n${resultText}${explanationText}`,
+          description: (() => {
+            const lines: string[] = [];
+
+            if (question.passage.content.length > 0) {
+              lines.push(question.passage.content);
+              lines.push(`**Question:** ${question.questionText}`);
+            } else {
+              lines.push(question.questionText);
+            }
+
+            if (resultText) lines.push(resultText);
+            if (explanationText) lines.push(explanationText);
+
+            return lines.join("\n\n");
+          })(),
           footer: `✅ Correct Option: ${question.correctOption}`,
           imageUrl: question.imageUrl || undefined,
           audioUrl: question.audioUrl || undefined,
         })
-        .setText(
-          `Start Test ${question.test?.id ?? "?"}, Part ${question.part?.id ?? "?"}`
-        )
+        .setText(`Start Test ${question.test?.id ?? "?"}, Part ${question.part?.id ?? "?"}`)
         .addButtonsRow([buttons])
         .build();
 
