@@ -10,7 +10,7 @@ import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
 import { Question } from "src/entities/question.entity";
 import { Passage } from "src/entities/passage.entity";
-import { MChannelMessage } from "./base";
+import { MMessageButtonClicked } from "./base";
 
 interface PartWithPassageParams {
   mezonUserId: string;
@@ -32,11 +32,12 @@ interface ReplyMessageParams {
   partId: number;
   testId: number;
   passage?: Passage;
+  mezonUserId?: string;
 }
 
 @Injectable()
-@Interaction(CommandType.NEXT_QUESTION)
-export class NextQuestionHandler extends BaseHandler<MChannelMessage> {
+@Interaction(CommandType.BUTTON_NEXT_QUESTION)
+export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
   private static readonly COMPLETED_MESSAGE = { t: "✅ You have completed this part!" };
 
   constructor(
@@ -48,7 +49,7 @@ export class NextQuestionHandler extends BaseHandler<MChannelMessage> {
   }
 
   async handle(): Promise<void> {
-    const mezonUserId = this.mezonMessage.sender_id;
+    const mezonUserId = this.event.user_id;
     if (!mezonUserId) return;
     const session = ToeicSessionStore.get(mezonUserId);
     if (!session) return;
@@ -103,13 +104,13 @@ export class NextQuestionHandler extends BaseHandler<MChannelMessage> {
         nextPassageNumber
       );
       if (!nextPassage) {
-        await this.mezonMessage.reply(NextQuestionHandler.COMPLETED_MESSAGE);
+        await this.mezonMessage.update(NextQuestionHandler.COMPLETED_MESSAGE);
         return;
       }
 
       const firstQuestion = await this.toeicQuestionService.getFirstQuestionByPassage(nextPassage.id);
       if (!firstQuestion) {
-        await this.mezonMessage.reply(NextQuestionHandler.COMPLETED_MESSAGE);
+        await this.mezonMessage.update(NextQuestionHandler.COMPLETED_MESSAGE);
         return;
       }
 
@@ -119,6 +120,7 @@ export class NextQuestionHandler extends BaseHandler<MChannelMessage> {
         partId: partId,
         testId: testId,
         passage: nextPassage,
+        mezonUserId: mezonUserId
       });
       return;
     }
@@ -129,6 +131,7 @@ export class NextQuestionHandler extends BaseHandler<MChannelMessage> {
       partId: partId,
       testId: testId,
       passage: question.passage,
+      mezonUserId: mezonUserId
     });
   }
 
@@ -143,7 +146,7 @@ export class NextQuestionHandler extends BaseHandler<MChannelMessage> {
     const nextQuestionNumber = currentQuestionNumber + 1;
     const question = await this.toeicQuestionService.getQuestion(testId, partId, nextQuestionNumber);
     if (!question) {
-      await this.mezonMessage.reply(NextQuestionHandler.COMPLETED_MESSAGE);
+      await this.mezonMessage.update(NextQuestionHandler.COMPLETED_MESSAGE);
       return;
     }
 
@@ -152,6 +155,7 @@ export class NextQuestionHandler extends BaseHandler<MChannelMessage> {
       question: question,
       partId: partId,
       testId: testId,
+      mezonUserId: mezonUserId
     });
   }
 
@@ -165,14 +169,14 @@ export class NextQuestionHandler extends BaseHandler<MChannelMessage> {
   }
 
   private async replyMessage(replyMessageParams: ReplyMessageParams) {
-    const { question, partId, testId, passage } = replyMessageParams;
+    const { question, partId, testId, passage, mezonUserId } = replyMessageParams;
     const passageContent = passage
       ? `📖 *Passage ${passage.passageNumber}*\n${passage.title ? `**${passage.title}**\n` : ""}${passage.content}`
       : "";
 
     const buttons = question.options.map(opt =>
       new ButtonBuilder()
-        .setId(`answer_${opt.optionLabel}`)
+        .setId(`user-answer_q:${question.id}_a:${opt.optionLabel}_id:${mezonUserId}`)
         .setLabel(`${opt.optionLabel}. ${opt.optionText}`)
         .setStyle(EButtonMessageStyle.PRIMARY)
         .build()
@@ -192,6 +196,10 @@ export class NextQuestionHandler extends BaseHandler<MChannelMessage> {
       .addButtonsRow(buttons)
       .build();
 
-    await this.mezonMessage.reply(messagePayload, undefined, messagePayload.attachments);
+    await this.mezonMessage.update(
+      messagePayload,
+      undefined,
+      messagePayload.attachments
+    )
   }
 }

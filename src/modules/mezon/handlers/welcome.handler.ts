@@ -6,7 +6,7 @@ import { BaseHandler } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
 import { MChannelMessage } from "./base";
 
-@Interaction(CommandType.WELCOME)
+@Interaction(CommandType.COMMAND_WELCOME)
 @Injectable()
 export class WelcomeHandler extends BaseHandler<MChannelMessage> {
   constructor(protected readonly client: MezonClient) {
@@ -57,7 +57,7 @@ export class WelcomeHandler extends BaseHandler<MChannelMessage> {
       await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       await this.mezonMessage.reply({
-        t: "⚠️ Something went wrong. Please try again later.",
+        t: "😢 Oops! Something went wrong. Please try again later!",
       });
     }
   }

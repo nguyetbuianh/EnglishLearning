@@ -12,7 +12,7 @@ import { PassageService } from "src/modules/toeic/services/passage.service";
 import { MMessageButtonClicked } from "./base";
 
 @Injectable()
-@Interaction(CommandType.CONFIRM_START_TEST)
+@Interaction(CommandType.BUTTON_CONFIRM_START_TEST)
 export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,
@@ -39,22 +39,13 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
       }
 
       const { testId, partId } = session;
-      const existingUser = await this.userService.findUserByMezonId(mezonUserId);
-      if (!existingUser) {
-        await this.userService.createUserByMezonId(mezonUserId);
-      }
-
-      let passageContent = "";
-      if (partId === 6 || partId === 7) {
-        const passage = await this.passageService.getPassageDetail(testId, partId, 1);
-        if (passage) {
-          passageContent = `📖 *Passage ${passage.passageNumber}*\n${passage.title ? `**${passage.title}**\n` : ""}${passage.content}`;
-        }
-      }
-
       const firstQuestion = await this.toeicQuestionService.getFirstQuestion(testId, partId);
       if (!firstQuestion) {
         return;
+      }
+      let passageContent = "";
+      if (partId === 6 || partId === 7) {
+        passageContent = `📖 *Passage ${firstQuestion.passage.passageNumber}*\n${firstQuestion.passage.title ? `**${firstQuestion.passage.title}**\n` : ""}${firstQuestion.passage.content}`;
       }
 
       ToeicSessionStore.set(mezonUserId, {
@@ -66,7 +57,7 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
 
       const buttons = firstQuestion.options.map((opt) =>
         new ButtonBuilder()
-          .setId(`answer_${firstQuestion.id}_${opt.optionLabel}_${mezonUserId}`)
+          .setId(`user-answer_q:${firstQuestion.id}_a:${opt.optionLabel}_id:${mezonUserId}`)
           .setLabel(`${opt.optionLabel}. ${opt.optionText}`)
           .setStyle(EButtonMessageStyle.PRIMARY)
           .build()
@@ -87,11 +78,11 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
         .addButtonsRow(buttons)
         .build();
 
-      await this.mezonMessage.reply(
+      await this.mezonMessage.update(
         messagePayload,
-        undefined, // mentions
+        undefined,
         messagePayload.attachments
-      );
+      );;
     } catch (error) {
       await this.mezonMessage.reply({
         t: 'Something went wrong. Please try again later.'

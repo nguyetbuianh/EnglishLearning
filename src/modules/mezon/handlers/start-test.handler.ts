@@ -11,7 +11,7 @@ import { MessageBuilder } from "../builders/message.builder";
 import { MChannelMessage } from "./base";
 
 @Injectable()
-@Interaction(CommandType.START)
+@Interaction(CommandType.COMMAND_START)
 export class StartTestHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,
@@ -36,7 +36,7 @@ export class StartTestHandler extends BaseHandler<MChannelMessage> {
       const senderId = this.mezonMessage.sender_id;
 
       const testSelect = new SelectionBuilder()
-        .setId(`select_toeic_test_${senderId}`)
+        .setId(`toeic-test_id:${senderId}`)
         .setPlaceholder("Select test...")
         .addOptions(
           tests.map((t) => ({
@@ -47,7 +47,7 @@ export class StartTestHandler extends BaseHandler<MChannelMessage> {
         .build();
 
       const partSelect = new SelectionBuilder()
-        .setId(`select_toeic_part_${senderId}`)
+        .setId(`toeic-part_id:${senderId}`)
         .setPlaceholder("Select part...")
         .addOptions(
           parts.map((p) => ({
@@ -58,13 +58,13 @@ export class StartTestHandler extends BaseHandler<MChannelMessage> {
         .build();
 
       const startButton = new ButtonBuilder()
-        .setId(`button_start_test_${senderId}`)
+        .setId(`start-test_id:${senderId}`)
         .setLabel("✅ Start Test")
         .setStyle(EButtonMessageStyle.SUCCESS)
         .build();
 
       const cancelButton = new ButtonBuilder()
-        .setId(`button_cancel_test_${senderId}`)
+        .setId(`cancel-test_id:${senderId}`)
         .setLabel("❌ Cancel")
         .setStyle(EButtonMessageStyle.DANGER)
         .build();
@@ -84,7 +84,7 @@ export class StartTestHandler extends BaseHandler<MChannelMessage> {
     } catch (error) {
       console.error("StartTestCommandHandler Error:", error);
       await this.mezonMessage.reply({
-        t: ("❌ Something is wrong.")
+        t: ("😢 Oops! Something went wrong. Please try again later!")
       });
     }
   }

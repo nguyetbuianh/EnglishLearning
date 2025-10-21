@@ -4,8 +4,9 @@ import { BaseHandler } from "./base";
 import { MezonClient, IInteractiveMessageProps, ChannelMessageContent } from "mezon-sdk";
 import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service";
 import { MChannelMessage } from "./base";
+import { CommandType } from "../enums/commands.enum";
 
-@Interaction("all-test")
+@Interaction(CommandType.COMMAND_ALL_TEST)
 @Injectable()
 export class ToeicTestHandler extends BaseHandler<MChannelMessage> {
   constructor(
@@ -47,7 +48,7 @@ export class ToeicTestHandler extends BaseHandler<MChannelMessage> {
     } catch (error) {
       console.error("ToeicTestHandler Error:", error);
       await this.mezonMessage.reply({
-        t: "⚠️ An error occurred while fetching TOEIC tests. Please try again later.",
+        t: "😢 Oops! Something went wrong. Please try again later!",
       });
     }
   }

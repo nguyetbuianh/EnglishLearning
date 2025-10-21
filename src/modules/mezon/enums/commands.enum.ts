@@ -1,10 +1,16 @@
 export enum CommandType {
-  WELCOME = 'welcome',
-  START = 'start',
-  INIT = 'init',
-  CONFIRM_START_TEST = 'button_start_test',
-  SELECT_PART = 'select_toeic_part',
-  SELECT_TEST = 'select_toeic_test',
-  NEXT_QUESTION = 'next_question',
-  CANCEL_TEST = 'button_cancel_test',
+  COMMAND_WELCOME = 'welcome',
+  COMMAND_START = 'start',
+  COMMAND_INIT = 'init',
+  COMMAND_ALL_PART = 'all-part',
+  COMMAND_ALL_TEST = 'all-test',
+
+  SELECT_PART = 'toeic-part',
+  SELECT_TEST = 'toeic-test',
+
+  BUTTON_CONFIRM_START_TEST = 'start-test',
+  BUTTON_NEXT_QUESTION = 'next-question',
+  BUTTON_CANCEL_TEST = 'cancel-test',
+  BUTTON_USER_ANSWER = 'user-answer',
 }
+
