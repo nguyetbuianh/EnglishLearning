@@ -3,7 +3,6 @@ import { MezonClient } from "mezon-sdk";
 import { InteractionFactory } from "./interaction-factory";
 import { InteractionEvent } from "../handlers/base";
 import { UserService } from "src/modules/user/user.service";
-import { MessageButtonClicked } from "mezon-sdk/dist/cjs/rtapi/realtime";
 
 @Injectable()
 export class EventRouter {
@@ -16,9 +15,15 @@ export class EventRouter {
   ) { }
 
   public registerListeners() {
-    this.client.onChannelMessage((event) => this.handleEvent(event));
-    this.client.onMessageButtonClicked((event) => this.handleEvent(event));
-    this.client.onDropdownBoxSelected((event) => this.handleEvent(event));
+    this.client.onChannelMessage((event) =>
+      this.handleEvent({ ...event, type: "ChannelMessage" })
+    );
+    this.client.onMessageButtonClicked((event) =>
+      this.handleEvent({ ...event, type: "MessageButtonClicked" })
+    );
+    this.client.onDropdownBoxSelected((event) =>
+      this.handleEvent({ ...event, type: "DropdownBoxSelected" })
+    );
 
     this.logger.log("✅ Mezon event listeners registered.");
   }
@@ -30,7 +35,7 @@ export class EventRouter {
 
       const channel = await this.client.channels.fetch(event.channel_id);
 
-      if (this.isCommandEvent(event)) {
+      if (event.type === "ChannelMessage") {
         if (!["welcome", "help"].includes(eventName)) {
           const userId = event.sender_id;
           if (!userId) {
@@ -44,11 +49,14 @@ export class EventRouter {
         }
       } else {
         const ownerId = this.extractOwnerId(event);
-        const userId = (event as MessageButtonClicked).user_id;
-        if (ownerId && userId !== ownerId) {
-          await this.sendWarning(channel, "❌ You are not allowed to interact with this form.");
-          return;
+        if (event.type === "MessageButtonClicked") {
+          const userId = event.user_id;
+          if (ownerId && userId !== ownerId) {
+            await this.sendWarning(channel, "❌ You are not allowed to interact with this form.");
+            return;
+          }
         }
+
       }
 
       const handler = this.interactionFactory.getHandler(eventName);
@@ -81,14 +89,6 @@ export class EventRouter {
     }
 
     return undefined;
-  }
-
-  private isCommandEvent(event: InteractionEvent) {
-    return (
-      "content" in event &&
-      typeof event.content?.t === "string" &&
-      /^\*[a-zA-Z]/.test(event.content.t.trim())
-    );
   }
 
   private extractOwnerId(event: InteractionEvent): string | undefined {

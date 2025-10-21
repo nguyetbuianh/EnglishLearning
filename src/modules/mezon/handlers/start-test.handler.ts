@@ -1,11 +1,6 @@
 import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service";
 import { ToeicPartService } from "src/modules/toeic/services/toeic-part.service";
-import {
-  ChannelMessageContent,
-  EButtonMessageStyle,
-  ChannelMessage,
-  MezonClient,
-} from "mezon-sdk";
+import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
 import { Injectable } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
@@ -13,10 +8,11 @@ import { BaseHandler } from "./base";
 import { SelectionBuilder } from "../builders/selection.builder";
 import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
+import { MChannelMessage } from "./base";
 
 @Injectable()
 @Interaction(CommandType.START)
-export class StartTestHandler extends BaseHandler<ChannelMessage> {
+export class StartTestHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,
     private toeicTestService: ToeicTestService,

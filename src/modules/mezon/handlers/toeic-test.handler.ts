@@ -1,12 +1,13 @@
 import { Interaction } from "../decorators/interaction.decorator";
 import { Injectable } from "@nestjs/common";
 import { BaseHandler } from "./base";
-import { ChannelMessage, MezonClient, IInteractiveMessageProps, ChannelMessageContent } from "mezon-sdk";
+import { MezonClient, IInteractiveMessageProps, ChannelMessageContent } from "mezon-sdk";
 import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service";
+import { MChannelMessage } from "./base";
 
 @Interaction("all-test")
 @Injectable()
-export class ToeicTestHandler extends BaseHandler<ChannelMessage> {
+export class ToeicTestHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,
     private readonly toeicTestService: ToeicTestService

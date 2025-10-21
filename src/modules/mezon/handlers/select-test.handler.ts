@@ -3,12 +3,12 @@ import { MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { BaseHandler } from "./base";
-import { MessageButtonClicked } from "mezon-sdk/dist/cjs/rtapi/realtime";
 import { ToeicSessionStore } from "../session/toeic-session.store";
+import { MMessageButtonClicked } from "./base";
 
 @Injectable()
 @Interaction(CommandType.SELECT_TEST)
-export class SelectTestHandler extends BaseHandler<MessageButtonClicked> {
+export class SelectTestHandler extends BaseHandler<MMessageButtonClicked> {
   private readonly logger = new Logger(SelectTestHandler.name);
 
   constructor(protected readonly client: MezonClient) {
