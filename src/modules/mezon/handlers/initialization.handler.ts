@@ -5,8 +5,9 @@ import { BaseHandler } from "./base";
 import { UserService } from "src/modules/user/user.service";
 import { MChannelMessage } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
+import { CommandType } from "../enums/commands.enum";
 
-@Interaction("init")
+@Interaction(CommandType.COMMAND_INIT)
 @Injectable()
 export class InitializationHandler extends BaseHandler<MChannelMessage> {
   constructor(

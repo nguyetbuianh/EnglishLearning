@@ -7,7 +7,7 @@ import { CommandType } from "../enums/commands.enum";
 import { MessageBuilder } from "../builders/message.builder";
 
 @Injectable()
-@Interaction(CommandType.CANCEL_TEST)
+@Interaction(CommandType.BUTTON_CANCEL_TEST)
 export class CancelTestHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,

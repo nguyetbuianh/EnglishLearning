@@ -3,6 +3,7 @@ import { MezonClient } from "mezon-sdk";
 import { InteractionFactory } from "./interaction-factory";
 import { InteractionEvent } from "../handlers/base";
 import { UserService } from "src/modules/user/user.service";
+import { appConfig } from "src/appConfig";
 
 @Injectable()
 export class EventRouter {
@@ -36,6 +37,7 @@ export class EventRouter {
       const channel = await this.client.channels.fetch(event.channel_id);
 
       if (event.type === "ChannelMessage") {
+        if (event.sender_id === appConfig.bot.id) return;
         if (!["welcome", "help", "init"].includes(eventName)) {
           const userId = event.sender_id;
           if (!userId) {
@@ -56,7 +58,6 @@ export class EventRouter {
             return;
           }
         }
-
       }
 
       const handler = this.interactionFactory.getHandler(eventName);
@@ -72,29 +73,23 @@ export class EventRouter {
   }
 
   private getEventName(event: InteractionEvent): string | undefined {
-
-    if ("button_id" in event && typeof event.button_id === "string") {
-      const buttonId = event.button_id;
-      if (buttonId.startsWith("answer_")) {
-        return "answer";
-      }
-      return event.button_id.split("_").slice(0, 3).join("_");
+    if (event.type === "MessageButtonClicked") {
+      return event.button_id.split("_")[0];
     }
 
-    if ("content" in event && typeof event.content?.t === "string") {
-      const content = event.content.t.trim();
-      if (content.startsWith("*")) {
-        return content.split(/\s+/)[0].substring(1).toLowerCase();
-      }
+    if (event.type === "ChannelMessage" && event.content.t) {
+      const content = event.content.t!.trim();
+      return content.split(/\s+/)[0].substring(1).toLowerCase();
     }
 
     return undefined;
   }
 
   private extractOwnerId(event: InteractionEvent): string | undefined {
-    if ("button_id" in event && typeof event.button_id === "string") {
-      const parts = event.button_id.split("_");
-      return parts.length > 0 ? parts[parts.length - 1] : undefined;
+    if (event.type === "MessageButtonClicked") {
+      const buttonId = event.button_id;
+      const ownerId = buttonId.split("_").find((p) => p.startsWith("id:"));
+      return ownerId ? ownerId.split(":")[1] : undefined;
     }
     return undefined;
   }

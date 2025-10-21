@@ -12,7 +12,7 @@ import { PassageService } from "src/modules/toeic/services/passage.service";
 import { MMessageButtonClicked } from "./base";
 
 @Injectable()
-@Interaction(CommandType.CONFIRM_START_TEST)
+@Interaction(CommandType.BUTTON_CONFIRM_START_TEST)
 export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,
@@ -61,7 +61,7 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
 
       const buttons = firstQuestion.options.map((opt) =>
         new ButtonBuilder()
-          .setId(`answer_${firstQuestion.id}_${opt.optionLabel}_${mezonUserId}`)
+          .setId(`user-answer_q:${firstQuestion.id}_a:${opt.optionLabel}_id:${mezonUserId}`)
           .setLabel(`${opt.optionLabel}. ${opt.optionText}`)
           .setStyle(EButtonMessageStyle.PRIMARY)
           .build()

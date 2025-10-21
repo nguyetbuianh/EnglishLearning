@@ -36,7 +36,7 @@ interface ReplyMessageParams {
 }
 
 @Injectable()
-@Interaction(CommandType.NEXT_QUESTION)
+@Interaction(CommandType.BUTTON_NEXT_QUESTION)
 export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
   private static readonly COMPLETED_MESSAGE = { t: "✅ You have completed this part!" };
 
@@ -176,8 +176,7 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
 
     const buttons = question.options.map(opt =>
       new ButtonBuilder()
-        .setId(`answer_${opt.optionLabel}`)
-        .setId(`answer_${question.id}_${opt.optionLabel}_${mezonUserId}`)
+        .setId(`user-answer_q:${question.id}_a:${opt.optionLabel}_id:${mezonUserId}`)
         .setLabel(`${opt.optionLabel}. ${opt.optionText}`)
         .setStyle(EButtonMessageStyle.PRIMARY)
         .build()
