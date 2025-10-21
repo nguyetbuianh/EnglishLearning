@@ -36,7 +36,7 @@ export class EventRouter {
       const channel = await this.client.channels.fetch(event.channel_id);
 
       if (event.type === "ChannelMessage") {
-        if (!["welcome", "help"].includes(eventName)) {
+        if (!["welcome", "help", "init"].includes(eventName)) {
           const userId = event.sender_id;
           if (!userId) {
             return;
