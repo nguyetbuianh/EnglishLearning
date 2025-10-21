@@ -1,17 +1,19 @@
-import { MezonClient } from "mezon-sdk";
+import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
 import { Injectable } from "@nestjs/common";
 import { BaseHandler } from "./base";
 import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
 import { UserService } from "src/modules/user/user.service";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
-import { MessageButtonClicked } from "mezon-sdk/dist/cjs/rtapi/realtime";
 import { ToeicPartService } from "src/modules/toeic/services/toeic-part.service";
 import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service";
 import { UserAnswer } from "src/entities/user-answer.entity";
 import { OptionEnum } from "src/enum/option.enum";
 import { parseOption } from "src/utils/option.util";
 import { MMessageButtonClicked } from "./base";
+import { MessageBuilder } from "../builders/message.builder";
+import { Question } from "src/entities/question.entity";
+import { ButtonBuilder } from "../builders/button.builder";
 
 @Interaction("answer")
 @Injectable()
@@ -62,11 +64,11 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
         question.test.id
       );
 
-      const message = isCorrect ? "✅ Correct!" : "❌ Wrong answer.";
-      await this.mezonMessage.reply({ t: message });
+      await this.sendAnswerResponse(isCorrect, question, mezonId);
 
     } catch (error) {
       console.error("UserAnswerHandler Error:", error);
+
       await this.mezonMessage.reply({
         t: "⚠️ An error occurred while fetching User Answer. Please try again later.",
       });
@@ -110,4 +112,56 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       console.error("❌ Failed to save user answer:", error);
     }
   }
+
+  private async sendAnswerResponse(
+    isCorrect: boolean,
+    question: Question,
+    mezonId: string
+  ): Promise<void> {
+    try {
+      const { message_id: eventMessageId } = this.event;
+
+      const resultText = isCorrect ? "✅ Correct!" : "❌ Wrong answer.";
+
+      const explanationText = question.explanation
+        ? `\n📘 Explanation: \n ${question.explanation}`
+        : "\n\ℹ️ No explanation available for this question.";
+      const questionContent =
+        question.passage?.content?.length > 0
+          ? `${question.passage.content}\n\n**Question:** ${question.questionText}`
+          : question.questionText;
+
+      const buttons = new ButtonBuilder()
+        .setId(`next_question_${mezonId}`)
+        .setLabel("Next Question")
+        .setStyle(EButtonMessageStyle.PRIMARY)
+        .build();
+
+      const messagePayload = new MessageBuilder()
+        .createEmbed({
+          color: "#9fc117",
+          title: `Question ${question.questionNumber}`,
+          description: `${questionContent}\n\n${resultText}${explanationText}`,
+          footer: `✅ Correct Option: ${question.correctOption}`,
+          imageUrl: question.imageUrl || undefined,
+          audioUrl: question.audioUrl || undefined,
+        })
+        .setText(
+          `Start Test ${question.test?.id ?? "?"}, Part ${question.part?.id ?? "?"}`
+        )
+        .addButtonsRow([buttons])
+        .build();
+      if (eventMessageId) {
+        const messageToEdit = await this.mezonChanel.messages.fetch(eventMessageId);
+        await messageToEdit.update(
+          messagePayload,
+          undefined,
+          messagePayload.attachments
+        )
+      }
+    } catch (error) {
+      console.error("❌ Error sending answer response:", error);
+    }
+  }
+
 }
