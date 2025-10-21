@@ -64,7 +64,12 @@ export class EventRouter {
   }
 
   private getEventName(event: InteractionEvent): string | undefined {
+
     if ("button_id" in event && typeof event.button_id === "string") {
+      const buttonId = event.button_id;
+      if (buttonId.startsWith("answer_")) {
+        return "answer";
+      }
       return event.button_id.split("_").slice(0, 3).join("_");
     }
 

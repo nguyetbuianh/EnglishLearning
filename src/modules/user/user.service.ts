@@ -18,4 +18,10 @@ export class UserService {
     const newUser = this.userRepo.create({ mezonUserId: mezonUserId });
     return this.userRepo.save(newUser);
   }
+
+  async findUserById(userId: number): Promise<User | null> {
+    return this.userRepo.findOne({
+      where: { id: userId }
+    });
+  }
 }

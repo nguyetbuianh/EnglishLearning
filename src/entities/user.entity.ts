@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
+import { UserAnswer } from './user-answer.entity';
 
 @Entity('users')
 export class User {
@@ -13,4 +14,7 @@ export class User {
 
   @CreateDateColumn({ name: "joined_at", type: 'timestamp' })
   joinedAt: Date;
+
+  @OneToMany(() => UserAnswer, (uq) => uq.user)
+  userAnswer: UserAnswer[];
 }

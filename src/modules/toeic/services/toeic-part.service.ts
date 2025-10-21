@@ -13,4 +13,10 @@ export class ToeicPartService {
   async getAllParts(): Promise<ToeicPart[]> {
     return this.partRepo.find({ order: { id: 'ASC' } });
   }
+
+  async findPartById(partId: number): Promise<ToeicPart | null> {
+    return await this.partRepo.findOne({
+      where: { id: partId }
+    });
+  }
 }

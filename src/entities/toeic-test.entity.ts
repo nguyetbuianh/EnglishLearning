@@ -6,6 +6,7 @@ import {
 } from 'typeorm';
 import { Question } from './question.entity';
 import { Passage } from './passage.entity';
+import { UserAnswer } from './user-answer.entity';
 
 @Entity('toeic_tests')
 export class ToeicTest {
@@ -26,4 +27,7 @@ export class ToeicTest {
 
   @OneToMany(() => Passage, (p) => p.part)
   passages: Passage[];
+
+  @OneToMany(() => UserAnswer, (ua) => ua.toeicTest)
+  userAnswers: UserAnswer[];
 }

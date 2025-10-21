@@ -8,25 +8,30 @@ import { ToeicQuestionService } from './services/toeic-question.service';
 import { Question } from 'src/entities/question.entity';
 import { PassageService } from './services/passage.service';
 import { Passage } from 'src/entities/passage.entity';
+import { UserAnswerService } from './services/user-answer.service';
+import { UserAnswer } from 'src/entities/user-answer.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
     ToeicPart,
     ToeicTest,
     Question,
-    Passage
+    Passage,
+    UserAnswer
   ])],
   providers: [
     ToeicPartService,
     ToeicTestService,
     ToeicQuestionService,
-    PassageService
+    PassageService,
+    UserAnswerService
   ],
   exports: [
     ToeicPartService,
     ToeicTestService,
     ToeicQuestionService,
-    PassageService
+    PassageService,
+    UserAnswerService
   ],
 })
 export class ToeicModule { }
