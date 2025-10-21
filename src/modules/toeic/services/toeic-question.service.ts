@@ -16,7 +16,7 @@ export class ToeicQuestionService {
         test: { id: testId },
         part: { id: partId },
       },
-      relations: ['options', 'test', 'part'],
+      relations: ['options', 'test', 'part', 'passage'],
       order: { id: 'ASC' },
     });
   }
@@ -58,7 +58,7 @@ export class ToeicQuestionService {
       where: {
         passage: { id: passageId },
       },
-      relations: ['options', 'passage', 'test', 'part'],
+      relations: ['options', 'test', 'part'],
       order: { id: 'ASC' },
     });
   }

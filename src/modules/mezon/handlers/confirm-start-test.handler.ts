@@ -39,17 +39,13 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
       }
 
       const { testId, partId } = session;
-      let passageContent = "";
-      if (partId === 6 || partId === 7) {
-        const passage = await this.passageService.getPassageDetail(testId, partId, 1);
-        if (passage) {
-          passageContent = `📖 *Passage ${passage.passageNumber}*\n${passage.title ? `**${passage.title}**\n` : ""}${passage.content}`;
-        }
-      }
-
       const firstQuestion = await this.toeicQuestionService.getFirstQuestion(testId, partId);
       if (!firstQuestion) {
         return;
+      }
+      let passageContent = "";
+      if (partId === 6 || partId === 7) {
+        passageContent = `📖 *Passage ${firstQuestion.passage.passageNumber}*\n${firstQuestion.passage.title ? `**${firstQuestion.passage.title}**\n` : ""}${firstQuestion.passage.content}`;
       }
 
       ToeicSessionStore.set(mezonUserId, {
