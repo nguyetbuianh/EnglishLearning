@@ -1,13 +1,13 @@
-import { CommandType } from "../enums/commands.enum";
-import { ChannelMessage, MezonClient } from "mezon-sdk";
+import { MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
 import { Injectable } from "@nestjs/common";
 import { BaseHandler } from "./base";
 import { UserService } from "src/modules/user/user.service";
+import { MChannelMessage } from "./base";
 
 @Interaction("init")
 @Injectable()
-export class InitializationHandler extends BaseHandler<ChannelMessage> {
+export class InitializationHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,
     private readonly userService: UserService,

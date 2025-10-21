@@ -7,10 +7,22 @@ import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { MessageButtonClicked } from "mezon-sdk/dist/cjs/rtapi/realtime";
 
+export type MChannelMessage = ChannelMessage & {
+  type: "ChannelMessage";
+}
+
+export type MMessageButtonClicked = MessageButtonClicked & {
+  type: "MessageButtonClicked";
+}
+
+export type MDropdownBoxSelected = DropdownBoxSelected & {
+  type: "DropdownBoxSelected";
+}
+
 export type InteractionEvent =
-  | ChannelMessage
-  | MessageButtonClicked
-  | DropdownBoxSelected;
+  | MChannelMessage
+  | MMessageButtonClicked
+  | MDropdownBoxSelected;
 
 export abstract class BaseHandler<T extends InteractionEvent> {
   protected mezonChanel!: TextChannel;

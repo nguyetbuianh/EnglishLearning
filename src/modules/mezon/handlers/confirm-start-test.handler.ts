@@ -8,12 +8,12 @@ import { ToeicSessionStore } from "../session/toeic-session.store";
 import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
 import { CommandType } from "../enums/commands.enum";
-import { MessageButtonClicked } from "mezon-sdk/dist/cjs/rtapi/realtime";
 import { PassageService } from "src/modules/toeic/services/passage.service";
+import { MMessageButtonClicked } from "./base";
 
 @Injectable()
 @Interaction(CommandType.CONFIRM_START_TEST)
-export class ConfirmStartTestHandler extends BaseHandler<MessageButtonClicked> {
+export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,
     private toeicQuestionService: ToeicQuestionService,

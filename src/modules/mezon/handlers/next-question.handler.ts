@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler } from "./base";
-import { ChannelMessage, EButtonMessageStyle, MezonClient } from "mezon-sdk";
+import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
 import { CommandType } from "../enums/commands.enum";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 import { PassageService } from "src/modules/toeic/services/passage.service";
@@ -10,6 +10,7 @@ import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
 import { Question } from "src/entities/question.entity";
 import { Passage } from "src/entities/passage.entity";
+import { MChannelMessage } from "./base";
 
 interface PartWithPassageParams {
   mezonUserId: string;
@@ -35,7 +36,7 @@ interface ReplyMessageParams {
 
 @Injectable()
 @Interaction(CommandType.NEXT_QUESTION)
-export class NextQuestionHandler extends BaseHandler<ChannelMessage> {
+export class NextQuestionHandler extends BaseHandler<MChannelMessage> {
   private static readonly COMPLETED_MESSAGE = { t: "✅ You have completed this part!" };
 
   constructor(

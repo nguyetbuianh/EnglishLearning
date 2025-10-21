@@ -1,4 +1,4 @@
-import { ChannelMessage, MezonClient } from "mezon-sdk";
+import { MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
 import { Injectable } from "@nestjs/common";
 import { BaseHandler } from "./base";
@@ -11,10 +11,11 @@ import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service"
 import { UserAnswer } from "src/entities/user-answer.entity";
 import { OptionEnum } from "src/enum/option.enum";
 import { parseOption } from "src/utils/option.util";
+import { MMessageButtonClicked } from "./base";
 
 @Interaction("answer")
 @Injectable()
-export class UserAnswerHandler extends BaseHandler<MessageButtonClicked> {
+export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,
     private readonly questionService: ToeicQuestionService,
