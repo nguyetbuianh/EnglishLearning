@@ -19,13 +19,6 @@ export class PassageService {
         passageNumber: passageNumber,
       },
     });
-
-    if (!passage) {
-      throw new NotFoundException(
-        `Passage not found.`,
-      );
-    }
-
     return passage;
   }
 }
