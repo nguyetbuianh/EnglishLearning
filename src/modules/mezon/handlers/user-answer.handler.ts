@@ -165,11 +165,8 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
           description: (() => {
             const lines: string[] = [];
 
-            if (question.passage.content.length > 0) {
-              lines.push(question.passage.content);
-              lines.push(`**Question:** ${question.questionText}`);
-            } else {
-              lines.push(question.questionText);
+            if (questionContent.length > 0) {
+              lines.push(questionContent);
             }
 
             if (resultText) lines.push(resultText);
