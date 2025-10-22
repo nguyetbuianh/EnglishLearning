@@ -32,7 +32,5 @@ export class SelectPartHandler extends BaseHandler<MMessageButtonClicked> {
       ...currentSession,
       partId,
     });
-
-    this.logger.debug(`User ${userId} đã chọn part ${partId}`);
   }
 }

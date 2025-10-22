@@ -1,15 +1,13 @@
 import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
-import { UserService } from "src/modules/user/user.service";
 import { Injectable } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
-import { BaseHandler } from "./base";
+import { BaseHandler, MMessageButtonClicked } from "./base";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
 import { CommandType } from "../enums/commands.enum";
-import { PassageService } from "src/modules/toeic/services/passage.service";
-import { MMessageButtonClicked } from "./base";
+import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
 
 @Injectable()
 @Interaction(CommandType.BUTTON_CONFIRM_START_TEST)
@@ -17,8 +15,7 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
   constructor(
     protected readonly client: MezonClient,
     private toeicQuestionService: ToeicQuestionService,
-    private userService: UserService,
-    private readonly passageService: PassageService
+    private userProgressService: UserProgressService,
   ) {
     super(client);
   }
@@ -39,6 +36,16 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
       }
 
       const { testId, partId } = session;
+      const existingProgress = await this.userProgressService.getProgress(mezonUserId, testId, partId);
+      if (existingProgress?.isCompleted === true) {
+        await this.sendCompletionMessag(testId, partId, mezonUserId);
+        return;
+      }
+      if (existingProgress) {
+        await this.sendContinueOrRestartMessage(testId, partId, mezonUserId);
+        return;
+      }
+
       const firstQuestion = await this.toeicQuestionService.getFirstQuestion(testId, partId);
       if (!firstQuestion) {
         return;
@@ -48,11 +55,17 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
         passageContent = `📖 *Passage ${firstQuestion.passage.passageNumber}*\n${firstQuestion.passage.title ? `**${firstQuestion.passage.title}**\n` : ""}${firstQuestion.passage.content}`;
       }
 
+      await this.userProgressService.createProgress({
+        userMezonId: mezonUserId,
+        testId,
+        partId,
+        currentQuestionNumber: firstQuestion.questionNumber,
+        currentPassageNumber: partId === 6 || partId === 7 ? 1 : undefined,
+      });
+
       ToeicSessionStore.set(mezonUserId, {
         testId: firstQuestion.test.id,
         partId: firstQuestion.part.id,
-        currentQuestionNumber: firstQuestion.questionNumber,
-        currentPassageNumber: partId === 6 || partId === 7 ? 1 : undefined,
       });
 
       const buttons = firstQuestion.options.map((opt) =>
@@ -84,9 +97,81 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
         messagePayload.attachments
       );;
     } catch (error) {
+      console.error("❌ Error in ConfirmStartTestHandler:", error);
       await this.mezonMessage.reply({
-        t: 'Something went wrong. Please try again later.'
+        t: '😢 Oops! Something went wrong. Please try again later!'
       })
+    }
+  }
+
+  private async sendContinueOrRestartMessage(
+    testId: number,
+    partId: number,
+    mezonId: string,
+  ): Promise<void> {
+    try {
+      const continueButton = new ButtonBuilder()
+        .setId(`continue-test_id:${mezonId}`)
+        .setLabel("Continue Test")
+        .setStyle(EButtonMessageStyle.PRIMARY)
+        .build();
+
+      const restartButton = new ButtonBuilder()
+        .setId(`restart-test_id:${mezonId}`)
+        .setLabel("Restart Test")
+        .setStyle(EButtonMessageStyle.PRIMARY)
+        .build();
+
+      const messagePayload = new MessageBuilder()
+        .createEmbed({
+          color: "#c12b17ff",
+          title: `🟡 You have started the Test ${testId} - Part ${partId}.\n`,
+          description: `Choose Continue Test to continue or Restart Test to start over.`,
+          footer: `English Learning Bot`,
+        })
+        .addButtonsRow([continueButton, restartButton])
+        .build();
+
+      await this.mezonMessage.update(messagePayload);
+    } catch (error) {
+      console.error("❌ Error sending answer response:", error);
+    }
+  }
+
+  private async sendCompletionMessag(
+    testId: number,
+    partId: number,
+    mezonId: string,
+  ): Promise<void> {
+    try {
+      const restartButton = new ButtonBuilder()
+        .setId(`restart-test_id:${mezonId}`)
+        .setLabel("Restart Test")
+        .setStyle(EButtonMessageStyle.PRIMARY)
+        .build();
+
+      const cancelButton = new ButtonBuilder()
+        .setId(`cancel-test_id:${mezonId}`)
+        .setLabel("❌ Cancel")
+        .setStyle(EButtonMessageStyle.DANGER)
+        .build();
+
+      const messagePayload = new MessageBuilder()
+        .createEmbed({
+          color: "#c12b17ff",
+          title: `🟡 You have completed the Test ${testId} - Part ${partId}.\n`,
+          description: `Choose Restart Test to start over or Cancel to cancel the test.`,
+          footer: `English Learning Bot`,
+        })
+        .addButtonsRow([restartButton, cancelButton])
+        .build();
+
+      await this.mezonMessage.update(messagePayload);
+    } catch (error) {
+      console.error("❌ Error sending answer response:", error);
+      await this.mezonMessage.reply({
+        t: ("😢 Oops! Something went wrong. Please try again later!")
+      });
     }
   }
 }

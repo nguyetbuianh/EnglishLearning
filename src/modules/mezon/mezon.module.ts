@@ -20,6 +20,7 @@ import { NextQuestionHandler } from './handlers/next-question.handler';
 import { CancelTestHandler } from './handlers/cancel-test.handler';
 import { TopicVocabularyModule } from '../topic-vocabulary/topic-vocabulary.module';
 import { AllTopicVocabularyHandler } from './handlers/all-topic-vocabulary.handler';
+import { ContinueTestHandler } from './handlers/continue-test.handler';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -33,7 +34,8 @@ const commandHandlers = [
   UserAnswerHandler,
   NextQuestionHandler,
   CancelTestHandler,
-  AllTopicVocabularyHandler
+  AllTopicVocabularyHandler,
+  ContinueTestHandler
 ];
 
 @Module({
