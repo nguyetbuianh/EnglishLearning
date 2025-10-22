@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Vocabulary } from "./vocabulary.entity";
 
-@Entity("topic-vocabularies")
-export class TopicVocabulary {
+@Entity("topic")
+export class Topic {
   @PrimaryGeneratedColumn({ name: "id" })
   public id: number;
 
@@ -16,4 +17,7 @@ export class TopicVocabulary {
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   public createAt: Date;
+
+  @OneToMany(() => Vocabulary, (vocabulary) => vocabulary.topic)
+  public vocabularies: Vocabulary[];
 }

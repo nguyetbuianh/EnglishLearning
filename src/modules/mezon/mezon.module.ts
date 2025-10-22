@@ -18,8 +18,10 @@ import { SelectTestHandler } from './handlers/select-test.handler';
 import { UserAnswerHandler } from './handlers/user-answer.handler';
 import { NextQuestionHandler } from './handlers/next-question.handler';
 import { CancelTestHandler } from './handlers/cancel-test.handler';
-import { TopicVocabularyModule } from '../topic-vocabulary/topic-vocabulary.module';
-import { AllTopicVocabularyHandler } from './handlers/all-topic-vocabulary.handler';
+import { TopicModule } from '../topic-vocabulary/topic.module';
+import { AllTopicHandler } from './handlers/all-topic.handler';
+import { ShowVocabularyHandler } from './handlers/vocabulary-of-topic.handler';
+import { VocabularyModule } from '../vocabulary/vocabulary.module';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -33,14 +35,16 @@ const commandHandlers = [
   UserAnswerHandler,
   NextQuestionHandler,
   CancelTestHandler,
-  AllTopicVocabularyHandler
+  AllTopicHandler,
+  ShowVocabularyHandler
 ];
 
 @Module({
   imports: [
     UserModule,
     ToeicModule,
-    TopicVocabularyModule
+    TopicModule,
+    VocabularyModule
   ],
   providers: [
     MezonService,

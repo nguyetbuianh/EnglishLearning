@@ -4,6 +4,7 @@ export enum CommandType {
   COMMAND_INIT = 'init',
   COMMAND_ALL_PART = 'all-part',
   COMMAND_ALL_TEST = 'all-test',
+  COMMAND_ALL_TOPIC = 'all-topic',
 
   SELECT_PART = 'toeic-part',
   SELECT_TEST = 'toeic-test',
@@ -12,5 +13,6 @@ export enum CommandType {
   BUTTON_NEXT_QUESTION = 'next-question',
   BUTTON_CANCEL_TEST = 'cancel-test',
   BUTTON_USER_ANSWER = 'user-answer',
+  BUTTON_SHOW_VOCABULARY = 'show-vocabulary',
 }
 
