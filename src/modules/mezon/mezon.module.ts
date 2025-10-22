@@ -21,6 +21,7 @@ import { CancelTestHandler } from './handlers/cancel-test.handler';
 import { TopicVocabularyModule } from '../topic-vocabulary/topic-vocabulary.module';
 import { AllTopicVocabularyHandler } from './handlers/all-topic-vocabulary.handler';
 import { ContinueTestHandler } from './handlers/continue-test.handler';
+import { RestartTestHandler } from './handlers/restart-test.handler';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -35,7 +36,8 @@ const commandHandlers = [
   NextQuestionHandler,
   CancelTestHandler,
   AllTopicVocabularyHandler,
-  ContinueTestHandler
+  ContinueTestHandler,
+  RestartTestHandler
 ];
 
 @Module({

@@ -91,11 +91,7 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
         currentPassageNumber: question.passage ? question.passage.passageNumber : undefined,
       });
 
-      ToeicSessionStore.set(mezonUserId, {
-        testId: question.test.id,
-        partId: question.part.id,
-      });
-
+      await updateSession(mezonUserId, question);
       await replyQuestionMessage({
         question: question,
         partId: partId,
