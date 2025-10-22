@@ -1,4 +1,4 @@
-import { ChannelMessageContent, MezonClient } from "mezon-sdk";
+import { MezonClient } from "mezon-sdk";
 import { BaseHandler } from "./base";
 import { MMessageButtonClicked } from "./base";
 import { Injectable } from "@nestjs/common";
@@ -29,6 +29,9 @@ export class CancelTestHandler extends BaseHandler<MMessageButtonClicked> {
       await this.mezonMessage.update(messagePayload);
     } catch (error) {
       console.error("❗Error handling the cancel test button:", error);
+      await this.mezonMessage.reply({
+        t: ("😢 Oops! Something went wrong. Please try again later!")
+      });
     }
   }
 }

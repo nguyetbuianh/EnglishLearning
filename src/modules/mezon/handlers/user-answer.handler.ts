@@ -152,10 +152,16 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
           ? `${question.passage.content}\n\n**Question:** ${question.questionText}`
           : question.questionText;
 
-      const buttons = new ButtonBuilder()
+      const nextQuestionButton = new ButtonBuilder()
         .setId(`next-question_id:${mezonId}`)
         .setLabel("Next Question")
         .setStyle(EButtonMessageStyle.PRIMARY)
+        .build();
+
+      const cancelButton = new ButtonBuilder()
+        .setId(`cancel-test_id:${mezonId}`)
+        .setLabel("Cancel Test")
+        .setStyle(EButtonMessageStyle.DANGER)
         .build();
 
       const messagePayload = new MessageBuilder()
@@ -179,7 +185,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
           audioUrl: question.audioUrl || undefined,
         })
         .setText(`Start Test ${question.test?.id ?? "?"}, Part ${question.part?.id ?? "?"}`)
-        .addButtonsRow([buttons])
+        .addButtonsRow([nextQuestionButton, cancelButton])
         .build();
 
       await this.mezonMessage.update(
