@@ -4,8 +4,9 @@ import { ButtonBuilder } from "../builders/button.builder";
 import { EButtonMessageStyle } from "mezon-sdk";
 import { MessageBuilder } from "../builders/message.builder";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
+import { UserAnswer } from "src/entities/user-answer.entity";
 
-interface ReplyMessageParams {
+interface QuestionMessageParams {
   question: Question;
   partId: number;
   testId: number;
@@ -14,8 +15,17 @@ interface ReplyMessageParams {
   mezonMessage?: Message;
 }
 
-export async function replyQuestionMessage(replyMessageParams: ReplyMessageParams) {
-  const { question, partId, testId, passage, mezonUserId, mezonMessage } = replyMessageParams;
+export interface AnswerReviewParams {
+  mezonMessage: Message;
+  userAnswers: {
+    question: Question;
+    chosenOption: string;
+    isCorrect: boolean;
+  }[];
+}
+
+export async function replyQuestionMessage(questionMessageParams: QuestionMessageParams) {
+  const { question, partId, testId, passage, mezonUserId, mezonMessage } = questionMessageParams;
   const passageContent = passage
     ? `📖 *Passage ${passage.passageNumber}*\n${passage.title ? `**${passage.title}**\n` : ""}${passage.content}`
     : "";
@@ -47,4 +57,36 @@ export async function replyQuestionMessage(replyMessageParams: ReplyMessageParam
     undefined,
     messagePayload.attachments
   )
+}
+
+export async function showAnswerReviewMessage(answerReviewParams: AnswerReviewParams) {
+  const { mezonMessage, userAnswers } = answerReviewParams;
+
+  const resultsText = userAnswers
+    .map(
+      (answer) =>
+        `Question ${answer.question.questionNumber}: ${answer.chosenOption} ${answer.isCorrect ? "✅" : "❌"
+        }`
+    )
+    .join("\n");
+
+  const messagePayload = new MessageBuilder()
+    .createEmbed({
+      color: "#3498db",
+      title: "📝 Part Review Results",
+      description: `
+      Here are your answers for this part:
+
+      ${resultsText}
+
+      If you believe any question or answer is incorrect, please contact us to report it.
+      `,
+    })
+    .build();
+
+  await mezonMessage!.update(
+    messagePayload,
+    undefined,
+    messagePayload.attachments
+  );
 }

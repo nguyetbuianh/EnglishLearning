@@ -25,7 +25,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     private readonly userService: UserService,
     private readonly toeicPartService: ToeicPartService,
     private readonly toeicTestService: ToeicTestService,
-    private readonly userAnswerService: UserAnswerService
+    private readonly userAnswerService: UserAnswerService,
   ) {
     super(client);
   }
@@ -66,7 +66,8 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
         chosenOption,
         isCorrect,
         question.part.id,
-        question.test.id
+        question.test.id,
+        question.id
       );
 
       await this.sendAnswerResponse(isCorrect, question, mezonId, chosenOption);
@@ -99,7 +100,8 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     chosenOption: OptionEnum,
     isCorrect: boolean,
     partId: number,
-    testId: number
+    testId: number,
+    questionId: number
   ): Promise<void> {
     try {
       const existingUser = await this.userService.findUserById(userId);
@@ -114,7 +116,11 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       }
       const existingTest = await this.toeicTestService.findTestById(testId);
       if (!existingTest) {
-        console.warn(`⚠️ User with test id ${testId} not found`);
+        return;
+      }
+
+      const existingQuestion = await this.questionService.findQuestionById(questionId);
+      if (!existingQuestion) {
         return;
       }
 
@@ -124,10 +130,9 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       newUserAnswer.isCorrect = isCorrect;
       newUserAnswer.toeicPart = existingPart;
       newUserAnswer.toeicTest = existingTest;
+      newUserAnswer.question = existingQuestion;
 
       await this.userAnswerService.recordAnswer(newUserAnswer);
-
-
     } catch (error) {
       console.error("❌ Failed to save user answer:", error);
       await this.mezonMessage.reply({

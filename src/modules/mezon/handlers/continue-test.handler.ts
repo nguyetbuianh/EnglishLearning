@@ -6,7 +6,7 @@ import { CommandType } from "../enums/commands.enum";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
-import { replyQuestionMessage } from "../utils/reply-question.util";
+import { replyQuestionMessage } from "../utils/reply-message.util";
 import { PassageService } from "src/modules/toeic/services/passage.service";
 import { updateSession } from "../utils/update-session.util";
 
@@ -34,7 +34,7 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
       }
 
       const { testId, partId } = session;
-      const existingProgress = await this.userProgressService.getProgress(mezonUserId, testId, partId);
+      const existingProgress = await this.userProgressService.getProgress(testId, partId, mezonUserId);
       if (!existingProgress) {
         return;
       }
