@@ -23,6 +23,10 @@ export class ShowVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
 
   async handle(): Promise<void> {
     try {
+      const mezonUserId = this.event.user_id;
+      if (!mezonUserId) {
+        return;
+      }
       const rawExtra =
         this.event.extra_data || this.event.button_id || "";
 
@@ -54,17 +58,25 @@ export class ShowVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
       }
 
       const vocabularyList = vocabularies
-        .map(
-          (vocab, index) =>
-            `**${(page - 1) * limit + index + 1}.** 📝 **${vocab.word}** — *${vocab.meaning}*`
-        )
+        .map((vocab, index) => {
+          const number = (page - 1) * limit + index + 1;
+          return (
+            `*${number}. ${vocab.word}* 🔊 *${vocab.pronounce || "—"}*\n` +
+            `> 🧩 *Type:* ${vocab.partOfSpeech}\n` +
+            `> 🇻🇳 *Meaning:* ${vocab.meaning}\n` +
+            (vocab.exampleSentence
+              ? `> 💬 *Example:* _${vocab.exampleSentence}_`
+              : "")
+          );
+        })
         .join("\n\n");
+
 
       const buttons: ButtonComponent[] = [];
 
       if (page > 1) {
         const previous = new ButtonBuilder()
-          .setId(`show-vocabulary_${topicId}_${page - 1}`)
+          .setId(`show-vocabulary_${topicId}_${page - 1}_id:${mezonUserId}`)
           .setLabel("⬅ Previous")
           .setStyle(EButtonMessageStyle.SECONDARY)
           .build();
@@ -73,7 +85,7 @@ export class ShowVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
 
       if (page * limit < total) {
         const next = new ButtonBuilder()
-          .setId(`show-vocabulary_${topicId}_${page + 1}`)
+          .setId(`show-vocabulary_${topicId}_${page + 1}_id:${mezonUserId}`)
           .setLabel("Next ➡")
           .setStyle(EButtonMessageStyle.PRIMARY)
           .build();
