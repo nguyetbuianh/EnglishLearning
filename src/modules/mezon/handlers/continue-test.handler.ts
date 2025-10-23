@@ -9,6 +9,19 @@ import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.
 import { replyQuestionMessage } from "../utils/reply-message.util";
 import { PassageService } from "src/modules/toeic/services/passage.service";
 import { updateSession } from "../utils/update-session.util";
+import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
+import { UserService } from "src/modules/user/user.service";
+import { Question } from "src/entities/question.entity";
+import { Passage } from "src/entities/passage.entity";
+
+interface LoadQuestionParams {
+  userId: number;
+  mezonUserId: string;
+  testId: number;
+  partId: number;
+  question: Question;
+  passage?: Passage;
+}
 
 @Injectable()
 @Interaction(CommandType.BUTTON_CONTINUE_TEST)
@@ -16,9 +29,11 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
   private static readonly COMPLETED_MESSAGE = { t: "✅ You have completed this part!" };
   constructor(
     protected readonly client: MezonClient,
-    private userProgressService: UserProgressService,
-    private toeicQuestionService: ToeicQuestionService,
+    private readonly userProgressService: UserProgressService,
+    private readonly toeicQuestionService: ToeicQuestionService,
     private readonly passageService: PassageService,
+    private readonly userAnswerService: UserAnswerService,
+    private readonly userService: UserService,
   ) {
     super(client);
   }
@@ -26,12 +41,8 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
   async handle(): Promise<void> {
     try {
       const mezonUserId = this.event.user_id;
-      if (!mezonUserId) return;
-
       const session = ToeicSessionStore.get(mezonUserId);
-      if (!session?.testId || !session?.partId) {
-        return;
-      }
+      if (!mezonUserId || !session?.testId || !session?.partId) return;
 
       const { testId, partId } = session;
       const existingProgress = await this.userProgressService.getProgress(testId, partId, mezonUserId);
@@ -39,66 +50,44 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
         return;
       }
 
+      const user = await this.userService.findUserByMezonId(mezonUserId);
+      if (!user) {
+        return;
+      }
+
       const question = await this.toeicQuestionService.getQuestion(testId, partId, existingProgress.currentQuestionNumber);
       if (!question) {
-        const nextPassage = await this.passageService.getPassageDetail(
+        const passage = await this.passageService.getPassageDetail(
           testId,
           partId,
           existingProgress.currentPassageNumber
         );
-        if (!nextPassage) {
-          await this.userProgressService.updateProgress({
-            userMezonId: mezonUserId,
-            testId,
-            partId,
-            isCompleted: true,
-          });
-          await this.mezonMessage.update(ContinueTestHandler.COMPLETED_MESSAGE);
-          return;
-        }
+        if (!passage) return this.finishPart(mezonUserId, testId, partId);
 
-        const firstQuestion = await this.toeicQuestionService.getFirstQuestionByPassage(nextPassage.id);
+        const firstQuestion = await this.toeicQuestionService.getFirstQuestionByPassage(passage.id);
         if (!firstQuestion) {
           await this.mezonMessage.update(ContinueTestHandler.COMPLETED_MESSAGE);
           return;
         }
 
-        await this.userProgressService.updateProgress({
-          userMezonId: mezonUserId,
-          testId,
-          partId,
-          currentQuestionNumber: firstQuestion.questionNumber,
-          currentPassageNumber: firstQuestion.passage.passageNumber,
-        });
-
-        updateSession(mezonUserId, firstQuestion);
-        await replyQuestionMessage({
-          question: firstQuestion,
-          partId: partId,
-          testId: testId,
-          passage: nextPassage,
+        await this.loadQuestion({
+          userId: user.id,
           mezonUserId: mezonUserId,
-          mezonMessage: this.mezonMessage,
+          testId: testId,
+          partId: partId,
+          question: firstQuestion,
+          passage: passage
         });
         return;
       }
 
-      await this.userProgressService.updateProgress({
-        userMezonId: mezonUserId,
-        testId,
-        partId,
-        currentQuestionNumber: question.questionNumber,
-        currentPassageNumber: question.passage ? question.passage.passageNumber : undefined,
-      });
-
-      await updateSession(mezonUserId, question);
-      await replyQuestionMessage({
-        question: question,
-        partId: partId,
-        testId: testId,
-        passage: question.passage,
+      await this.loadQuestion({
+        userId: user.id,
         mezonUserId: mezonUserId,
-        mezonMessage: this.mezonMessage,
+        testId: testId,
+        partId: partId,
+        question: question,
+        passage: question.passage
       });
     } catch (error) {
       console.error("❗Error handling the continue test:", error);
@@ -106,5 +95,40 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
         t: ("😢 Oops! Something went wrong. Please try again later!")
       });
     }
+  }
+
+  private async finishPart(mezonUserId: string, testId: number, partId: number) {
+    await this.userProgressService.updateProgress({
+      userMezonId: mezonUserId,
+      testId,
+      partId,
+      isCompleted: true,
+    });
+    await this.mezonMessage.update(ContinueTestHandler.COMPLETED_MESSAGE);
+  }
+
+  private async loadQuestion(loadQuestionParams: LoadQuestionParams) {
+    const { userId, mezonUserId, testId, partId, question, passage } = loadQuestionParams;
+
+    await this.userProgressService.updateProgress({
+      userMezonId: mezonUserId,
+      testId,
+      partId,
+      currentQuestionNumber: question.questionNumber,
+      currentPassageNumber: question.passage?.passageNumber,
+    });
+
+    updateSession(mezonUserId, question);
+
+    await this.userAnswerService.deleteUserAnswerByUserAndQuestion(userId, question.id);
+
+    await replyQuestionMessage({
+      question,
+      partId,
+      testId,
+      passage,
+      mezonUserId,
+      mezonMessage: this.mezonMessage,
+    });
   }
 }
