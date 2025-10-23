@@ -25,6 +25,7 @@ import { VocabularyModule } from '../vocabulary/vocabulary.module';
 import { ContinueTestHandler } from './handlers/continue-test.handler';
 import { RestartTestHandler } from './handlers/restart-test.handler';
 import { HelpHandler } from './handlers/help.handler';
+import { NextPartHandler } from './handlers/next-part.handler';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -42,7 +43,8 @@ const commandHandlers = [
   ShowVocabularyHandler,
   ContinueTestHandler,
   RestartTestHandler,
-  HelpHandler
+  HelpHandler,
+  NextPartHandler
 ];
 
 @Module({

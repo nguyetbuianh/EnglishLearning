@@ -82,7 +82,7 @@ export class StartTestHandler extends BaseHandler<MChannelMessage> {
         .build();
 
       const replyMessage = await this.mezonMessage.reply(payload);
-      updateSession(this.mezonMessage.sender_id, undefined, replyMessage.message_id);
+      await updateSession(this.mezonMessage.sender_id, undefined, replyMessage.message_id);
     } catch (error) {
       console.error("StartTestCommandHandler Error:", error);
       await this.mezonMessage.reply({

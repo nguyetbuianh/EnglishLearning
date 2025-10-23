@@ -42,6 +42,7 @@ interface NextQuestionParams {
 }
 
 interface FinishPartParams {
+  mezonUserId?: string;
   testId: number;
   partId: number;
   userId: number;
@@ -142,6 +143,7 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
           isCompleted: true,
         });
         await this.finishPart({
+          mezonUserId: mezonUserId,
           testId: testId,
           partId: partId,
           userId: userId!,
@@ -153,6 +155,7 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
       const firstQuestion = await this.toeicQuestionService.getFirstQuestionByPassage(nextPassage.id);
       if (!firstQuestion) {
         await this.finishPart({
+          mezonUserId: mezonUserId,
           testId: testId,
           partId: partId,
           userId: userId!,
@@ -195,6 +198,7 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
     const question = await this.toeicQuestionService.getQuestion(testId, partId, nextQuestionNumber);
     if (!question) {
       await this.finishPart({
+        mezonUserId: mezonUserId,
         testId: testId,
         partId: partId,
         userId: userId!,
@@ -228,13 +232,17 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
       currentQuestionNumber: question.questionNumber,
       currentPassageNumber: question.passage?.passageNumber,
     });
-    updateSession(mezonUserId, question, this.mezonMessage.id);
+    await updateSession(mezonUserId, question, this.mezonMessage.id);
     await replyQuestionMessage({ question, partId, testId, passage, mezonUserId, mezonMessage });
   }
 
   private async finishPart(finishPartParams: FinishPartParams) {
-    const { testId, partId, userId, mezonMessage } = finishPartParams;
+    const { mezonUserId, testId, partId, userId, mezonMessage } = finishPartParams;
     const userAnswers = await this.userAnswerService.getUserAnswersByPartAndTest(testId, partId, userId);
-    await showAnswerReviewMessage({ mezonMessage, userAnswers });
-  }
+    await showAnswerReviewMessage({
+      mezonMessage: mezonMessage,
+      mezonUserId: mezonUserId,
+      userAnswers: userAnswers,
+    });
+  } 
 }
