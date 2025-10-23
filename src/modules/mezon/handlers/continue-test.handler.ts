@@ -100,8 +100,8 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
   private async finishPart(mezonUserId: string, testId: number, partId: number) {
     await this.userProgressService.updateProgress({
       userMezonId: mezonUserId,
-      testId,
-      partId,
+      testId: testId,
+      partId: partId,
       isCompleted: true,
     });
     await this.mezonMessage.update(ContinueTestHandler.COMPLETED_MESSAGE);
@@ -112,8 +112,8 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
 
     await this.userProgressService.updateProgress({
       userMezonId: mezonUserId,
-      testId,
-      partId,
+      testId: testId,
+      partId: partId,
       currentQuestionNumber: question.questionNumber,
       currentPassageNumber: question.passage?.passageNumber,
     });
@@ -123,11 +123,11 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
     await this.userAnswerService.deleteUserAnswerByUserAndQuestion(userId, question.id);
 
     await replyQuestionMessage({
-      question,
-      partId,
-      testId,
-      passage,
-      mezonUserId,
+      question: question,
+      partId: partId,
+      testId: testId,
+      passage: passage,
+      mezonUserId: mezonUserId,
       mezonMessage: this.mezonMessage,
     });
   }
