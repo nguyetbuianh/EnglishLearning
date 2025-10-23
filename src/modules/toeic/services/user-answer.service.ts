@@ -53,4 +53,18 @@ export class UserAnswerService {
       question: { id: questionId },
     });
   }
+
+  async getUserAnswersByTest(id: number, testId: number) {
+    return await this.userAnswerRepo.find({
+      where: {
+        user: { id: id },
+        toeicTest: { id: testId },
+      },
+      relations: ["toeicPart", "toeicTest", "question"],
+      order: {
+        toeicPart: { partNumber: "ASC" },
+        question: { questionNumber: "ASC" },
+      },
+    });
+  }
 }

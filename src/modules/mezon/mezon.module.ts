@@ -26,6 +26,7 @@ import { ContinueTestHandler } from './handlers/continue-test.handler';
 import { RestartTestHandler } from './handlers/restart-test.handler';
 import { HelpHandler } from './handlers/help.handler';
 import { NextPartHandler } from './handlers/next-part.handler';
+import { ReviewTestHandler } from './handlers/review-test.handler';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -44,7 +45,8 @@ const commandHandlers = [
   ContinueTestHandler,
   RestartTestHandler,
   HelpHandler,
-  NextPartHandler
+  NextPartHandler,
+  ReviewTestHandler
 ];
 
 @Module({
