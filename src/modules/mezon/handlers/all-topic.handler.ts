@@ -54,7 +54,7 @@ export class AllTopicHandler extends BaseHandler<MChannelMessage> {
         .build();
 
       const replyMessage = await this.mezonMessage.reply(messagePayload);
-      updateSession(this.mezonMessage.sender_id, undefined, replyMessage.message_id);
+      await updateSession(this.mezonMessage.sender_id, undefined, replyMessage.message_id);
     } catch (error) {
       await this.mezonMessage.reply({
         t: "⚠️ An error occurred while loading the topic vocabularies. Please try again later.",

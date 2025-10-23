@@ -64,7 +64,7 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
         currentPassageNumber: partId === 6 || partId === 7 ? 1 : undefined,
       });
       
-      updateSession(mezonUserId, firstQuestion, this.mezonMessage.id);
+      await updateSession(mezonUserId, firstQuestion, this.mezonMessage.id);
 
       const buttons = firstQuestion.options.map((opt) =>
         new ButtonBuilder()
