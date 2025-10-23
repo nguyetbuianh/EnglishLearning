@@ -52,7 +52,7 @@ export class RestartTestHandler extends BaseHandler<MMessageButtonClicked> {
         currentPassageNumber: firstQuestion.passage ? firstQuestion.passage.passageNumber : undefined,
       });
 
-      await updateSession(mezonUserId, firstQuestion);
+      await updateSession(mezonUserId, firstQuestion, this.mezonMessage.id);
 
       await this.userAnswerService.deleteUserAnswersByPartAndTest(
         testId,

@@ -228,7 +228,7 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
       currentQuestionNumber: question.questionNumber,
       currentPassageNumber: question.passage?.passageNumber,
     });
-    updateSession(mezonUserId, question);
+    updateSession(mezonUserId, question, this.mezonMessage.id);
     await replyQuestionMessage({ question, partId, testId, passage, mezonUserId, mezonMessage });
   }
 

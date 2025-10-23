@@ -9,6 +9,7 @@ import { SelectionBuilder } from "../builders/selection.builder";
 import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
 import { MChannelMessage } from "./base";
+import { updateSession } from "../utils/update-session.util";
 
 @Injectable()
 @Interaction(CommandType.COMMAND_START)
@@ -80,7 +81,8 @@ export class StartTestHandler extends BaseHandler<MChannelMessage> {
         .addButtonsRow([startButton, cancelButton])
         .build();
 
-      await this.mezonMessage.reply(payload);
+      const replyMessage = await this.mezonMessage.reply(payload);
+      updateSession(this.mezonMessage.sender_id, undefined, replyMessage.message_id);
     } catch (error) {
       console.error("StartTestCommandHandler Error:", error);
       await this.mezonMessage.reply({
