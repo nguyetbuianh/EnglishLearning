@@ -37,11 +37,11 @@ export class EventRouter {
       const channel = await this.client.channels.fetch(event.channel_id);
 
       if (event.type === "ChannelMessage" && event.content.t!.startsWith("*")) {
+        const userId = event.sender_id;
+        if (!userId) {
+          return;
+        }
         if (!["welcome", "help", "init"].includes(eventName)) {
-          const userId = event.sender_id;
-          if (!userId) {
-            return;
-          }
           const existingUser = await this.userService.findUserByMezonId(userId);
           if (!existingUser) {
             await this.sendWarning(channel, "⚠️ You are not registered. Use *init to start.");

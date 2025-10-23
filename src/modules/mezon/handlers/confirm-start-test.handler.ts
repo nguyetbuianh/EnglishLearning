@@ -36,9 +36,9 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
       }
 
       const { testId, partId } = session;
-      const existingProgress = await this.userProgressService.getProgress(mezonUserId, testId, partId);
+      const existingProgress = await this.userProgressService.getProgress(testId, partId, mezonUserId);
       if (existingProgress?.isCompleted === true) {
-        await this.sendCompletionMessag(testId, partId, mezonUserId);
+        await this.sendCompletionMessage(testId, partId, mezonUserId);
         return;
       }
       if (existingProgress) {
@@ -138,7 +138,7 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
     }
   }
 
-  private async sendCompletionMessag(
+  private async sendCompletionMessage(
     testId: number,
     partId: number,
     mezonId: string,

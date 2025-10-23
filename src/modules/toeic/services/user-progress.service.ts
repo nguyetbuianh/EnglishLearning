@@ -13,9 +13,9 @@ export class UserProgressService {
   ) { }
 
   async getProgress(
-    userMezonId: string,
     testId: number,
     partId: number,
+    userMezonId: string
   ): Promise<UserProgress | null> {
     return this.userProgressRepo.findOne({
       where: {

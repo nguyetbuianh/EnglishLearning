@@ -6,16 +6,20 @@ import { CommandType } from "../enums/commands.enum";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
-import { replyQuestionMessage } from "../utils/reply-question.util";
+import { replyQuestionMessage } from "../utils/reply-message.util";
 import { updateSession } from "../utils/update-session.util";
+import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
+import { UserService } from "src/modules/user/user.service";
 
 @Injectable()
 @Interaction(CommandType.BUTTON_RESTART_TEST)
 export class RestartTestHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,
-    private userProgressService: UserProgressService,
-    private toeicQuestionService: ToeicQuestionService,
+    private readonly userProgressService: UserProgressService,
+    private readonly toeicQuestionService: ToeicQuestionService,
+    private readonly userAnswerService: UserAnswerService,
+    private readonly userService: UserService,
   ) {
     super(client);
   }
@@ -35,6 +39,11 @@ export class RestartTestHandler extends BaseHandler<MMessageButtonClicked> {
         return;
       }
 
+      const user = await this.userService.findUserByMezonId(mezonUserId);
+      if (!user) {
+        return;
+      }
+
       await this.userProgressService.updateProgress({
         userMezonId: mezonUserId,
         testId,
@@ -44,6 +53,13 @@ export class RestartTestHandler extends BaseHandler<MMessageButtonClicked> {
       });
 
       await updateSession(mezonUserId, firstQuestion);
+
+      await this.userAnswerService.deleteUserAnswersByPartAndTest(
+        testId,
+        partId,
+        user.id,
+      );
+
       await replyQuestionMessage({
         question: firstQuestion,
         partId: partId,
