@@ -43,4 +43,14 @@ export class UserAnswerService {
       toeicPart: { id: partId },
     });
   }
+
+  async deleteUserAnswerByUserAndQuestion(
+    userId: number,
+    questionId: number,
+  ): Promise<void> {
+    await this.userAnswerRepo.delete({
+      user: { id: userId },
+      question: { id: questionId },
+    });
+  }
 }
