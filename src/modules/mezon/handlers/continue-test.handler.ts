@@ -118,7 +118,7 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
       currentPassageNumber: question.passage?.passageNumber,
     });
 
-    updateSession(mezonUserId, question);
+    updateSession(mezonUserId, question, this.mezonMessage.id);
 
     await this.userAnswerService.deleteUserAnswerByUserAndQuestion(userId, question.id);
 

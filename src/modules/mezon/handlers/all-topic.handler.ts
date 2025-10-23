@@ -7,6 +7,7 @@ import { MessageBuilder } from "../builders/message.builder";
 import { SelectionBuilder } from "../builders/selection.builder";
 import { ButtonBuilder } from "../builders/button.builder";
 import { CommandType } from "../enums/commands.enum";
+import { updateSession } from "../utils/update-session.util";
 
 @Injectable()
 @Interaction(CommandType.COMMAND_ALL_TOPIC)
@@ -52,7 +53,8 @@ export class AllTopicHandler extends BaseHandler<MChannelMessage> {
         .addSelectRow([selectionTopic])
         .build();
 
-      await this.mezonMessage.reply(messagePayload);
+      const replyMessage = await this.mezonMessage.reply(messagePayload);
+      updateSession(this.mezonMessage.sender_id, undefined, replyMessage.message_id);
     } catch (error) {
       await this.mezonMessage.reply({
         t: "⚠️ An error occurred while loading the topic vocabularies. Please try again later.",

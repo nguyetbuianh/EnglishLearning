@@ -3,7 +3,9 @@ import { MezonClient } from "mezon-sdk";
 import { InteractionFactory } from "./interaction-factory";
 import { InteractionEvent } from "../handlers/base";
 import { UserService } from "src/modules/user/user.service";
-import { appConfig } from "src/appConfig";
+import { ToeicSessionStore } from "../session/toeic-session.store";
+import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
+import { MessageBuilder } from "../builders/message.builder";
 
 @Injectable()
 export class EventRouter {
@@ -41,31 +43,44 @@ export class EventRouter {
         if (!userId) {
           return;
         }
-        if (!["welcome", "help", "init"].includes(eventName)) {
-          const existingUser = await this.userService.findUserByMezonId(userId);
-          if (!existingUser) {
-            await this.sendWarning(channel, "⚠️ You are not registered. Use *init to start.");
-            return;
-          }
+
+        await this.endUserSession(userId, channel, this.logger);
+
+        const existingUser = await this.userService.findUserByMezonId(userId);
+
+        const PUBLIC_COMMANDS = ["welcome", "help", "init"];
+        const isPublic = PUBLIC_COMMANDS.includes(eventName);
+
+        if (!existingUser && !isPublic) {
+          await this.sendWarning(channel, "⚠️ You are not registered. Use *init to start.");
+          return;
         }
-      } else {
-        const ownerId = this.extractOwnerId(event);
-        if (event.type === "MessageButtonClicked" || event.type === "DropdownBoxSelected") {
-          const userId = event.user_id;
-          if (ownerId && userId !== ownerId) {
-            await this.sendWarning(channel, "❌ You are not allowed to interact with this form.");
-            return;
-          }
+
+        const handler = this.interactionFactory.getHandler(eventName);
+        if (handler) {
+          await handler.process(event);
+        }
+
+        return;
+      }
+
+      const ownerId = this.extractOwnerId(event);
+      if (
+        event.type === "MessageButtonClicked" ||
+        event.type === "DropdownBoxSelected"
+      ) {
+        const userId = event.user_id;
+        if (ownerId && userId !== ownerId) {
+          await this.sendWarning(channel, "❌ You are not allowed to interact with this form.");
+          return;
         }
       }
 
       const handler = this.interactionFactory.getHandler(eventName);
-      if (!handler) {
-        return;
+      if (handler) {
+        await handler.process(event);
       }
-
-      await handler.process(event);
-    } catch (err: any) {
+    } catch (err) {
       this.logger.error(`❌ Error handling event: ${err.message}`);
     }
   }
@@ -92,7 +107,33 @@ export class EventRouter {
     return undefined;
   }
 
-  private async sendWarning(channel: any, message: string) {
+  private async sendWarning(channel: TextChannel, message: string) {
     await channel.send({ t: message });
+  }
+
+  private async endUserSession(userId: string, channel: TextChannel, logger?: Logger) {
+    const existingSession = ToeicSessionStore.get(userId);
+    if (!existingSession) return;
+
+    if (existingSession.messageId) {
+      try {
+        const oldMessage = await channel.messages.fetch(existingSession.messageId);
+        const messagePayload = new MessageBuilder()
+          .createEmbed({
+            color: "#db3f34ff",
+            title: "❌ TOEIC Test Cancelled",
+            description: "You have successfully cancelled your TOEIC test selection. Feel free to start a new test whenever you're ready!",
+            footer: "English Learning Bot",
+            timestamp: true,
+          })
+          .build();
+        await oldMessage.update(messagePayload);
+      } catch (err) {
+        logger?.warn?.(`⚠️ Could not edit old message for user ${userId}: ${err.message}`);
+      }
+    } else {
+      logger?.warn?.(`⚠️ No messageId found in session for user ${userId}`);
+    }
+    ToeicSessionStore.delete(userId);
   }
 }
