@@ -9,6 +9,9 @@ export class Vocabulary {
   @Column({ type: 'varchar', length: 100, nullable: false })
   word: string;
 
+  @Column({ type: 'varchar', length: 100, nullable: false })
+  pronounce: string;
+
   @Column({ name: "part_of_speech", type: "varchar", length: 50, nullable: true })
   partOfSpeech: string;
 
