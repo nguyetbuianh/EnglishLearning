@@ -5,6 +5,7 @@ export enum CommandType {
   COMMAND_ALL_PART = 'all-part',
   COMMAND_ALL_TEST = 'all-test',
   COMMAND_ALL_TOPIC = 'all-topic',
+  COMMAND_HELP = 'help',
 
   SELECT_PART = 'toeic-part',
   SELECT_TEST = 'toeic-test',

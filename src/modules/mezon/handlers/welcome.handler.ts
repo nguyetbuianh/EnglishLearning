@@ -26,27 +26,26 @@ export class WelcomeHandler extends BaseHandler<MChannelMessage> {
             {
               name: "📘 VOCABULARY",
               value:
-                "`*vocab <word>` – Get meaning, examples, synonyms\n" +
-                "`*save <word>` – Save the word to your list\n" +
-                "`*review` – Review saved vocabulary",
+                " – Get meaning, examples, synonyms\n" +
+                " – Save the word to your list\n" +
+                " – Review saved vocabulary",
             },
             {
               name: "🧠 QUIZZES",
               value:
-                "`*quiz` – Random TOEIC quiz\n" +
-                "`*quiz part5` – Grammar & Vocabulary\n" +
-                "`*quiz part6` – Text Completion",
+                "`quiz` – TOEIC quiz\n" +
+                "`part1` – Photographs\n" +
+                "`part2` – Question–Response\n" +
+                "`part3` – Conversations\n" +
+                "`part4` – Talks\n" +
+                "`part5` – Incomplete Sentences (Grammar & Vocabulary)\n" +
+                "`part6` – Text Completion\n" +
+                "`part7` – Reading Comprehension",
             },
             {
               name: "📈 PROGRESS",
               value:
-                "`*stats` – View your progress\n" +
-                "`*goal <target_score>` – Set your goal\n" +
-                "`*rank` – Leaderboard 🔥",
-            },
-            {
-              name: "💬 QUICK START",
-              value: "1️⃣ `*vocab hello`\n2️⃣ `*quiz`\n3️⃣ `*save work`",
+                " – View your progress\n",
             },
           ],
           footer: "Study 15 minutes daily – your TOEIC score will soar 🚀",
