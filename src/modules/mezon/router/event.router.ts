@@ -36,13 +36,12 @@ export class EventRouter {
 
       const channel = await this.client.channels.fetch(event.channel_id);
 
-      if (event.type === "ChannelMessage") {
-        if (event.sender_id === appConfig.bot.id) return;
+      if (event.type === "ChannelMessage" && event.content.t!.startsWith("*")) {
+        const userId = event.sender_id;
+        if (!userId) {
+          return;
+        }
         if (!["welcome", "help", "init"].includes(eventName)) {
-          const userId = event.sender_id;
-          if (!userId) {
-            return;
-          }
           const existingUser = await this.userService.findUserByMezonId(userId);
           if (!existingUser) {
             await this.sendWarning(channel, "⚠️ You are not registered. Use *init to start.");
@@ -51,7 +50,7 @@ export class EventRouter {
         }
       } else {
         const ownerId = this.extractOwnerId(event);
-        if (event.type === "MessageButtonClicked") {
+        if (event.type === "MessageButtonClicked" || event.type === "DropdownBoxSelected") {
           const userId = event.user_id;
           if (ownerId && userId !== ownerId) {
             await this.sendWarning(channel, "❌ You are not allowed to interact with this form.");
@@ -62,7 +61,6 @@ export class EventRouter {
 
       const handler = this.interactionFactory.getHandler(eventName);
       if (!handler) {
-        this.logger.warn(`⚠️ No handler found for event: ${eventName}`);
         return;
       }
 

@@ -10,6 +10,7 @@ import { User } from './user.entity';
 import { ToeicPart } from './toeic-part.entity';
 import { ToeicTest } from './toeic-test.entity';
 import { OptionEnum } from '../enum/option.enum';
+import { Question } from './question.entity';
 
 @Entity({ name: 'user_answer' })
 export class UserAnswer {
@@ -19,6 +20,10 @@ export class UserAnswer {
   @ManyToOne(() => User, (u) => u.userAnswer, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @ManyToOne(() => Question, (q) => q.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'question_id' })
+  question: Question;
 
   @Column({ type: 'enum', enum: ['A', 'B', 'C', 'D'], nullable: false })
   chosenOption: OptionEnum;

@@ -14,5 +14,7 @@ export enum CommandType {
   BUTTON_CANCEL_TEST = 'cancel-test',
   BUTTON_USER_ANSWER = 'user-answer',
   BUTTON_SHOW_VOCABULARY = 'show-vocabulary',
+  BUTTON_CONTINUE_TEST = 'continue-test',
+  BUTTON_RESTART_TEST = 'restart-test',
 }
 

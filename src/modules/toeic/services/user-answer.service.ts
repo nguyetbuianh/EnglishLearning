@@ -13,4 +13,34 @@ export class UserAnswerService {
   async recordAnswer(userAnswer: UserAnswer): Promise<UserAnswer> {
     return this.userAnswerRepo.save(userAnswer);
   }
+
+  async getUserAnswersByPartAndTest(
+    testId: number,
+    partId: number,
+    userId: number,
+  ): Promise<UserAnswer[]> {
+    return this.userAnswerRepo.find({
+      where: {
+        user: { id: userId },
+        toeicTest: { id: testId },
+        toeicPart: { id: partId },
+      },
+      relations: ['question', 'toeicPart', 'toeicTest'],
+      order: {
+        question: { id: 'ASC' },
+      },
+    });
+  }
+
+  async deleteUserAnswersByPartAndTest(
+    testId: number,
+    partId: number,
+    userId: number,
+  ): Promise<void> {
+    await this.userAnswerRepo.delete({
+      user: { id: userId },
+      toeicTest: { id: testId },
+      toeicPart: { id: partId },
+    });
+  }
 }

@@ -25,7 +25,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     private readonly userService: UserService,
     private readonly toeicPartService: ToeicPartService,
     private readonly toeicTestService: ToeicTestService,
-    private readonly userAnswerService: UserAnswerService
+    private readonly userAnswerService: UserAnswerService,
   ) {
     super(client);
   }
@@ -66,7 +66,8 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
         chosenOption,
         isCorrect,
         question.part.id,
-        question.test.id
+        question.test.id,
+        question.id
       );
 
       await this.sendAnswerResponse(isCorrect, question, mezonId, chosenOption);
@@ -99,7 +100,8 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     chosenOption: OptionEnum,
     isCorrect: boolean,
     partId: number,
-    testId: number
+    testId: number,
+    questionId: number
   ): Promise<void> {
     try {
       const existingUser = await this.userService.findUserById(userId);
@@ -114,7 +116,11 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       }
       const existingTest = await this.toeicTestService.findTestById(testId);
       if (!existingTest) {
-        console.warn(`⚠️ User with test id ${testId} not found`);
+        return;
+      }
+
+      const existingQuestion = await this.questionService.findQuestionById(questionId);
+      if (!existingQuestion) {
         return;
       }
 
@@ -124,10 +130,9 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       newUserAnswer.isCorrect = isCorrect;
       newUserAnswer.toeicPart = existingPart;
       newUserAnswer.toeicTest = existingTest;
+      newUserAnswer.question = existingQuestion;
 
       await this.userAnswerService.recordAnswer(newUserAnswer);
-
-
     } catch (error) {
       console.error("❌ Failed to save user answer:", error);
       await this.mezonMessage.reply({
@@ -152,10 +157,16 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
           ? `${question.passage.content}\n\n**Question:** ${question.questionText}`
           : question.questionText;
 
-      const buttons = new ButtonBuilder()
+      const nextQuestionButton = new ButtonBuilder()
         .setId(`next-question_id:${mezonId}`)
         .setLabel("Next Question")
         .setStyle(EButtonMessageStyle.PRIMARY)
+        .build();
+
+      const cancelButton = new ButtonBuilder()
+        .setId(`cancel-test_id:${mezonId}`)
+        .setLabel("Cancel Test")
+        .setStyle(EButtonMessageStyle.DANGER)
         .build();
 
       const messagePayload = new MessageBuilder()
@@ -165,11 +176,8 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
           description: (() => {
             const lines: string[] = [];
 
-            if (question.passage.content.length > 0) {
-              lines.push(question.passage.content);
-              lines.push(`**Question:** ${question.questionText}`);
-            } else {
-              lines.push(question.questionText);
+            if (questionContent.length > 0) {
+              lines.push(questionContent);
             }
 
             if (resultText) lines.push(resultText);
@@ -182,7 +190,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
           audioUrl: question.audioUrl || undefined,
         })
         .setText(`Start Test ${question.test?.id ?? "?"}, Part ${question.part?.id ?? "?"}`)
-        .addButtonsRow([buttons])
+        .addButtonsRow([nextQuestionButton, cancelButton])
         .build();
 
       await this.mezonMessage.update(

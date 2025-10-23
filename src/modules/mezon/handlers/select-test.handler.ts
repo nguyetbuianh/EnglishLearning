@@ -31,7 +31,5 @@ export class SelectTestHandler extends BaseHandler<MMessageButtonClicked> {
       ...currentSession,
       testId,
     });
-
-    this.logger.debug(`User ${userId} đã chọn test ${testId}`);
   }
 }
