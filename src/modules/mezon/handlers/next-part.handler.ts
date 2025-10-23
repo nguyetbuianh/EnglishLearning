@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { MezonClient } from "mezon-sdk";
+import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { BaseHandler, MMessageButtonClicked } from "./base";
@@ -9,6 +9,7 @@ import { updateSession } from "../utils/update-session.util";
 import { replyQuestionMessage } from "../utils/reply-message.util";
 import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
 import { MessageBuilder } from "../builders/message.builder";
+import { ButtonBuilder } from "../builders/button.builder";
 
 @Interaction(CommandType.BUTTON_NEXT_PART)
 @Injectable()
@@ -34,12 +35,18 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
       const { testId, partId } = session;
       const nextPart = partId + 1;
       if (nextPart > 7) {
+        const reviewTestButton = new ButtonBuilder()
+          .setId(`review-test_id:${mezonUserId}`)
+          .setLabel("Review Test Answers")
+          .setStyle(EButtonMessageStyle.SUCCESS)
+          .build();
+
         const messagePayload = new MessageBuilder()
           .createEmbed({
             color: "#00b894",
             title: "🏆 Congratulations!",
             description: `
-                🎉 **Amazing work!** You've successfully completed all **7 parts** of the TOEIC test.  
+                🎉 **Amazing work!** You've successfully completed all 7 parts of the TOEIC test.  
                 You're proving that your English skills are getting sharper every step of the way! 💪  
 
                 ✨ Keep up the great work — consistency is the key to mastery!  
@@ -54,6 +61,7 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
                       `,
             footer: "TOEIC Practice Bot • Keep pushing your limits 🚀",
           })
+          .addButtonsRow([reviewTestButton])
           .build();
         await this.mezonMessage.update(messagePayload);
         return;

@@ -71,7 +71,7 @@ export async function showAnswerReviewMessage(answerReviewParams: AnswerReviewPa
     )
     .join("\n");
 
-  const startButton = new ButtonBuilder()
+  const nextPartButton = new ButtonBuilder()
     .setId(`next-part_id:${mezonUserId}`)
     .setLabel("Next Part")
     .setStyle(EButtonMessageStyle.SUCCESS)
@@ -89,7 +89,7 @@ export async function showAnswerReviewMessage(answerReviewParams: AnswerReviewPa
       If you believe any question or answer is incorrect, please contact us to report it.
       `,
     })
-    .addButtonsRow([startButton])
+    .addButtonsRow([nextPartButton])
     .build();
 
   await mezonMessage!.update(

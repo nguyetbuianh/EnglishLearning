@@ -18,5 +18,6 @@ export enum CommandType {
   BUTTON_CONTINUE_TEST = 'continue-test',
   BUTTON_RESTART_TEST = 'restart-test',
   BUTTON_NEXT_PART = 'next-part',
+  BUTTON_REVIEW_TEST = 'review-test',
 }
 
