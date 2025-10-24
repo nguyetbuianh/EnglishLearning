@@ -69,4 +69,17 @@ export class ToeicQuestionService {
       relations: ['part', 'test', 'options', 'passage'],
     });
   }
+
+  async getRandomQuestion(): Promise<Question | null> {
+    const count = await this.questionRepo.count();
+    const randomOffset = Math.floor(Math.random() * count);
+
+    const question = await this.questionRepo.find({
+      relations: ['options', 'part', 'test', 'passage'],
+      skip: randomOffset,
+      take: 1,
+    });
+
+    return question[0] || null;
+  }
 }
