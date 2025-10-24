@@ -8,6 +8,7 @@ import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
 import { CommandType } from "../enums/commands.enum";
 import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
+import { updateSession } from "../utils/update-session.util";
 
 @Injectable()
 @Interaction(CommandType.BUTTON_CONFIRM_START_TEST)
@@ -62,11 +63,8 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
         currentQuestionNumber: firstQuestion.questionNumber,
         currentPassageNumber: partId === 6 || partId === 7 ? 1 : undefined,
       });
-
-      ToeicSessionStore.set(mezonUserId, {
-        testId: firstQuestion.test.id,
-        partId: firstQuestion.part.id,
-      });
+      
+      await updateSession(mezonUserId, firstQuestion, this.mezonMessage.id);
 
       const buttons = firstQuestion.options.map((opt) =>
         new ButtonBuilder()

@@ -4,7 +4,7 @@ import {
   ChannelMessageContent,
   EMessageComponentType,
   IMessageActionRow,
-  RadioButtonComponent,
+
   RadioFieldOption,
   SelectComponent,
 } from "mezon-sdk";
@@ -77,12 +77,6 @@ export class MessageBuilder {
     this.attachments.push(attachment);
     return this;
   }
-
-  addRadioRow(options: RadioButtonComponent[]): this {
-    this.components.push({ components: options })
-    return this;
-  }
-
 
   build() {
     if (!this.text && this.embeds.length === 0) {

@@ -1,15 +1,16 @@
-// 🧠 favorite-vocabulary.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
   ManyToOne,
   CreateDateColumn,
   JoinColumn,
+  Unique,
 } from "typeorm";
 import { Vocabulary } from "./vocabulary.entity";
 import { User } from "./user.entity";
 
 @Entity("favorite_vocabulary")
+@Unique(["user", "vocabulary"])
 export class FavoriteVocabulary {
   @PrimaryGeneratedColumn("increment", { type: "bigint" })
   id: number;

@@ -17,6 +17,10 @@ export enum CommandType {
   BUTTON_SHOW_VOCABULARY = 'show-vocabulary',
   BUTTON_CONTINUE_TEST = 'continue-test',
   BUTTON_RESTART_TEST = 'restart-test',
-  BUTTON_SAVE_VOCABULARY = "save_vocabulary",
+  BUTTON_SAVE_VOCABULARY = "save-vocabulary",
+  BUTTON_NEXT_PART = 'next-part',
+  BUTTON_REVIEW_TEST = 'review-test',
+  BUTTON_SHOW_VOCABULARY_PREV = 'show-vocabulary-prev',
+  BUTTON_SHOW_VOCABULARY_NEXT = 'show-vocabulary-next',
 }
 

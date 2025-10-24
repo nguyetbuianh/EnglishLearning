@@ -3,7 +3,6 @@ export const ToeicSessionStore = new Map<
   {
     testId?: number;
     partId?: number;
-    currentQuestionNumber?: number;
-    currentPassageNumber?: number;
+    messageId?: string;
   }
 >();

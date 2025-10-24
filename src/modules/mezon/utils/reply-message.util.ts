@@ -17,6 +17,7 @@ interface QuestionMessageParams {
 
 export interface AnswerReviewParams {
   mezonMessage: Message;
+  mezonUserId?: string;
   userAnswers: {
     question: Question;
     chosenOption: string;
@@ -60,7 +61,7 @@ export async function replyQuestionMessage(questionMessageParams: QuestionMessag
 }
 
 export async function showAnswerReviewMessage(answerReviewParams: AnswerReviewParams) {
-  const { mezonMessage, userAnswers } = answerReviewParams;
+  const { mezonMessage, mezonUserId, userAnswers } = answerReviewParams;
 
   const resultsText = userAnswers
     .map(
@@ -69,6 +70,12 @@ export async function showAnswerReviewMessage(answerReviewParams: AnswerReviewPa
         }`
     )
     .join("\n");
+
+  const nextPartButton = new ButtonBuilder()
+    .setId(`next-part_id:${mezonUserId}`)
+    .setLabel("Next Part")
+    .setStyle(EButtonMessageStyle.SUCCESS)
+    .build();
 
   const messagePayload = new MessageBuilder()
     .createEmbed({
@@ -82,6 +89,7 @@ export async function showAnswerReviewMessage(answerReviewParams: AnswerReviewPa
       If you believe any question or answer is incorrect, please contact us to report it.
       `,
     })
+    .addButtonsRow([nextPartButton])
     .build();
 
   await mezonMessage!.update(

@@ -7,6 +7,7 @@ import { MessageBuilder } from "../builders/message.builder";
 import { SelectionBuilder } from "../builders/selection.builder";
 import { ButtonBuilder } from "../builders/button.builder";
 import { CommandType } from "../enums/commands.enum";
+import { updateSession } from "../utils/update-session.util";
 
 @Injectable()
 @Interaction(CommandType.COMMAND_ALL_TOPIC)
@@ -29,20 +30,21 @@ export class AllTopicHandler extends BaseHandler<MChannelMessage> {
         return;
       }
 
-      const senderId = this.mezonMessage.sender_id;
+      const mezonUserId = this.event.sender_id;
+      if (!mezonUserId) return;
 
       const selectionTopic = new SelectionBuilder()
-        .setId(`show-vocabulary_id:${senderId}`)
+        .setId(`show-vocabulary_id:${mezonUserId}`)
         .setPlaceholder("Select a topic...")
         .addOptions(
           topicVocabularies.map((topic) => ({
             label: `📘 ${topic.name}`,
             type: topic.type || "_(No category provided)_",
-            value: String(topic.id),
+            value: `show-vocabulary_topic:${topic.id}_page:1`,
           }))
         )
-
         .build();
+
       const messagePayload = new MessageBuilder()
         .createEmbed({
           color: "#3498db",
@@ -52,7 +54,8 @@ export class AllTopicHandler extends BaseHandler<MChannelMessage> {
         .addSelectRow([selectionTopic])
         .build();
 
-      await this.mezonMessage.reply(messagePayload);
+      const replyMessage = await this.mezonMessage.reply(messagePayload);
+      await updateSession(this.mezonMessage.sender_id, undefined, replyMessage.message_id);
     } catch (error) {
       await this.mezonMessage.reply({
         t: "⚠️ An error occurred while loading the topic vocabularies. Please try again later.",

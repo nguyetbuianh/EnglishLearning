@@ -24,4 +24,8 @@ export class UserService {
       where: { id: userId }
     });
   }
+
+  async getAllUsers(): Promise<User[]> {
+    return this.userRepo.find();
+  }
 }

@@ -13,4 +13,16 @@ export class FavoriteVocabularyService {
   async saveVocabulary(favoriteVocabulary: FavoriteVocabulary): Promise<FavoriteVocabulary> {
     return await this.favoriteVocabularyRepo.save(favoriteVocabulary);
   }
+
+  async existingVocabularyAndUserId(
+    userId: number,
+    vocabularyId: number
+  ): Promise<boolean> {
+    return await this.favoriteVocabularyRepo.exists({
+      where: {
+        user: { id: userId },
+        vocabulary: { id: vocabularyId }
+      }
+    });
+  }
 }
