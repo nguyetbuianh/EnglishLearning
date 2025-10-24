@@ -27,6 +27,7 @@ import { RestartTestHandler } from './handlers/restart-test.handler';
 import { HelpHandler } from './handlers/help.handler';
 import { NextPartHandler } from './handlers/next-part.handler';
 import { ReviewTestHandler } from './handlers/review-test.handler';
+import { DailyReminderTask } from './handlers/reminder.handler';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -46,7 +47,8 @@ const commandHandlers = [
   RestartTestHandler,
   HelpHandler,
   NextPartHandler,
-  ReviewTestHandler
+  ReviewTestHandler,
+  DailyReminderTask
 ];
 
 @Module({

@@ -1361,6 +1361,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/schedule@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "@nestjs/schedule@npm:6.0.1"
+  dependencies:
+    cron: 4.3.3
+  peerDependencies:
+    "@nestjs/common": ^10.0.0 || ^11.0.0
+    "@nestjs/core": ^10.0.0 || ^11.0.0
+  checksum: a9e91f70387e4858ba991b7d7e5d7378681ff6c0dbc6bc416c3757fcbb7aa58d0abcdbcd310d91021af4c42f0179a8e18a6ca9215b150767710f4d48ad152556
+  languageName: node
+  linkType: hard
+
 "@nestjs/schematics@npm:^11.0.0, @nestjs/schematics@npm:^11.0.1":
   version: 11.0.7
   resolution: "@nestjs/schematics@npm:11.0.7"
@@ -1666,6 +1678,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/cron@npm:^2.4.3":
+  version: 2.4.3
+  resolution: "@types/cron@npm:2.4.3"
+  dependencies:
+    cron: "*"
+  checksum: 760d1d4957d1755348b9cf8b4779205faeab9694d4c1d477283087d649474e1cccf64d448980fbbe8fd2324aa9f343d8e9f4aca77c1155dca8abd70986233032
+  languageName: node
+  linkType: hard
+
 "@types/dotenv@npm:^8.2.3":
   version: 8.2.3
   resolution: "@types/dotenv@npm:8.2.3"
@@ -1797,6 +1818,13 @@ __metadata:
   version: 4.0.2
   resolution: "@types/long@npm:4.0.2"
   checksum: d16cde7240d834cf44ba1eaec49e78ae3180e724cd667052b194a372f350d024cba8dd3f37b0864931683dab09ca935d52f0c4c1687178af5ada9fc85b0635f4
+  languageName: node
+  linkType: hard
+
+"@types/luxon@npm:~3.7.0":
+  version: 3.7.1
+  resolution: "@types/luxon@npm:3.7.1"
+  checksum: ec5181716f9a744d2be1a4a72c3509670e1030a9271736d95e9e04af075ac6f24f6b35f2934f6d7eab496c1eefd9f81b572ad63fd33fd17a100eb2b315702a77
   languageName: node
   linkType: hard
 
@@ -3324,6 +3352,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cron@npm:*, cron@npm:4.3.3":
+  version: 4.3.3
+  resolution: "cron@npm:4.3.3"
+  dependencies:
+    "@types/luxon": ~3.7.0
+    luxon: ~3.7.0
+  checksum: 08294d1813335584b828f1e980ac7655de77aa0963597e04881d6abd48167801abc6a59fa746ae7d8f4a2cd85537f93af31dffb0dd23c436be37e91b5f3bf830
+  languageName: node
+  linkType: hard
+
 "cross-spawn@npm:^6.0.0, cross-spawn@npm:^6.0.5":
   version: 6.0.6
   resolution: "cross-spawn@npm:6.0.6"
@@ -3742,9 +3780,11 @@ __metadata:
     "@nestjs/config": ^4.0.2
     "@nestjs/core": ^11.1.6
     "@nestjs/platform-express": ^11.1.6
+    "@nestjs/schedule": ^6.0.1
     "@nestjs/schematics": ^11.0.0
     "@nestjs/testing": ^11.0.1
     "@nestjs/typeorm": ^11.0.0
+    "@types/cron": ^2.4.3
     "@types/dotenv": ^8.2.3
     "@types/express": ^5.0.0
     "@types/node": ^24.6.2
@@ -6388,6 +6428,13 @@ __metadata:
   dependencies:
     yallist: ^3.0.2
   checksum: c154ae1cbb0c2206d1501a0e94df349653c92c8cbb25236d7e85190bcaf4567a03ac6eb43166fabfa36fd35623694da7233e88d9601fbf411a9a481d85dbd2cb
+  languageName: node
+  linkType: hard
+
+"luxon@npm:~3.7.0":
+  version: 3.7.2
+  resolution: "luxon@npm:3.7.2"
+  checksum: fc115fd6a7acc2adb7df3476d20c672beb2985d2a034294282f2c31de8c07f29a15460f5a2b7dd0107797be0dab545ddbc64862662b059fb18c1931a726064f4
   languageName: node
   linkType: hard
 
