@@ -24,4 +24,10 @@ export class VocabularyService {
 
     return { data, total };
   }
+
+  async findVocabularyById(vocabularyId: number): Promise<Vocabulary | null> {
+    return this.vocabularyRepo.findOne({
+      where: { id: vocabularyId }
+    });
+  }
 }

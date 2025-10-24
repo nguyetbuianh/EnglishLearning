@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Topic } from './topic.entity';
+import { FavoriteVocabulary } from './favorite-vocabulary.entity';
 
 @Entity('vocabulary')
 export class Vocabulary {
@@ -30,4 +31,7 @@ export class Vocabulary {
   })
   @JoinColumn({ name: "topic_id" })
   topic: Topic;
+
+  @OneToMany(() => FavoriteVocabulary, (fav) => fav.vocabulary)
+  favorites: FavoriteVocabulary[];
 }
