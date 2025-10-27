@@ -18,19 +18,23 @@ export class DailyReminderTask {
 
   @Cron('*/1 * * * *')
   async handleDailyReminder() {
-    this.logger.log("⏰ Starting daily reminder task...");
-
     try {
-      const users = await this.userService.getAllUsers();
+      const batchSize = 100;
+      const users = await this.userService.getAllUsersInBatches(batchSize);
       if (!users.length) {
         this.logger.warn("⚠️ No active users found for daily reminder.");
         return;
       }
 
-      for (const user of users) {
-        await this.sendDailyMessage(user.mezonUserId);
-      }
-
+      await Promise.all(
+        users.map(async (user) => {
+          try {
+            await this.sendDailyMessage(user.mezonUserId);
+          } catch (err) {
+            this.logger.error(`❌ Failed to send to ${user.mezonUserId}`, err);
+          }
+        })
+      );
     } catch (error) {
       this.logger.error("❌ Error sending daily reminders:", error);
     }
@@ -40,9 +44,9 @@ export class DailyReminderTask {
     const random = Math.random();
     let messagePayload;
     if (random < 0.5) {
-      messagePayload = await this.buildRandomQuestionMessage(); 
+      messagePayload = await this.buildRandomQuestionMessage();
     } else {
-      messagePayload = { t: this.buildRandomTipMessage() }; 
+      messagePayload = { t: this.buildRandomTipMessage() };
     }
 
     await this.sendDM(userMezonId, messagePayload);
@@ -69,7 +73,7 @@ export class DailyReminderTask {
         content: "❓ No question available at the moment. Please try again later."
       };
     }
-
+    
     const passageContent = question.passage
       ? `📖 *Passage ${question.passage.passageNumber}*\n${question.passage.title
         ? `**${question.passage.title}**\n`
