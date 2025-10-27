@@ -25,23 +25,11 @@ export class UserService {
     });
   }
 
-  async getAllUsersInBatches(batchSize: number): Promise<User[]> {
-    let page = 0;
-    const allUsers: User[] = [];
-
-    while (true) {
-      const users = await this.userRepo.find({
-        skip: page * batchSize,
-        take: batchSize,
-        order: { id: "ASC" },
-      });
-
-      if (users.length === 0) break;
-
-      allUsers.push(...users);
-      page++;
-    }
-
-    return allUsers;
+  async getAllUsersInBatches(limit: number, offset = 0): Promise<User[]> {
+    return this.userRepo.find({
+      skip: offset,
+      take: limit,
+    });
   }
+
 }

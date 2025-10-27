@@ -54,10 +54,10 @@ export class UserAnswerService {
     });
   }
 
-  async getUserAnswersByTest(id: number, testId: number) {
+  async getUserAnswersByTest(userId: number, testId: number) {
     return await this.userAnswerRepo.find({
       where: {
-        user: { id: id },
+        user: { id: userId },
         toeicTest: { id: testId },
       },
       relations: ["toeicPart", "toeicTest", "question"],

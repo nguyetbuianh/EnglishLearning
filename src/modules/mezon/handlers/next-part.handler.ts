@@ -6,10 +6,12 @@ import { BaseHandler, MMessageButtonClicked } from "./base";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 import { updateSession } from "../utils/update-session.util";
-import { replyQuestionMessage } from "../utils/reply-message.util";
+import { replyQuestionMessage, sendAchievementBadgeReply, sendCompletionMessage, sendContinueOrRestartMessage } from "../utils/reply-message.util";
 import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
 import { MessageBuilder } from "../builders/message.builder";
 import { ButtonBuilder } from "../builders/button.builder";
+import { UserService } from "src/modules/user/user.service";
+import { UserStatService } from "src/modules/daily/services/user-stat.service";
 
 @Interaction(CommandType.BUTTON_NEXT_PART)
 @Injectable()
@@ -18,6 +20,8 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
     protected readonly client: MezonClient,
     private readonly toeicQuestionService: ToeicQuestionService,
     private readonly userProgressService: UserProgressService,
+    private readonly userService: UserService,
+    private readonly userStatService: UserStatService
   ) {
     super(client);
   }
@@ -33,19 +37,24 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
       }
 
       const { testId, partId } = session;
-      const nextPart = partId + 1;
-      if (nextPart > 7) {
-        const reviewTestButton = new ButtonBuilder()
-          .setId(`review-test_id:${mezonUserId}`)
-          .setLabel("Review Test Answers")
-          .setStyle(EButtonMessageStyle.SUCCESS)
-          .build();
+      const nextPartId = partId + 1;
+      if (nextPartId > 7) {
+        const hasCompletedAllParts = await this.userProgressService.hasCompletedAllParts(
+          mezonUserId,
+          testId,
+        );
+        if (hasCompletedAllParts) {
+          const reviewTestButton = new ButtonBuilder()
+            .setId(`review-test_id:${mezonUserId}`)
+            .setLabel("Review Test Answers")
+            .setStyle(EButtonMessageStyle.SUCCESS)
+            .build();
 
-        const messagePayload = new MessageBuilder()
-          .createEmbed({
-            color: "#00b894",
-            title: "🏆 Congratulations!",
-            description: `
+          const messagePayload = new MessageBuilder()
+            .createEmbed({
+              color: "#00b894",
+              title: "🏆 Congratulations!",
+              description: `
                 🎉 **Amazing work!** You've successfully completed all 7 parts of the TOEIC test.  
                 You're proving that your English skills are getting sharper every step of the way! 💪  
 
@@ -58,16 +67,70 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
                 ---
 
                 💬 Type \`*start*\` to take another test or \`*review <test_id>*\` to view your results.
-                      `,
-            footer: "TOEIC Practice Bot • Keep pushing your limits 🚀",
+              `,
+              footer: "TOEIC Practice Bot • Keep pushing your limits 🚀",
+            })
+            .addButtonsRow([reviewTestButton])
+            .build();
+
+          await this.mezonMessage.update(messagePayload);
+
+          const user = await this.userService.findUserByMezonId(mezonUserId);
+          if (user) {
+            const newBadges = await this.userStatService.addTestScore(testId, user.id);
+            await sendAchievementBadgeReply(newBadges, this.mezonMessage);
+          }
+
+          return;
+        }
+
+        const messagePayload = new MessageBuilder()
+          .createEmbed({
+            color: "#f9ca24",
+            title: "⚠️ Almost There!",
+            description: `
+            You haven’t completed all 7 parts of the TOEIC test yet. 🧩  
+
+            💪 Keep going — you're doing great!  
+            Finish every part to unlock your final score and review options. 🚀
+            `,
+            footer: "TOEIC Practice Bot • Keep pushing your limits 💥",
           })
-          .addButtonsRow([reviewTestButton])
           .build();
+
         await this.mezonMessage.update(messagePayload);
+
         return;
       }
 
-      const question = await this.toeicQuestionService.getFirstQuestion(testId, nextPart);
+      const userProgress = await this.userProgressService.getProgress(testId, nextPartId, mezonUserId);
+      if (userProgress) {
+        if (userProgress.isCompleted) {
+          await sendCompletionMessage({
+            testId: testId,
+            partId: nextPartId,
+            mezonId: mezonUserId,
+            mezonMessage: this.mezonMessage
+          });
+
+          await this.updateSession(mezonUserId, testId, nextPartId);
+
+          return;
+        }
+
+        await sendContinueOrRestartMessage({
+          testId: testId,
+          partId: nextPartId,
+          mezonId: mezonUserId,
+          mezonMessage: this.mezonMessage
+        });
+
+        await this.updateSession(mezonUserId, testId, nextPartId);
+
+        return;
+      }
+
+      const question = await this.toeicQuestionService.getFirstQuestion(testId, nextPartId);
       if (!question) return;
 
       await updateSession(mezonUserId, question);
@@ -75,7 +138,7 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
       await this.userProgressService.createProgress({
         userMezonId: mezonUserId,
         testId: testId,
-        partId: nextPart,
+        partId: nextPartId,
         currentQuestionNumber: question.questionNumber,
         currentPassageNumber: question.passage ? question.passage.passageNumber : undefined,
       });
@@ -83,7 +146,7 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
       await replyQuestionMessage({
         mezonUserId: mezonUserId,
         testId: testId,
-        partId: nextPart,
+        partId: nextPartId,
         question: question,
         passage: question.passage,
         mezonMessage: this.mezonMessage,
@@ -94,5 +157,13 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
         t: "😢 Oops! Something went wrong. Please try again later!",
       });
     }
+  }
+
+  private async updateSession(mezonUserId: string, testId: number, partId: number) {
+    await ToeicSessionStore.set(mezonUserId, {
+      testId: testId,
+      partId: partId,
+      messageId: this.mezonMessage.id,
+    });
   }
 }

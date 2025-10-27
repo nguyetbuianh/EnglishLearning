@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserProgress } from 'src/entities/progress.entity';
-import { ToeicQuestionService } from './toeic-question.service';
-import { PassageService } from './passage.service';
 
 @Injectable()
 export class UserProgressService {
@@ -81,4 +79,17 @@ export class UserProgressService {
 
     return this.userProgressRepo.save(progress);
   }
+
+  async hasCompletedAllParts(userMezonId: string, testId: number): Promise<boolean> {
+    const progresses = await this.userProgressRepo.find({
+      where: {
+        userMezonId,
+        test: { id: testId },
+        isCompleted: true
+      },
+    });
+
+    return progresses.length >= 7;
+  }
+
 }

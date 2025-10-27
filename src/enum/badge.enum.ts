@@ -8,4 +8,8 @@ export enum BadgeEnum {
   POINTS_1000 = "👑 Ultimate Player",
   CORRECT_100 = "🧠 Quiz Expert",
   CORRECT_500 = "🚀 Quiz Legend",
+  PART_FINISHER = "🧩 Part Finisher",
+  PERFECT_PART = "🌈 Perfect Part",
+  TEST_FINISHER = "📘 Test Finisher",
+  PERFECT_TEST = "🏅 TOEIC Master",
 }

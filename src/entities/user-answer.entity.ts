@@ -25,7 +25,7 @@ export class UserAnswer {
   @JoinColumn({ name: 'question_id' })
   question: Question;
 
-  @Column({ type: 'enum', enum: ['A', 'B', 'C', 'D'], nullable: false })
+  @Column({ type: 'enum', enum: OptionEnum, nullable: false })
   chosenOption: OptionEnum;
 
   @Column({ name: 'is_correct', type: 'boolean', nullable: true })
