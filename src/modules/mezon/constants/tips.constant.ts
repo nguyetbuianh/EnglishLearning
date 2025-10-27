@@ -1,0 +1,61 @@
+export const TOEIC_TIPS: string[] = [
+  // Listening
+  "🎧 Listen to English daily — even 10 minutes counts!",
+  "💡 *Tip:* In Part 1, focus on the main action, not background details.",
+  "👂 For Part 2, listen for question words like *who*, *where*, *why*.",
+  "🎯 Predict possible answers before the recording starts.",
+  "🧩 Don’t translate while listening — focus on understanding ideas.",
+  "🔊 Notice intonation and stress — they often change meaning.",
+  "💬 Pay attention to the speaker’s attitude or tone.",
+  "📻 Practice shadowing: repeat after audio to improve rhythm.",
+  "🚀 Use English news or TED talks for advanced listening practice.",
+  "🎵 Songs with clear lyrics help your ear adapt to real speech.",
+
+  // Reading
+  "📚 Read English articles daily — business, travel, or technology topics.",
+  "🔍 Skim for the main idea before reading in detail.",
+  "📏 Manage your time: don’t spend too long on one passage.",
+  "📝 Underline keywords in the question before reading.",
+  "📖 Focus on connectors like *however, therefore, although*.",
+  "💪 Don’t panic at unknown words — use context clues.",
+  "💬 For Part 6, read all sentences before choosing the answer.",
+  "📘 Improve reading speed by timing yourself on short texts.",
+  "📈 Review reading mistakes to understand why you chose wrong.",
+  "💭 Practice guessing meanings from context, not a dictionary.",
+
+  // Grammar
+  "🧠 Learn common TOEIC grammar: tenses, conditionals, and modals.",
+  "📌 Review subject-verb agreement — it appears often in Part 5.",
+  "📝 Practice identifying the sentence’s main clause first.",
+  "💬 Know which prepositions go with which verbs (e.g., depend on).",
+  "📏 Watch for parallel structure: *to work, to study, and to rest.*",
+  "💡 Adjective or adverb? Check if it modifies a noun or verb.",
+  "🚦 Learn signal words for tenses: *since, for, yet, already.*",
+  "🔤 Use flashcards for confusing pairs (e.g., affect/effect).",
+  "📖 Review relative clauses: *who, which, that*.",
+  "🧩 Focus on word forms: noun, verb, adjective, adverb patterns.",
+
+  // Vocabulary
+  "🧱 Learn vocabulary by category (office, business, travel, etc.).",
+  "✍️ Write your own example sentences with new words.",
+  "📒 Review 10–15 old words before adding new ones.",
+  "📈 Use spaced repetition apps to remember vocabulary longer.",
+  "📚 Learn collocations like *make a decision*, *take a break*.",
+  "📖 Study prefixes/suffixes: *un-, re-, -ment, -tion*.",
+  "📊 TOEIC often reuses business vocabulary — focus on those.",
+  "💬 Learn synonyms and paraphrases — TOEIC loves them!",
+  "🎯 Use new words in real sentences or daily notes.",
+  "🌟 Create mini quizzes to test your memory.",
+
+  // Test Strategy
+  "⏱️ Don’t get stuck — skip and return if needed.",
+  "🧘‍♀️ Stay calm. Panic lowers your listening accuracy.",
+  "🎯 Practice full tests weekly under time pressure.",
+  "📖 Review answer explanations, not just your score.",
+  "💪 Track your weak parts and focus on improving them.",
+  "🚀 Accuracy first, speed later — both come with practice.",
+  "📈 Celebrate small progress — consistency is key!",
+  "🏆 Aim for improvement each test, not perfection immediately.",
+  "💬 Discuss TOEIC topics with friends to stay motivated.",
+  "🔥 Your goal is progress, not just passing the test!",
+];

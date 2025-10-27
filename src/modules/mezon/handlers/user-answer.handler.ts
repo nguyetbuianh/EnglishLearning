@@ -17,6 +17,7 @@ import { ButtonBuilder } from "../builders/button.builder";
 import { CommandType } from "../enums/commands.enum";
 import { DailyAnswerService } from "src/modules/daily/services/daily-answer.service";
 import { UserStatService } from "src/modules/daily/services/user-stat.service";
+import { sendAchievementBadgeReply } from "../utils/reply-message.util";
 
 interface ParsedButtonId {
   type?: string;
@@ -106,26 +107,12 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       chosenOption,
       isCorrect,
     });
+    await this.sendAnswerDailyResponse(question, isCorrect, chosenOption);
 
     const newBadges = await this.userStatService.updateUserStats(user.id, isCorrect);
     if (newBadges.length > 0) {
-      for (const badge of newBadges) {
-        const embed = new MessageBuilder()
-          .createEmbed({
-            color: "#FFD700",
-            title: "🏅 Congratulations!",
-            description: `You’ve just unlocked a new achievement: ${badge} 🎉`,
-            imageUrl: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNjltOTc4MTVyb3ZicnZ0eG1yd2c5dmJ1anVlZDh1bXpqZmVjanhrbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/hsmUlGtBlroCoU9esb/giphy.gif",
-            footer: "Keep it up and collect them all!",
-            timestamp: true,
-          })
-          .build();
-
-        await this.mezonMessage.reply(embed);
-      }
+      await sendAchievementBadgeReply(newBadges, this.mezonMessage);
     }
-
-    await this.sendAnswerDailyResponse(question, isCorrect, chosenOption);
   }
 
   private async handleTestAnswer(): Promise<void> {
@@ -153,6 +140,8 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       testId: question.test.id,
       questionId: question.id
     });
+
+    await this.userStatService.updateUserStats(existingUser.id, true);
 
     await this.sendAnswerTestResponse(isCorrect, question, mezonId, chosenOption);
   }

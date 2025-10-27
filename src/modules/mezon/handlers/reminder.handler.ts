@@ -5,6 +5,7 @@ import { ChannelMessageContent, EButtonMessageStyle, MezonClient } from "mezon-s
 import { Cron } from "@nestjs/schedule";
 import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
+import { TOEIC_TIPS } from "../constants/tips.constant";
 
 @Injectable()
 export class DailyReminderTask {
@@ -16,25 +17,41 @@ export class DailyReminderTask {
     private readonly toeicQuestionService: ToeicQuestionService,
   ) { }
 
-  @Cron('*/1 * * * *')
+  @Cron("0 * * * *") 
   async handleDailyReminder() {
+    const now = new Date();
+    const hour = now.getHours(); 
+
+    if (hour >= 8 && hour <= 22) {
+      await this.sendDailyMessageToAllUsers();
+    } else {
+      this.logger.log(`⏳ Outside reminder hours (${hour}:00) – skipping.`);
+    }
+  }
+    
+  async sendDailyMessageToAllUsers() {
     try {
       const batchSize = 100;
-      const users = await this.userService.getAllUsersInBatches(batchSize);
-      if (!users.length) {
-        this.logger.warn("⚠️ No active users found for daily reminder.");
-        return;
-      }
+      let offset = 0;
 
-      await Promise.all(
-        users.map(async (user) => {
-          try {
-            await this.sendDailyMessage(user.mezonUserId);
-          } catch (err) {
-            this.logger.error(`❌ Failed to send to ${user.mezonUserId}`, err);
-          }
-        })
-      );
+      while (true) {
+        const users = await this.userService.getAllUsersInBatches(batchSize, offset);
+        if (!users.length) {
+          break;
+        }
+
+        await Promise.all(
+          users.map(async (user) => {
+            try {
+              await this.sendDailyMessage(user.mezonUserId);
+            } catch (err) {
+              this.logger.error(`❌ Failed to send to ${user.mezonUserId}`, err);
+            }
+          })
+        );
+
+        offset += batchSize;
+      }
     } catch (error) {
       this.logger.error("❌ Error sending daily reminders:", error);
     }
@@ -46,7 +63,7 @@ export class DailyReminderTask {
     if (random < 0.5) {
       messagePayload = await this.buildRandomQuestionMessage();
     } else {
-      messagePayload = { t: this.buildRandomTipMessage() };
+      messagePayload = await this.buildRandomTipMessage();
     }
 
     await this.sendDM(userMezonId, messagePayload);
@@ -73,7 +90,7 @@ export class DailyReminderTask {
         content: "❓ No question available at the moment. Please try again later."
       };
     }
-    
+
     const passageContent = question.passage
       ? `📖 *Passage ${question.passage.passageNumber}*\n${question.passage.title
         ? `**${question.passage.title}**\n`
@@ -105,19 +122,28 @@ export class DailyReminderTask {
       .build();
   }
 
-  private buildRandomTipMessage(): string {
-    const tips = [
-      "💡 *Tip:* In Part 3 & 4, read the questions before listening.",
-      "🎧 Listen to short English podcasts daily for better comprehension.",
-      "📝 In Part 5, grammar clues around the blank are key.",
-      "📖 Focus on full-sentence meaning, not word-by-word translation.",
-      "🔥 15 minutes of focused practice daily beats 2 hours once a week!",
+
+  private buildRandomTipMessage() {
+    const greetings = [
+      "🌞 *Hello homie, TOEIC learner!*",
+      "🔥 *Hi, champ!*",
+      "💪 *What’s up, English warrior?*",
+      "🚀 *Keep grinding, future 900+ scorer!*",
+      "🎯 *Hey legend, ready to learn today?*",
     ];
 
-    const randomTip = tips[Math.floor(Math.random() * tips.length)];
-    return `
-    🌞 *Good morning, TOEIC learner!*
-    ${randomTip}
-    Keep going — every day counts! 💪`;
+    const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
+    const randomTip = TOEIC_TIPS[Math.floor(Math.random() * TOEIC_TIPS.length)];
+
+    const message = new MessageBuilder()
+      .createEmbed({
+        color: "#1e90ff",
+        title: `${randomGreeting}`,
+        description: `${randomTip}\n\nKeep going — every day counts! 💪`,
+        footer: "English Learning Bot",
+      })
+      .build();
+
+    return message;
   }
 }

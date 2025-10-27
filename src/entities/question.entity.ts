@@ -12,6 +12,7 @@ import { ToeicTest } from './toeic-test.entity';
 import { ToeicPart } from './toeic-part.entity';
 import { QuestionOption } from './question-option.entity';
 import { Passage } from './passage.entity';
+import { OptionEnum } from '../enum/option.enum';
 
 @Entity('questions')
 @Unique(['test', 'part', 'questionNumber'])
@@ -38,7 +39,7 @@ export class Question {
   questionText: string;
 
   @Column({ name: 'correct_option', type: 'char', length: 1 })
-  correctOption: 'A' | 'B' | 'C' | 'D';
+  correctOption: OptionEnum;
 
   @Column({ type: 'text', nullable: true })
   explanation: string;

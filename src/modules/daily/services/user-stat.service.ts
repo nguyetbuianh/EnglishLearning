@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { UserStats } from "src/entities/user-stat.entity";
 import { User } from "src/entities/user.entity";
 import { BadgeEnum } from "src/enum/badge.enum";
+import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
 import { Repository } from "typeorm";
 
 @Injectable()
@@ -10,6 +11,7 @@ export class UserStatService {
   constructor(
     @InjectRepository(UserStats)
     private readonly userStatsRepo: Repository<UserStats>,
+    private readonly userAnswerService: UserAnswerService
   ) { }
 
   private toDateString(date: Date | string): string {
@@ -121,5 +123,82 @@ export class UserStatService {
     if (stats.points >= 1000) badges.add(BadgeEnum.POINTS_1000);
 
     return Array.from(badges);
+  }
+
+  async addPartScore(testId: number, partId: number, userId: number): Promise<string[]> {
+    const userStat = await this.userStatsRepo.findOne({
+      where: { user: { id: userId } },
+    });
+    if (!userStat) return [];
+
+    const answers = await this.userAnswerService.getUserAnswersByPartAndTest(
+      testId,
+      partId,
+      userId
+    );
+    if (answers.length === 0) return [];
+
+    const correctCount = answers.filter(a => a.isCorrect).length;
+    const totalCount = answers.length;
+    const accuracy = (correctCount / totalCount) * 100;
+    const partScore = Math.round((accuracy / 100) * 50);
+
+    userStat.points += partScore;
+    userStat.totalAnswers += totalCount;
+    userStat.correctAnswers += correctCount;
+
+    const oldBadges = new Set(userStat.badges || []);
+
+    if (accuracy === 100) {
+      userStat.badges = Array.from(
+        new Set([...(userStat.badges || []), BadgeEnum.PERFECT_PART])
+      );
+    } else {
+      userStat.badges = Array.from(
+        new Set([...(userStat.badges || []), BadgeEnum.PART_FINISHER])
+      );
+    }
+
+    await this.userStatsRepo.save(userStat);
+
+    const newBadges = userStat.badges.filter(b => !oldBadges.has(b));
+    return newBadges;
+  }
+
+  async addTestScore(testId: number, userId: number): Promise<string[]> {
+    const userStat = await this.userStatsRepo.findOne({
+      where: { user: { id: userId } },
+    });
+    if (!userStat) return [];
+
+    const answers = await this.userAnswerService.getUserAnswersByTest(userId, testId);
+    if (answers.length === 0) return [];
+
+    const correctCount = answers.filter(a => a.isCorrect).length;
+    const totalCount = answers.length;
+    const accuracy = (correctCount / totalCount) * 100;
+
+    const testScore = Math.round((accuracy / 100) * 200);
+
+    userStat.points += testScore;
+    userStat.totalAnswers += totalCount;
+    userStat.correctAnswers += correctCount;
+
+    const oldBadges = new Set(userStat.badges || []);
+
+    if (accuracy === 100) {
+      userStat.badges = Array.from(
+        new Set([...(userStat.badges || []), BadgeEnum.PERFECT_TEST])
+      );
+    } else {
+      userStat.badges = Array.from(
+        new Set([...(userStat.badges || []), BadgeEnum.TEST_FINISHER])
+      );
+    }
+
+    await this.userStatsRepo.save(userStat);
+
+    const newBadges = userStat.badges.filter(b => !oldBadges.has(b));
+    return newBadges;
   }
 }

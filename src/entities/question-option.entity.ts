@@ -6,6 +6,7 @@ import {
   JoinColumn
 } from 'typeorm';
 import { Question } from './question.entity';
+import { OptionEnum } from '../enum/option.enum';
 
 @Entity('question_options')
 export class QuestionOption {
@@ -17,7 +18,7 @@ export class QuestionOption {
   question: Question;
 
   @Column({ name: "option_label", type: 'char', length: 1, nullable: false })
-  optionLabel: 'A' | 'B' | 'C' | 'D';
+  optionLabel: OptionEnum;
 
   @Column({ name: "option_text", type: 'text', nullable: false })
   optionText: string;

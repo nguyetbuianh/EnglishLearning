@@ -11,7 +11,7 @@ export class MezonService implements OnModuleInit {
     try {
       this.eventRouter.registerListeners();
       this.logger.log("🚀 MezonService initialized and listeners attached.");
-    } catch (error: any) {
+    } catch (error) {
       this.logger.error(`❌ Failed to register listeners: ${error.message}`);
     }
   }
