@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Question } from 'src/entities/question.entity';
 
 @Injectable()
@@ -71,15 +71,23 @@ export class ToeicQuestionService {
   }
 
   async getRandomQuestion(): Promise<Question | null> {
-    const count = await this.questionRepo.count();
+    const partIds = [5, 6, 7];
+
+    const count = await this.questionRepo.count({
+      where: { part: { id: In(partIds) } },
+    });
+
+    if (count === 0) return null;
+
     const randomOffset = Math.floor(Math.random() * count);
 
-    const question = await this.questionRepo.find({
+    const [question] = await this.questionRepo.find({
+      where: { part: { id: In(partIds) } },
       relations: ['options', 'part', 'test', 'passage'],
       skip: randomOffset,
       take: 1,
     });
 
-    return question[0] || null;
+    return question || null;
   }
 }

@@ -28,6 +28,7 @@ import { HelpHandler } from './handlers/help.handler';
 import { NextPartHandler } from './handlers/next-part.handler';
 import { ReviewTestHandler } from './handlers/review-test.handler';
 import { DailyReminderTask } from './handlers/reminder.handler';
+import { DailyModule } from '../daily/daily.module';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -56,7 +57,8 @@ const commandHandlers = [
     UserModule,
     ToeicModule,
     TopicModule,
-    VocabularyModule
+    VocabularyModule,
+    DailyModule
   ],
   providers: [
     MezonService,

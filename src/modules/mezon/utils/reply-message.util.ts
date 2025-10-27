@@ -4,7 +4,6 @@ import { ButtonBuilder } from "../builders/button.builder";
 import { EButtonMessageStyle } from "mezon-sdk";
 import { MessageBuilder } from "../builders/message.builder";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
-import { UserAnswer } from "src/entities/user-answer.entity";
 
 interface QuestionMessageParams {
   question: Question;
@@ -33,7 +32,7 @@ export async function replyQuestionMessage(questionMessageParams: QuestionMessag
 
   const buttons = question.options.map(opt =>
     new ButtonBuilder()
-      .setId(`user-answer_q:${question.id}_a:${opt.optionLabel}_id:${mezonUserId}`)
+      .setId(`user-answer_t:test_q:${question.id}_a:${opt.optionLabel}_id:${mezonUserId}`)
       .setLabel(`${opt.optionLabel}. ${opt.optionText}`)
       .setStyle(EButtonMessageStyle.PRIMARY)
       .build()
