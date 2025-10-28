@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import { EventRouter } from "./router/event.router";
+import { EventRouter } from "../router/event.router";
 
 @Injectable()
 export class MezonService implements OnModuleInit {

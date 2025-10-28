@@ -50,8 +50,8 @@ export class UserStatService {
     }
   }
 
-  private async findUserStats(userId: number): Promise<UserStats | null> {
-    return await this.userStatsRepo.findOne({
+  async findUserStats(userId: number): Promise<UserStats | null> {
+    return this.userStatsRepo.findOne({
       where: { user: { id: userId } },
     });
   }
