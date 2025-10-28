@@ -17,18 +17,7 @@ export class DailyReminderTask {
     private readonly toeicQuestionService: ToeicQuestionService,
   ) { }
 
-  @Cron("0 * * * *") 
-  async handleDailyReminder() {
-    const now = new Date();
-    const hour = now.getHours(); 
-
-    if (hour >= 8 && hour <= 22) {
-      await this.sendDailyMessageToAllUsers();
-    } else {
-      this.logger.log(`⏳ Outside reminder hours (${hour}:00) – skipping.`);
-    }
-  }
-    
+  @Cron("0 8-22 * * *")
   async sendDailyMessageToAllUsers() {
     try {
       const batchSize = 100;

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import * as dotenv from "dotenv";
 
-dotenv.config(); 
+dotenv.config();
 
 const EnvSchema = z.object({
   DB_HOST: z.string().min(1, "DB_HOST is required"),
@@ -14,6 +14,10 @@ const EnvSchema = z.object({
 
   MEZON_BOT_TOKEN: z.string().min(1, "MEZON_BOT_TOKEN is required"),
   MEZON_BOT_ID: z.string().min(1, "MEZON_BOT_ID is required"),
+
+  CLOUD_NAME: z.string().min(1, "CLOUD_NAME is required"),
+  CLOUD_API_KEY: z.string().min(1, "CLOUD_API_KEY is required"),
+  CLOUD_API_SECRET: z.string().min(1, "CLOUD_API_SECRET is required"),
 });
 
 
@@ -33,5 +37,10 @@ export const appConfig = {
   bot: {
     token: env.MEZON_BOT_TOKEN,
     id: env.MEZON_BOT_ID,
+  },
+  cloudinary: {
+    cloudName: env.CLOUD_NAME,
+    apiKey: env.CLOUD_API_KEY,
+    apiSecret: env.CLOUD_API_SECRET,
   },
 };
