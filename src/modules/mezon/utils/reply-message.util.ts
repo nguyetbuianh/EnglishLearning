@@ -4,7 +4,6 @@ import { ButtonBuilder } from "../builders/button.builder";
 import { EButtonMessageStyle } from "mezon-sdk";
 import { MessageBuilder } from "../builders/message.builder";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
-import { UserAnswer } from "src/entities/user-answer.entity";
 
 interface QuestionMessageParams {
   question: Question;
@@ -25,6 +24,13 @@ export interface AnswerReviewParams {
   }[];
 }
 
+interface ToeiMessageParams {
+  testId: number,
+  partId: number,
+  mezonId: string,
+  mezonMessage: Message
+}
+
 export async function replyQuestionMessage(questionMessageParams: QuestionMessageParams) {
   const { question, partId, testId, passage, mezonUserId, mezonMessage } = questionMessageParams;
   const passageContent = passage
@@ -33,7 +39,7 @@ export async function replyQuestionMessage(questionMessageParams: QuestionMessag
 
   const buttons = question.options.map(opt =>
     new ButtonBuilder()
-      .setId(`user-answer_q:${question.id}_a:${opt.optionLabel}_id:${mezonUserId}`)
+      .setId(`user-answer_t:test_q:${question.id}_a:${opt.optionLabel}_id:${mezonUserId}`)
       .setLabel(`${opt.optionLabel}. ${opt.optionText}`)
       .setStyle(EButtonMessageStyle.PRIMARY)
       .build()
@@ -97,4 +103,89 @@ export async function showAnswerReviewMessage(answerReviewParams: AnswerReviewPa
     undefined,
     messagePayload.attachments
   );
+}
+
+export async function sendContinueOrRestartMessage(
+  toeiMessageParams: ToeiMessageParams
+): Promise<void> {
+  try {
+    const { testId, partId, mezonId, mezonMessage } = toeiMessageParams;
+    const continueButton = new ButtonBuilder()
+      .setId(`continue-test_id:${mezonId}`)
+      .setLabel("Continue Test")
+      .setStyle(EButtonMessageStyle.PRIMARY)
+      .build();
+
+    const restartButton = new ButtonBuilder()
+      .setId(`restart-test_id:${mezonId}`)
+      .setLabel("Restart Test")
+      .setStyle(EButtonMessageStyle.PRIMARY)
+      .build();
+
+    const messagePayload = new MessageBuilder()
+      .createEmbed({
+        color: "#c12b17ff",
+        title: `🟡 You have started the Test ${testId} - Part ${partId}.\n`,
+        description: `Choose Continue Test to continue or Restart Test to start over.`,
+        footer: `English Learning Bot`,
+      })
+      .addButtonsRow([continueButton, restartButton])
+      .build();
+
+    await mezonMessage.update(messagePayload);
+  } catch (error) {
+    console.error("❌ Error sending answer response:", error);
+  }
+}
+
+export async function sendCompletionMessage(
+  toeiMessageParams: ToeiMessageParams
+): Promise<void> {
+  try {
+    const { testId, partId, mezonId, mezonMessage } = toeiMessageParams;
+    const restartButton = new ButtonBuilder()
+      .setId(`restart-test_id:${mezonId}`)
+      .setLabel("Restart Test")
+      .setStyle(EButtonMessageStyle.PRIMARY)
+      .build();
+
+    const cancelButton = new ButtonBuilder()
+      .setId(`cancel-test_id:${mezonId}`)
+      .setLabel("❌ Cancel")
+      .setStyle(EButtonMessageStyle.DANGER)
+      .build();
+
+    const messagePayload = new MessageBuilder()
+      .createEmbed({
+        color: "#c12b17ff",
+        title: `🟡 You have completed the Test ${testId} - Part ${partId}.\n`,
+        description: `Choose Restart Test to start over or Cancel to cancel the test.`,
+        footer: `English Learning Bot`,
+      })
+      .addButtonsRow([restartButton, cancelButton])
+      .build();
+
+    await mezonMessage.update(messagePayload);
+  } catch (error) {
+    console.error("❌ Error sending answer response:", error);
+    await this.mezonMessage.reply({
+      t: ("😢 Oops! Something went wrong. Please try again later!")
+    });
+  }
+}
+
+export async function sendAchievementBadgeReply(badgeList: string[], mezonMessage: Message) {
+  const formattedBadges = badgeList.map((b) => `🏆 **${b}**`).join("\n");
+  const messagePayload = new MessageBuilder()
+    .createEmbed({
+      color: "#FFD700",
+      title: "🏅 Congratulations!",
+      description: `You’ve just unlocked new achievements!\n\n${formattedBadges}\n\n🎉 Keep shining!`,
+      imageUrl: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNjltOTc4MTVyb3ZicnZ0eG1yd2c5dmJ1anVlZDh1bXpqZmVjanhrbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/hsmUlGtBlroCoU9esb/giphy.gif",
+      footer: "Keep it up and collect them all! 🏅",
+      timestamp: true,
+    })
+    .build();
+
+  await mezonMessage.reply(messagePayload);
 }

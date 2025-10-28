@@ -25,7 +25,11 @@ export class UserService {
     });
   }
 
-  async getAllUsers(): Promise<User[]> {
-    return this.userRepo.find();
+  async getAllUsersInBatches(limit: number, offset = 0): Promise<User[]> {
+    return this.userRepo.find({
+      skip: offset,
+      take: limit,
+    });
   }
+
 }

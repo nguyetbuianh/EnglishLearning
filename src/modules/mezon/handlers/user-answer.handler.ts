@@ -15,6 +15,33 @@ import { MessageBuilder } from "../builders/message.builder";
 import { Question } from "src/entities/question.entity";
 import { ButtonBuilder } from "../builders/button.builder";
 import { CommandType } from "../enums/commands.enum";
+import { DailyAnswerService } from "src/modules/daily/services/daily-answer.service";
+import { UserStatService } from "src/modules/daily/services/user-stat.service";
+import { sendAchievementBadgeReply } from "../utils/reply-message.util";
+
+interface ParsedButtonId {
+  type?: string;
+  questionId?: string;
+  answerOption?: string;
+  mezonId?: string;
+}
+
+interface SaveUserAnswerParams {
+  userId: number;
+  chosenOption: OptionEnum;
+  isCorrect: boolean;
+  partId: number;
+  testId: number;
+  questionId: number;
+}
+
+interface AnswerMessageParams {
+  question: Question,
+  isCorrect: boolean,
+  chosenOption: OptionEnum,
+  includeButtons: boolean,
+  mezonId?: string
+}
 
 @Interaction(CommandType.BUTTON_USER_ANSWER)
 @Injectable()
@@ -26,84 +53,121 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     private readonly toeicPartService: ToeicPartService,
     private readonly toeicTestService: ToeicTestService,
     private readonly userAnswerService: UserAnswerService,
+    private readonly dailyAnswerService: DailyAnswerService,
+    private readonly userStatService: UserStatService
   ) {
     super(client);
   }
 
   async handle(): Promise<void> {
     try {
-      const { questionId, answerOption, mezonId } = this.parseButtonId(this.event.button_id);
-
-      if (!questionId || !answerOption || !mezonId) {
-        await this.mezonMessage.reply({ t: "⚠️ Invalid button ID format." });
-        return;
+      const { type } = this.parseButtonId();
+      switch (type) {
+        case "test":
+          await this.handleTestAnswer();
+          break;
+        case "daily":
+          await this.handleDailyAnswer();
+          break;
+        default:
+          await this.mezonMessage.reply({ t: "⚠️ Unknown answer type." });
       }
-
-      const questionIdNumber = Number(questionId);
-      const chosenOption = parseOption(answerOption);
-
-      if (!chosenOption) {
-        await this.mezonMessage.reply({ t: "⚠️ Invalid option selected." });
-        return;
-      }
-
-      const question = await this.questionService.findQuestionById(questionIdNumber);
-      if (!question) {
-        await this.mezonMessage.reply({ t: "⚠️ Question not found." });
-        return;
-      }
-
-      const existingUser = await this.userService.findUserByMezonId(mezonId);
-      if (!existingUser) {
-        await this.mezonMessage.reply({ t: "⚠️ User not found." });
-        return;
-      }
-
-      const isCorrect = question.correctOption === chosenOption;
-
-      await this.saveUserAnswer(
-        existingUser.id,
-        chosenOption,
-        isCorrect,
-        question.part.id,
-        question.test.id,
-        question.id
-      );
-
-      await this.sendAnswerResponse(isCorrect, question, mezonId, chosenOption);
-
     } catch (error) {
       console.error("UserAnswerHandler Error:", error);
-
       await this.mezonMessage.reply({
         t: "⚠️ An error occurred while fetching User Answer. Please try again later.",
       });
     }
   }
 
-  private parseButtonId(buttonId: string): {
-    questionId?: string;
-    answerOption?: string;
-    mezonId?: string;
-  } {
+  private async handleDailyAnswer(): Promise<void> {
+    const { questionId, answerOption } = this.parseButtonId();
+
+    if (!questionId || !answerOption) {
+      await this.mezonMessage.reply({ t: "⚠️ Invalid daily answer format." });
+      return;
+    }
+
+    const mezonId = this.event.user_id;
+    const questionIdNumber = Number(questionId);
+    const chosenOption = parseOption(answerOption);
+    const question = await this.questionService.findQuestionById(questionIdNumber);
+    const user = await this.userService.findUserByMezonId(mezonId);
+
+    if (!question || !user || !chosenOption) {
+      await this.mezonMessage.reply({ t: "⚠️ Missing question or user data." });
+      return;
+    }
+
+    const isCorrect = question.correctOption === chosenOption;
+
+    await this.dailyAnswerService.saveDailyAnswer({
+      user,
+      question,
+      chosenOption,
+      isCorrect,
+    });
+    await this.sendAnswerDailyResponse(question, isCorrect, chosenOption);
+
+    const newBadges = await this.userStatService.updateUserStats(user.id, isCorrect);
+    if (newBadges.length > 0) {
+      await sendAchievementBadgeReply(newBadges, this.mezonMessage);
+    }
+  }
+
+  private async handleTestAnswer(): Promise<void> {
+    const { questionId, answerOption, mezonId } = this.parseButtonId();
+    if (!questionId || !answerOption || !mezonId) {
+      await this.mezonMessage.reply({ t: "⚠️ Invalid button ID format." });
+      return;
+    }
+
+    const questionIdNumber = Number(questionId);
+    const chosenOption = parseOption(answerOption);
+    const question = await this.questionService.findQuestionById(questionIdNumber);
+    const existingUser = await this.userService.findUserByMezonId(mezonId);
+    if (!chosenOption || !question || !existingUser) {
+      await this.mezonMessage.reply({ t: "⚠️ Missing data." });
+      return;
+    }
+    const isCorrect = question.correctOption === chosenOption;
+
+    await this.saveUserAnswer({
+      userId: existingUser.id,
+      chosenOption: chosenOption,
+      isCorrect: isCorrect,
+      partId: question.part.id,
+      testId: question.test.id,
+      questionId: question.id
+    });
+
+    await this.userStatService.updateUserStats(existingUser.id, true);
+
+    await this.sendAnswerTestResponse(isCorrect, question, mezonId, chosenOption);
+  }
+
+  private parseButtonId(): ParsedButtonId {
+    const buttonId = this.event.button_id;
     const parts = buttonId.split("_");
 
-    const questionId = parts.find((p) => p.startsWith("q:"))?.split(":")[1];
-    const answerOption = parts.find((p) => p.startsWith("a:"))?.split(":")[1];
-    const mezonId = parts.find((p) => p.startsWith("id:"))?.split(":")[1];
+    const type = parts.find((t) => t.startsWith("t:"))?.split(":")[1].trim();
+    const questionId = parts.find((p) => p.startsWith("q:"))?.split(":")[1].trim();
+    const answerOption = parts.find((p) => p.startsWith("a:"))?.split(":")[1].trim();
+    const mezonId = parts.find((p) => p.startsWith("id:"))?.split(":")[1].trim();
 
-    return { questionId, answerOption, mezonId };
+    return {
+      type: type,
+      questionId: questionId,
+      answerOption: answerOption,
+      mezonId: mezonId
+    };
   }
 
   private async saveUserAnswer(
-    userId: number,
-    chosenOption: OptionEnum,
-    isCorrect: boolean,
-    partId: number,
-    testId: number,
-    questionId: number
+    saveUserAnswerParams: SaveUserAnswerParams
   ): Promise<void> {
     try {
+      const { userId, chosenOption, isCorrect, partId, testId, questionId } = saveUserAnswerParams;
       const existingUser = await this.userService.findUserById(userId);
       if (!existingUser) {
         console.warn(`⚠️ User with user id ${userId} not found`);
@@ -141,22 +205,33 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     }
   }
 
-  private async sendAnswerResponse(
-    isCorrect: boolean,
-    question: Question,
-    mezonId: string,
-    chosenOption: OptionEnum
-  ): Promise<void> {
-    try {
-      const resultText = isCorrect ? `✅ Correct! You chose ${chosenOption}.` : `❌ Wrong answer: You chose ${chosenOption}.`;
-      const explanationText = question.explanation
-        ? `\n📘 Explanation: \n ${question.explanation}`
-        : "\n\ℹ️ No explanation available for this question.";
-      const questionContent =
-        question.passage?.content?.length > 0
-          ? `${question.passage.content}\n\n**Question:** ${question.questionText}`
-          : question.questionText;
+  private buildAnswerMessage(answerMessageParams: AnswerMessageParams) {
+    const { question, isCorrect, chosenOption, includeButtons, mezonId } = answerMessageParams;
+    const resultText = isCorrect
+      ? `✅ Correct! You chose ${chosenOption}.`
+      : `❌ Wrong answer: You chose ${chosenOption}.`;
 
+    const explanationText = question.explanation
+      ? `\n📘 Explanation:\n${question.explanation}`
+      : "\nℹ️ No explanation available for this question.";
+
+    const questionContent =
+      question.passage?.content?.length > 0
+        ? `${question.passage.content}\n\n**Question:** ${question.questionText}`
+        : question.questionText;
+
+    const messageBuilder = new MessageBuilder()
+      .createEmbed({
+        color: "#9fc117",
+        title: `Question ${question.questionNumber}`,
+        description: [questionContent, resultText, explanationText].filter(Boolean).join("\n\n"),
+        footer: `✅ Correct Option: ${question.correctOption}`,
+        imageUrl: question.imageUrl || undefined,
+        audioUrl: question.audioUrl || undefined,
+      })
+      .setText(`Start Test ${question.test?.id ?? "?"}, Part ${question.part?.id ?? "?"}`);
+
+    if (includeButtons && mezonId) {
       const nextQuestionButton = new ButtonBuilder()
         .setId(`next-question_id:${mezonId}`)
         .setLabel("Next Question")
@@ -169,37 +244,49 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
         .setStyle(EButtonMessageStyle.DANGER)
         .build();
 
-      const messagePayload = new MessageBuilder()
-        .createEmbed({
-          color: "#9fc117",
-          title: `Question ${question.questionNumber}`,
-          description: (() => {
-            const lines: string[] = [];
+      messageBuilder.addButtonsRow([nextQuestionButton, cancelButton]);
+    }
 
-            if (questionContent.length > 0) {
-              lines.push(questionContent);
-            }
+    return messageBuilder.build();
+  }
 
-            if (resultText) lines.push(resultText);
-            if (explanationText) lines.push(explanationText);
+  private async sendAnswerTestResponse(
+    isCorrect: boolean,
+    question: Question,
+    mezonId: string,
+    chosenOption: OptionEnum
+  ): Promise<void> {
+    try {
+      const messagePayload = this.buildAnswerMessage({
+        question: question,
+        isCorrect: isCorrect,
+        chosenOption: chosenOption,
+        includeButtons: true,
+        mezonId: mezonId
+      });
 
-            return lines.join("\n\n");
-          })(),
-          footer: `✅ Correct Option: ${question.correctOption}`,
-          imageUrl: question.imageUrl || undefined,
-          audioUrl: question.audioUrl || undefined,
-        })
-        .setText(`Start Test ${question.test?.id ?? "?"}, Part ${question.part?.id ?? "?"}`)
-        .addButtonsRow([nextQuestionButton, cancelButton])
-        .build();
-
-      await this.mezonMessage.update(
-        messagePayload,
-        undefined,
-        messagePayload.attachments
-      )
+      await this.mezonMessage.update(messagePayload, undefined, messagePayload.attachments);
     } catch (error) {
-      console.error("❌ Error sending answer response:", error);
+      console.error("❌ Error sending test answer response:", error);
+    }
+  }
+
+  private async sendAnswerDailyResponse(
+    question: Question,
+    isCorrect: boolean,
+    chosenOption: OptionEnum
+  ): Promise<void> {
+    try {
+      const messagePayload = this.buildAnswerMessage({
+        question: question,
+        isCorrect: isCorrect,
+        chosenOption: chosenOption,
+        includeButtons: false
+      });
+
+      await this.mezonMessage.update(messagePayload, undefined, messagePayload.attachments);
+    } catch (error) {
+      console.error("❌ Error sending daily answer response:", error);
     }
   }
 }

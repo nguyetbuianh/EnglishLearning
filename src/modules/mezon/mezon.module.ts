@@ -30,6 +30,7 @@ import { ReviewTestHandler } from './handlers/review-test.handler';
 import { DailyReminderTask } from './handlers/reminder.handler';
 import { SaveVocabularyHandler } from './handlers/save-vocabulary.handler';
 import { FavoriteVocabularyModule } from '../favorite-vocabulary/favorite_vocabulary.module';
+import { DailyModule } from '../daily/daily.module';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -60,7 +61,8 @@ const commandHandlers = [
     ToeicModule,
     TopicModule,
     VocabularyModule,
-    FavoriteVocabularyModule
+    FavoriteVocabularyModule,
+    DailyModule
   ],
   providers: [
     MezonService,
