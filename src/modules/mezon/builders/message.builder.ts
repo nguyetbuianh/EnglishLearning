@@ -2,7 +2,10 @@ import {
   ApiMessageAttachment,
   ButtonComponent,
   ChannelMessageContent,
+  EMessageComponentType,
   IMessageActionRow,
+
+  RadioFieldOption,
   SelectComponent,
 } from "mezon-sdk";
 import { IInteractiveMessageProps } from "mezon-sdk";
@@ -12,7 +15,6 @@ export class MessageBuilder {
   private text?: string;
   private embeds: IInteractiveMessageProps[] = [];
   private components: IMessageActionRow[] = [];
-
   private attachments: ApiMessageAttachment[] = [];
 
   setText(text: string): this {
@@ -29,7 +31,7 @@ export class MessageBuilder {
     color?: string;
     title?: string;
     description?: string;
-    fields?: { name: string; value: string; inline?: boolean }[];
+    fields?: IInteractiveMessageProps["fields"];
     footer?: string;
     timestamp?: boolean;
     imageUrl?: string;

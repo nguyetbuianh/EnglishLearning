@@ -1,0 +1,101 @@
+import { Injectable } from "@nestjs/common";
+import { BaseHandler, MMessageButtonClicked } from "./base";
+import { MezonClient } from "mezon-sdk";
+import { FavoriteVocabularyService } from "src/modules/favorite-vocabulary/favorite-vocabulary.service";
+import { VocabularyService } from "src/modules/vocabulary/vocabulary.service";
+import { Interaction } from "../decorators/interaction.decorator";
+import { CommandType } from "../enums/commands.enum";
+import { FavoriteVocabulary } from "src/entities/favorite-vocabulary.entity";
+import { UserService } from "src/modules/user/user.service";
+
+@Injectable()
+@Interaction(CommandType.BUTTON_SAVE_VOCABULARY)
+export class SaveVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
+  constructor(
+    protected readonly client: MezonClient,
+    private readonly favoriteService: FavoriteVocabularyService,
+    private readonly vocabularyService: VocabularyService,
+    private readonly userService: UserService
+  ) {
+    super(client);
+  }
+
+  async handle(): Promise<void> {
+    try {
+      const mezonUserId = this.event.user_id;
+      if (!mezonUserId) {
+        await this.mezonMessage.reply({ t: "⚠️ Missing user info." });
+        return;
+      }
+
+      const extra = this.event.extra_data;
+      if (!extra) {
+        await this.mezonMessage.reply({ t: "⚠️ Missing selection info." });
+        return;
+      }
+
+      let vocabIds: number[] = [];
+      try {
+        const data = JSON.parse(extra);
+        const values = Object.values(data).flat();
+        vocabIds = values.map((v) => Number(v)).filter((n) => !isNaN(n));
+      } catch (e) {
+        console.error("❌ Failed to parse extra_data:", extra, e);
+      }
+
+      if (vocabIds.length === 0) {
+        await this.mezonMessage.reply({
+          t: "⚠️ Please select at least one vocabulary before saving.",
+        });
+        return;
+      }
+
+      const user = await this.userService.findUserByMezonId(mezonUserId);
+      if (!user) {
+        await this.mezonMessage.reply({ t: "🚫 User not found." });
+        return;
+      }
+
+      let savedCount = 0;
+      let alreadySaved: string[] = [];
+      let notFound: number[] = [];
+
+      for (const vocabId of vocabIds) {
+        const vocabulary = await this.vocabularyService.findVocabularyById(vocabId);
+        if (!vocabulary) {
+          notFound.push(vocabId);
+          continue;
+        }
+
+        const existing = await this.favoriteService.existingVocabularyAndUserId(
+          user.id,
+          vocabulary.id
+        );
+
+        if (existing) {
+          alreadySaved.push(vocabulary.word);
+          continue;
+        }
+
+        const fav = new FavoriteVocabulary();
+        fav.user = user;
+        fav.vocabulary = vocabulary;
+        await this.favoriteService.saveVocabulary(fav);
+        savedCount++;
+      }
+
+      let replyMsg = `✅ Saved ${savedCount} vocabular${savedCount > 1 ? "ies" : "y"} to your favorites!`;
+      if (alreadySaved.length > 0)
+        replyMsg += `\n⚠️ Already saved: ${alreadySaved.join(", ")}`;
+      if (notFound.length > 0)
+        replyMsg += `\n🚫 Not found: ${notFound.join(", ")}`;
+
+      await this.mezonMessage.reply({ t: replyMsg });
+    } catch (error) {
+      console.error("❌ Error in SaveVocabularyHandler:", error);
+      await this.mezonMessage.reply({
+        t: "⚠️ Error saving vocabulary. Please try again later.",
+      });
+    }
+  }
+}

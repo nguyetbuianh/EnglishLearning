@@ -34,6 +34,7 @@ export class EventRouter {
   private async handleEvent<T extends InteractionEvent>(event: T) {
     try {
       const eventName = this.getEventName(event);
+
       if (!eventName) return;
 
       const channel = await this.client.channels.fetch(event.channel_id);
@@ -69,6 +70,7 @@ export class EventRouter {
         event.type === "MessageButtonClicked" ||
         event.type === "DropdownBoxSelected"
       ) {
+
         const userId = event.user_id;
         if (ownerId && userId !== ownerId) {
           await this.sendWarning(channel, "❌ You are not allowed to interact with this form.");

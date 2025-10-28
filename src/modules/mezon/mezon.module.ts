@@ -28,6 +28,8 @@ import { HelpHandler } from './handlers/help.handler';
 import { NextPartHandler } from './handlers/next-part.handler';
 import { ReviewTestHandler } from './handlers/review-test.handler';
 import { DailyReminderTask } from './handlers/reminder.handler';
+import { SaveVocabularyHandler } from './handlers/save-vocabulary.handler';
+import { FavoriteVocabularyModule } from '../favorite-vocabulary/favorite_vocabulary.module';
 import { DailyModule } from '../daily/daily.module';
 
 const commandHandlers = [
@@ -49,7 +51,8 @@ const commandHandlers = [
   HelpHandler,
   NextPartHandler,
   ReviewTestHandler,
-  DailyReminderTask
+  //DailyReminderTask,
+  SaveVocabularyHandler
 ];
 
 @Module({
@@ -58,6 +61,7 @@ const commandHandlers = [
     ToeicModule,
     TopicModule,
     VocabularyModule,
+    FavoriteVocabularyModule,
     DailyModule
   ],
   providers: [

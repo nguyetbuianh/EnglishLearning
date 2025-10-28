@@ -30,20 +30,21 @@ export class AllTopicHandler extends BaseHandler<MChannelMessage> {
         return;
       }
 
-      const senderId = this.mezonMessage.sender_id;
+      const mezonUserId = this.event.sender_id;
+      if (!mezonUserId) return;
 
       const selectionTopic = new SelectionBuilder()
-        .setId(`show-vocabulary_id:${senderId}`)
+        .setId(`show-vocabulary_id:${mezonUserId}`)
         .setPlaceholder("Select a topic...")
         .addOptions(
           topicVocabularies.map((topic) => ({
             label: `📘 ${topic.name}`,
             type: topic.type || "_(No category provided)_",
-            value: String(topic.id),
+            value: `show-vocabulary_topic:${topic.id}_page:1`,
           }))
         )
-
         .build();
+
       const messagePayload = new MessageBuilder()
         .createEmbed({
           color: "#3498db",
