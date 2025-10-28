@@ -22,7 +22,27 @@ export class FavoriteVocabularyService {
       where: {
         user: { id: userId },
         vocabulary: { id: vocabularyId }
-      }
+      },
     });
+  }
+
+  async getVocabularyOfUser(
+    userId: number,
+    page: number,
+    limit: number
+  ): Promise<{ data: FavoriteVocabulary[]; total: number }> {
+    const [data, total] = await this.favoriteVocabularyRepo.findAndCount({
+      where: {
+        user: { id: userId },
+      },
+      relations: ['vocabulary'],
+      order: {
+        createdAt: 'DESC',
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return { data, total };
   }
 }
