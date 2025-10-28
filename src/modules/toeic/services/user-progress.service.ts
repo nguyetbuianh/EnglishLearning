@@ -25,7 +25,6 @@ export class UserProgressService {
     });
   }
 
-
   async createProgress(data: {
     userMezonId: string;
     testId: number;
@@ -91,5 +90,4 @@ export class UserProgressService {
 
     return progresses.length >= 7;
   }
-
 }

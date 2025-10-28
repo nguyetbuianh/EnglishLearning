@@ -7,6 +7,7 @@ export enum CommandType {
   COMMAND_ALL_TOPIC = 'all-topic',
   COMMAND_HELP = 'help',
   COMMAND_ALL_VOCABULARY_OF_USER = 'my-vocab',
+  COMMAND_PROFILE = 'profile',
 
   SELECT_PART = 'toeic-part',
   SELECT_TEST = 'toeic-test',
@@ -24,4 +25,3 @@ export enum CommandType {
   BUTTON_SHOW_VOCABULARY_PREV = 'show-vocabulary-prev',
   BUTTON_SHOW_VOCABULARY_NEXT = 'show-vocabulary-next',
 }
-

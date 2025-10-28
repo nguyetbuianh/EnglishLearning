@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { MezonService } from './mezon.service';
+import { MezonService } from './services/mezon.service';
 import { InteractionFactory } from './router/interaction-factory';
 import { WelcomeHandler } from './handlers/welcome.handler';
 import { BaseHandler, InteractionEvent } from 'src/modules/mezon/handlers/base';
@@ -32,6 +32,8 @@ import { SaveVocabularyHandler } from './handlers/save-vocabulary.handler';
 import { FavoriteVocabularyModule } from '../favorite-vocabulary/favorite_vocabulary.module';
 import { DailyModule } from '../daily/daily.module';
 import { VocabularyOfUserHandler } from './handlers/vocabulary-of-user.handler';
+import { ProfileHandler } from './handlers/profile.handler';
+import { ProfileService } from './services/profile.service';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -54,7 +56,10 @@ const commandHandlers = [
   ReviewTestHandler,
   //DailyReminderTask,
   SaveVocabularyHandler,
-  VocabularyOfUserHandler
+  VocabularyOfUserHandler,
+  SaveVocabularyHandler,
+  DailyReminderTask,
+  ProfileHandler,
 ];
 
 @Module({
@@ -69,6 +74,7 @@ const commandHandlers = [
   providers: [
     MezonService,
     EventRouter,
+    ProfileService,
     ...commandHandlers,
     {
       provide: MezonClient,
