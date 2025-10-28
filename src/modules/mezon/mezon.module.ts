@@ -31,6 +31,7 @@ import { DailyReminderTask } from './handlers/reminder.handler';
 import { SaveVocabularyHandler } from './handlers/save-vocabulary.handler';
 import { FavoriteVocabularyModule } from '../favorite-vocabulary/favorite_vocabulary.module';
 import { DailyModule } from '../daily/daily.module';
+import { VocabularyOfUserHandler } from './handlers/vocabulary-of-user.handler';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -52,7 +53,8 @@ const commandHandlers = [
   NextPartHandler,
   ReviewTestHandler,
   //DailyReminderTask,
-  SaveVocabularyHandler
+  SaveVocabularyHandler,
+  VocabularyOfUserHandler
 ];
 
 @Module({

@@ -6,6 +6,7 @@ export enum CommandType {
   COMMAND_ALL_TEST = 'all-test',
   COMMAND_ALL_TOPIC = 'all-topic',
   COMMAND_HELP = 'help',
+  COMMAND_ALL_VOCABULARY_OF_USER = 'my-vocab',
 
   SELECT_PART = 'toeic-part',
   SELECT_TEST = 'toeic-test',
