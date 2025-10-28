@@ -37,11 +37,9 @@ export class VocabularyOfUserHandler extends BaseHandler<
       if (isButtonClicked) {
         const event = this.event as MMessageButtonClicked;
 
-        // ✅ Lấy custom ID của nút
         const buttonId = event.button_id;
         console.log("Button ID:", buttonId);
 
-        // ✅ Tách page & mezonUserId ra từ custom ID
         const match = buttonId.match(/page:(\d+)_id:([A-Za-z0-9_-]+)/);
         if (match) {
           page = Number(match[1]);
@@ -57,7 +55,6 @@ export class VocabularyOfUserHandler extends BaseHandler<
       console.log("mezonUserId:", mezonUserId, "| page:", page);
       if (!mezonUserId) return;
 
-      // 🧩 Lấy user
       const user = await this.userService.findUserByMezonId(mezonUserId);
       if (!user) {
         await this.mezonMessage.reply({
@@ -66,7 +63,6 @@ export class VocabularyOfUserHandler extends BaseHandler<
         return;
       }
 
-      // 📚 Lấy danh sách từ vựng
       const limit = 3;
       const { data: favoriteVocabularies, total } =
         await this.favoriteVocabularyService.getVocabularyOfUser(
@@ -82,7 +78,6 @@ export class VocabularyOfUserHandler extends BaseHandler<
         return;
       }
 
-      // 🔘 Radio options
       const radioOptions: RadioFieldOption[] = favoriteVocabularies.map(
         (favVocab, index) => {
           const number = (page - 1) * limit + index + 1;
@@ -109,14 +104,12 @@ export class VocabularyOfUserHandler extends BaseHandler<
 
       console.log("radioOptions:", radioOptions);
 
-      // ❌ Nút delete
       const deleteButton = new ButtonBuilder()
         .setId(`delete-vocabulary_page:${page}_id:${mezonUserId}`)
         .setLabel("❌ Delete vocabulary")
         .setStyle(EButtonMessageStyle.DANGER)
         .build();
-
-      // ⏪⏩ Pagination buttons
+      
       const paginationButtons: ButtonComponent[] = [];
       if (page > 1) {
         paginationButtons.push(
@@ -137,7 +130,6 @@ export class VocabularyOfUserHandler extends BaseHandler<
         );
       }
 
-      // 🧱 Build message
       const messagePayload = new MessageBuilder()
         .createEmbed({
           color: "#3498db",
@@ -161,7 +153,6 @@ export class VocabularyOfUserHandler extends BaseHandler<
         .addButtonsRow(paginationButtons)
         .build();
 
-      // 🧩 Reply hoặc update
       if (isButtonClicked) {
         await this.mezonMessage.update(messagePayload);
       } else {
