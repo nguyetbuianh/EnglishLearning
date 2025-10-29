@@ -24,4 +24,5 @@ export enum CommandType {
   BUTTON_REVIEW_TEST = 'review-test',
   BUTTON_SHOW_VOCABULARY_PREV = 'show-vocabulary-prev',
   BUTTON_SHOW_VOCABULARY_NEXT = 'show-vocabulary-next',
+  BUTTON_DELETE_MY_VOCABULARY = 'delete-my-vocabulary',
 }

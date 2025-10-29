@@ -12,16 +12,17 @@ import { FavoriteVocabularyService } from "src/modules/favorite-vocabulary/favor
 import { UserService } from "src/modules/user/user.service";
 import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
+import { CommandType } from "../enums/commands.enum";
 
 @Injectable()
-@Interaction("my-vocab")
+@Interaction(CommandType.COMMAND_ALL_VOCABULARY_OF_USER)
 export class VocabularyOfUserHandler extends BaseHandler<
   MChannelMessage | MMessageButtonClicked
 > {
   constructor(
     protected readonly client: MezonClient,
     private readonly favoriteVocabularyService: FavoriteVocabularyService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {
     super(client);
   }
@@ -29,7 +30,6 @@ export class VocabularyOfUserHandler extends BaseHandler<
   async handle(): Promise<void> {
     try {
       const isButtonClicked = "button_id" in this.event;
-      console.log("Button Clicked:", isButtonClicked);
 
       let page = 1;
       let mezonUserId: string;
@@ -37,11 +37,8 @@ export class VocabularyOfUserHandler extends BaseHandler<
       if (isButtonClicked) {
         const event = this.event as MMessageButtonClicked;
 
-        // ✅ Lấy custom ID của nút
         const buttonId = event.button_id;
-        console.log("Button ID:", buttonId);
 
-        // ✅ Tách page & mezonUserId ra từ custom ID
         const match = buttonId.match(/page:(\d+)_id:([A-Za-z0-9_-]+)/);
         if (match) {
           page = Number(match[1]);
@@ -54,10 +51,7 @@ export class VocabularyOfUserHandler extends BaseHandler<
         mezonUserId = (this.event as MChannelMessage).sender_id;
       }
 
-      console.log("mezonUserId:", mezonUserId, "| page:", page);
       if (!mezonUserId) return;
-
-      // 🧩 Lấy user
       const user = await this.userService.findUserByMezonId(mezonUserId);
       if (!user) {
         await this.mezonMessage.reply({
@@ -66,7 +60,6 @@ export class VocabularyOfUserHandler extends BaseHandler<
         return;
       }
 
-      // 📚 Lấy danh sách từ vựng
       const limit = 3;
       const { data: favoriteVocabularies, total } =
         await this.favoriteVocabularyService.getVocabularyOfUser(
@@ -82,7 +75,6 @@ export class VocabularyOfUserHandler extends BaseHandler<
         return;
       }
 
-      // 🔘 Radio options
       const radioOptions: RadioFieldOption[] = favoriteVocabularies.map(
         (favVocab, index) => {
           const number = (page - 1) * limit + index + 1;
@@ -100,23 +92,19 @@ export class VocabularyOfUserHandler extends BaseHandler<
           return {
             name: `${index}`,
             label: `${number}. ${favVocab.vocabulary.word}`,
-            value: favVocab.id.toString(),
+            value: favVocab.vocabulary.id.toString(),
             description: details,
             style: EButtonMessageStyle.SUCCESS,
           };
         }
       );
 
-      console.log("radioOptions:", radioOptions);
-
-      // ❌ Nút delete
       const deleteButton = new ButtonBuilder()
-        .setId(`delete-vocabulary_page:${page}_id:${mezonUserId}`)
+        .setId(`delete-my-vocabulary_page:${page}_id:${mezonUserId}`)
         .setLabel("❌ Delete vocabulary")
         .setStyle(EButtonMessageStyle.DANGER)
         .build();
 
-      // ⏪⏩ Pagination buttons
       const paginationButtons: ButtonComponent[] = [];
       if (page > 1) {
         paginationButtons.push(
@@ -137,7 +125,6 @@ export class VocabularyOfUserHandler extends BaseHandler<
         );
       }
 
-      // 🧱 Build message
       const messagePayload = new MessageBuilder()
         .createEmbed({
           color: "#3498db",
@@ -161,7 +148,6 @@ export class VocabularyOfUserHandler extends BaseHandler<
         .addButtonsRow(paginationButtons)
         .build();
 
-      // 🧩 Reply hoặc update
       if (isButtonClicked) {
         await this.mezonMessage.update(messagePayload);
       } else {
