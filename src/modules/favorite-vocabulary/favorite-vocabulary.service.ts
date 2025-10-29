@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FavoriteVocabulary } from "src/entities/favorite-vocabulary.entity";
-import { Repository } from "typeorm";
+import { Vocabulary } from "src/entities/vocabulary.entity";
+import { In, Repository } from "typeorm";
 
 @Injectable()
 export class FavoriteVocabularyService {
@@ -44,5 +45,12 @@ export class FavoriteVocabularyService {
     });
 
     return { data, total };
+  }
+
+  async deleteVocabularyOfUser(vocabIds: number[], userId: number): Promise<void> {
+    await this.favoriteVocabularyRepo.delete({
+      user: { id: userId },
+      vocabulary: { id: In(vocabIds) },
+    });
   }
 }

@@ -34,6 +34,7 @@ import { DailyModule } from '../daily/daily.module';
 import { VocabularyOfUserHandler } from './handlers/vocabulary-of-user.handler';
 import { ProfileHandler } from './handlers/profile.handler';
 import { ProfileService } from './services/profile.service';
+import { DeleteMyVocabulary } from './handlers/delete-vocabulary-of-user.handler';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -59,7 +60,8 @@ const commandHandlers = [
   VocabularyOfUserHandler,
   SaveVocabularyHandler,
   DailyReminderTask,
-  ProfileHandler,
+  //ProfileHandler,
+  DeleteMyVocabulary
 ];
 
 @Module({
@@ -92,9 +94,10 @@ const commandHandlers = [
       useFactory: (...handlers: BaseHandler<InteractionEvent>[]): InteractionFactory =>
         new InteractionFactory(handlers),
       inject: [...commandHandlers],
-    },
-
+    }
   ],
-  exports: [MezonService],
+  exports: [
+    MezonService
+  ],
 })
 export class MezonModule { }
