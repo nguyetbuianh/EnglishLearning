@@ -104,7 +104,6 @@ export class VocabularyOfUserHandler extends BaseHandler<
         .setLabel("❌ Delete vocabulary")
         .setStyle(EButtonMessageStyle.DANGER)
         .build();
-
       const paginationButtons: ButtonComponent[] = [];
       if (page > 1) {
         paginationButtons.push(
