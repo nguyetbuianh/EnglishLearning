@@ -30,7 +30,9 @@ export class SaveVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
 
       const extra = this.event.extra_data;
       if (!extra) {
-        await this.mezonMessage.reply({ t: "⚠️ Missing selection info." });
+        await this.mezonMessage.reply({
+          t: "⚠️ Please select at least one vocabulary before saving.",
+        });
         return;
       }
 
