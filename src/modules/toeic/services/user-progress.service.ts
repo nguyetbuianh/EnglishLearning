@@ -90,4 +90,13 @@ export class UserProgressService {
 
     return progresses.length >= 7;
   }
+
+  async getProgressByUserId(userMezonId: string): Promise<UserProgress[]> {
+    return await this.userProgressRepo.find({
+      where: {
+        userMezonId
+      },
+      relations: ['test', 'part']
+    })
+  }
 }
