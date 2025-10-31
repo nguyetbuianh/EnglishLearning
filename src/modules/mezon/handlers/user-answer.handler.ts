@@ -18,6 +18,8 @@ import { CommandType } from "../enums/commands.enum";
 import { DailyAnswerService } from "src/modules/daily/services/daily-answer.service";
 import { UserStatService } from "src/modules/daily/services/user-stat.service";
 import { sendAchievementBadgeReply } from "../utils/reply-message.util";
+import { QuestionOptionService } from "src/modules/toeic/services/question-option.service";
+import { QuestionOption } from "src/entities/question-option.entity";
 
 interface ParsedButtonId {
   type?: string;
@@ -54,7 +56,8 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     private readonly toeicTestService: ToeicTestService,
     private readonly userAnswerService: UserAnswerService,
     private readonly dailyAnswerService: DailyAnswerService,
-    private readonly userStatService: UserStatService
+    private readonly userStatService: UserStatService,
+    private readonly questionOptionService: QuestionOptionService
   ) {
     super(client);
   }
@@ -110,7 +113,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     await this.sendAnswerDailyResponse(question, isCorrect, chosenOption);
 
     const newBadges = await this.userStatService.updateUserStats(user.id, isCorrect);
-    if (newBadges.length > 0) {
+    if (newBadges && newBadges.length > 0) {
       await sendAchievementBadgeReply(newBadges, this.mezonMessage);
     }
   }
@@ -141,7 +144,10 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       questionId: question.id
     });
 
-    await this.userStatService.updateUserStats(existingUser.id, true);
+    const newBadges = await this.userStatService.updateUserStats(existingUser.id, true);
+    if (newBadges && newBadges.length > 0) {
+      await sendAchievementBadgeReply(newBadges, this.mezonMessage);
+    }
 
     await this.sendAnswerTestResponse(isCorrect, question, mezonId, chosenOption);
   }
@@ -205,11 +211,22 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     }
   }
 
-  private buildAnswerMessage(answerMessageParams: AnswerMessageParams) {
+  private async buildAnswerMessage(answerMessageParams: AnswerMessageParams) {
     const { question, isCorrect, chosenOption, includeButtons, mezonId } = answerMessageParams;
+
+    const correctOption = await this.questionOptionService.getOption(question.id, question.correctOption);
+    let wrongOption: QuestionOption | null = null;
+    if (!isCorrect) {
+      wrongOption = await this.questionOptionService.getOption(question.id, chosenOption);
+    }
+    if (!correctOption && !wrongOption) {
+      return;
+    }
+
     const resultText = isCorrect
-      ? `✅ Correct! You chose ${chosenOption}.`
-      : `❌ Wrong answer: You chose ${chosenOption}.`;
+      ? `✅ Correct! You chose ${chosenOption}. ${correctOption!.optionText}`
+      : `❌ Wrong answer: You chose ${chosenOption}. ${wrongOption!.optionText}
+         ✅ Correct Option: ${question.correctOption}. ${correctOption!.optionText}`;
 
     const explanationText = question.explanation
       ? `\n📘 Explanation:\n${question.explanation}`
@@ -225,7 +242,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
         color: "#9fc117",
         title: `Question ${question.questionNumber}`,
         description: [questionContent, resultText, explanationText].filter(Boolean).join("\n\n"),
-        footer: `✅ Correct Option: ${question.correctOption}`,
+        footer: `English Learning Bot`,
         imageUrl: question.imageUrl || undefined,
         audioUrl: question.audioUrl || undefined,
       })
@@ -257,13 +274,15 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     chosenOption: OptionEnum
   ): Promise<void> {
     try {
-      const messagePayload = this.buildAnswerMessage({
+      const messagePayload = await this.buildAnswerMessage({
         question: question,
         isCorrect: isCorrect,
         chosenOption: chosenOption,
         includeButtons: true,
         mezonId: mezonId
       });
+
+      if (!messagePayload) return;
 
       await this.mezonMessage.update(messagePayload, undefined, messagePayload.attachments);
     } catch (error) {
@@ -277,12 +296,14 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     chosenOption: OptionEnum
   ): Promise<void> {
     try {
-      const messagePayload = this.buildAnswerMessage({
+      const messagePayload = await this.buildAnswerMessage({
         question: question,
         isCorrect: isCorrect,
         chosenOption: chosenOption,
         includeButtons: false
       });
+
+      if (!messagePayload) return;
 
       await this.mezonMessage.update(messagePayload, undefined, messagePayload.attachments);
     } catch (error) {

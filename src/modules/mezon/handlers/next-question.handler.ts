@@ -252,6 +252,8 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
     });
 
     const newBadges = await this.userStatService.addPartScore(testId, partId, userId);
-    await sendAchievementBadgeReply(newBadges, this.mezonMessage);
+    if (newBadges && newBadges.length > 0) {
+      await sendAchievementBadgeReply(newBadges, this.mezonMessage);
+    }
   }
 }

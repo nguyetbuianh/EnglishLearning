@@ -13,6 +13,8 @@ import { UserAnswer } from 'src/entities/user-answer.entity';
 import { User } from 'mezon-sdk/dist/cjs/api/api';
 import { UserProgress } from 'src/entities/progress.entity';
 import { UserProgressService } from './services/user-progress.service';
+import { QuestionOptionService } from './services/question-option.service';
+import { QuestionOption } from 'src/entities/question-option.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -21,7 +23,8 @@ import { UserProgressService } from './services/user-progress.service';
     Question,
     Passage,
     UserAnswer,
-    UserProgress
+    UserProgress,
+    QuestionOption
   ])],
   providers: [
     ToeicPartService,
@@ -29,7 +32,8 @@ import { UserProgressService } from './services/user-progress.service';
     ToeicQuestionService,
     PassageService,
     UserAnswerService,
-    UserProgressService
+    UserProgressService,
+    QuestionOptionService
   ],
   exports: [
     ToeicPartService,
@@ -37,7 +41,8 @@ import { UserProgressService } from './services/user-progress.service';
     ToeicQuestionService,
     PassageService,
     UserAnswerService,
-    UserProgressService
+    UserProgressService,
+    QuestionOptionService
   ],
 })
 export class ToeicModule { }

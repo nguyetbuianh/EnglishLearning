@@ -6,10 +6,10 @@ import { BaseHandler, MChannelMessage } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
 import { ProfileService } from "../services/profile.service";
 import { UserService } from "src/modules/user/user.service";
-import { UserProgress } from "src/entities/progress.entity";
 import { User } from "src/entities/user.entity";
 import { UserStatService } from "src/modules/daily/services/user-stat.service";
-import { UserStats } from "src/entities/user-stat.entity";
+import { updateSession } from "../utils/update-session.util";
+import { ToeicSessionStore } from "../session/toeic-session.store";
 
 @Interaction(CommandType.COMMAND_PROFILE)
 @Injectable()
@@ -34,33 +34,21 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
         return;
       }
 
+      const waitMessage = await this.mezonMessage.reply({
+        t: "⏳ Please wait a moment while I prepare your profile..."
+      });
+
       const formattedJoinDate = await this.getJoinAt(user);
       const userStat = await this.userStatService.findUserStats(user.id);
-      if (!userStat) {
-        const messagePayload = new MessageBuilder()
-          .createEmbed({
-            color: "#808080",
-            title: "📊 No Statistics Yet",
-            description:
-              `Hello *${username}*!\n\n` +
-              `It looks like you don’t have any learning statistics yet.\n` +
-              `🎯 Start completing exercises to track your progress and earn achievements!`,
-            imageUrl:
-              "https://media0.giphy.com/media/xT9DPldJHzZKtOnEn6/200w.gif",
-            footer: "Start your learning journey today! 🚀",
-            timestamp: true,
-          })
-          .build();
 
-        await this.mezonMessage.reply(messagePayload);
-        return;
-      }
+      const badges = userStat ? userStat.badges.slice(-3) : [];
+      const points = userStat ? userStat.points : 0;
 
       const buffer = await this.profileService.generateProfileImage(
         username!,
         avatarUrl,
-        userStat.badges.slice(-3),
-        userStat.points,
+        badges,
+        points,
         formattedJoinDate
       );
 
@@ -71,9 +59,10 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
           title: '👤 Your Profile',
           imageUrl: result.secure_url,
         })
-        .build();
+        .build();      
 
-      await this.mezonMessage.reply(messagePayload);
+      const oldMessage = await this.mezonChanel.messages.fetch(waitMessage.message_id);
+      await oldMessage.update(messagePayload);
     } catch (error) {
       console.error("❗Error in ProfileHandler:", error);
       await this.mezonMessage.reply({
@@ -82,7 +71,7 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
     }
   }
 
-  private async getJoinAt(user: User): Promise<string> {
+  private getJoinAt(user: User): string {
     const joinAt = user.joinedAt;
     const formattedJoinDate = joinAt.toISOString().split('T')[0];
 

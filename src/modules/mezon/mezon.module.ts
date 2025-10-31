@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MezonService } from './services/mezon.service';
 import { InteractionFactory } from './router/interaction-factory';
-import { WelcomeHandler } from './handlers/welcome.handler';
 import { BaseHandler, InteractionEvent } from 'src/modules/mezon/handlers/base';
 import { MezonClient } from 'mezon-sdk';
 import { appConfig } from 'src/appConfig';
@@ -37,7 +36,6 @@ import { ProfileService } from './services/profile.service';
 import { DeleteMyVocabulary } from './handlers/delete-vocabulary-of-user.handler';
 
 const commandHandlers = [
-  WelcomeHandler,
   StartTestHandler,
   InitializationHandler,
   ToeicPartHandler,
@@ -55,12 +53,12 @@ const commandHandlers = [
   HelpHandler,
   NextPartHandler,
   ReviewTestHandler,
-  //DailyReminderTask,
+  DailyReminderTask,
   SaveVocabularyHandler,
   VocabularyOfUserHandler,
   SaveVocabularyHandler,
   DailyReminderTask,
-  //ProfileHandler,
+  ProfileHandler,
   DeleteMyVocabulary
 ];
 
