@@ -4,19 +4,15 @@ import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { BaseHandler, MChannelMessage } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
-import { ProfileService } from "../services/profile.service";
 import { UserService } from "src/modules/user/user.service";
 import { User } from "src/entities/user.entity";
 import { UserStatService } from "src/modules/daily/services/user-stat.service";
-import { updateSession } from "../utils/update-session.util";
-import { ToeicSessionStore } from "../session/toeic-session.store";
 
 @Interaction(CommandType.COMMAND_PROFILE)
 @Injectable()
 export class ProfileHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,
-    private readonly profileService: ProfileService,
     private readonly userService: UserService,
     private readonly userStatService: UserStatService
   ) {
@@ -34,35 +30,34 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
         return;
       }
 
-      const waitMessage = await this.mezonMessage.reply({
-        t: "⏳ Please wait a moment while I prepare your profile..."
-      });
-
       const formattedJoinDate = await this.getJoinAt(user);
       const userStat = await this.userStatService.findUserStats(user.id);
 
       const badges = userStat ? userStat.badges.slice(-3) : [];
       const points = userStat ? userStat.points : 0;
 
-      const buffer = await this.profileService.generateProfileImage(
-        username!,
-        avatarUrl,
-        badges,
-        points,
-        formattedJoinDate
-      );
+      const badgeList = badges.length > 0
+        ? badges.map(b => `${b}`).join(' |')
+        : '_No badges yet_';
 
-      const result = await this.profileService.uploadProfileImage(buffer, `profiles/${mezonUserId}`);
+      const embedDescription = `
+      👤 *Username:* ${username}
+      🏅 *Points:* ${points}
+      📅 *Joined:* ${formattedJoinDate}\n
+      🎖️ *Badges:* ${badgeList}
+      `;
 
       const messagePayload = new MessageBuilder()
         .createEmbed({
-          title: '👤 Your Profile',
-          imageUrl: result.secure_url,
+          title: "🌟 Your English Learning Profile",
+          description: embedDescription.trim(),
+          thumbnail: avatarUrl,
+          footer: "English Learning Bot",
+          timestamp: true,
         })
-        .build();      
+        .build();
 
-      const oldMessage = await this.mezonChanel.messages.fetch(waitMessage.message_id);
-      await oldMessage.update(messagePayload);
+      await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       console.error("❗Error in ProfileHandler:", error);
       await this.mezonMessage.reply({
