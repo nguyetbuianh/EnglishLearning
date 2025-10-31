@@ -32,7 +32,6 @@ import { FavoriteVocabularyModule } from '../favorite-vocabulary/favorite_vocabu
 import { DailyModule } from '../daily/daily.module';
 import { VocabularyOfUserHandler } from './handlers/vocabulary-of-user.handler';
 import { ProfileHandler } from './handlers/profile.handler';
-import { ProfileService } from './services/profile.service';
 import { DeleteMyVocabulary } from './handlers/delete-vocabulary-of-user.handler';
 import { UserProgressHandler } from './handlers/user-progress.handler';
 
@@ -76,7 +75,6 @@ const commandHandlers = [
   providers: [
     MezonService,
     EventRouter,
-    ProfileService,
     ...commandHandlers,
     {
       provide: MezonClient,
