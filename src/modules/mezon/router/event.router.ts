@@ -61,7 +61,8 @@ export class EventRouter {
           CommandType.COMMAND_ALL_TOPIC,
           CommandType.COMMAND_ALL_TEST,
           CommandType.COMMAND_ALL_PART,
-          CommandType.COMMAND_ALL_VOCABULARY_OF_USER
+          CommandType.COMMAND_ALL_VOCABULARY_OF_USER,
+          CommandType.COMMAND_MY_PROGRESS
         ];
         if (!VALID_COMMANDS.includes(command)) {
           return;

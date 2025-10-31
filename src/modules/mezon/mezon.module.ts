@@ -34,6 +34,7 @@ import { VocabularyOfUserHandler } from './handlers/vocabulary-of-user.handler';
 import { ProfileHandler } from './handlers/profile.handler';
 import { ProfileService } from './services/profile.service';
 import { DeleteMyVocabulary } from './handlers/delete-vocabulary-of-user.handler';
+import { UserProgressHandler } from './handlers/user-progress.handler';
 
 const commandHandlers = [
   StartTestHandler,
@@ -59,7 +60,8 @@ const commandHandlers = [
   SaveVocabularyHandler,
   DailyReminderTask,
   ProfileHandler,
-  DeleteMyVocabulary
+  DeleteMyVocabulary,
+  UserProgressHandler
 ];
 
 @Module({
