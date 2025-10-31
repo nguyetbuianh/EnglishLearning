@@ -43,7 +43,7 @@ export class ShowVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
       const topicId = Number(match[1]);
       const page = Number(match[2]);
 
-      const limit = 3;
+      const limit = 10;
       const { data: vocabularies, total } =
         await this.vocabularyService.getVocabulariesByTopic(topicId, page, limit);
 
@@ -55,8 +55,8 @@ export class ShowVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
       const radioOptions: RadioFieldOption[] = vocabularies.map((vocab, index) => {
         const number = (page - 1) * limit + index + 1;
         const details = [
-          `🔊 /${vocab.pronounce || "—"}/ | 🧩 *${vocab.partOfSpeech || "N/A"}*`,
-          `🇻🇳 ${vocab.meaning}`,
+          `🔊 ${vocab.pronounce || "—"} | 🧩 *${vocab.partOfSpeech || "N/A"}*`,
+          `Mean: ${vocab.meaning}`,
           vocab.exampleSentence ? `💬 _${vocab.exampleSentence}_` : null,
         ]
           .filter(Boolean)

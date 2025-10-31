@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, ManyToOne, JoinColumn, Unique } from 'typeorm';
 import { Topic } from './topic.entity';
 import { FavoriteVocabulary } from './favorite-vocabulary.entity';
 
 @Entity('vocabulary')
+@Unique(['word'])
 export class Vocabulary {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   id: number;
