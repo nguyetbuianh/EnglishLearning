@@ -8,6 +8,7 @@ import { Repository } from "typeorm";
 
 @Injectable()
 export class UserStatService {
+  private readonly POINT_CHANGE = 5;
   constructor(
     @InjectRepository(UserStats)
     private readonly userStatsRepo: Repository<UserStats>,
@@ -27,7 +28,8 @@ export class UserStatService {
   }
 
   private updatePoints(stats: UserStats, isCorrect: boolean): void {
-    if (isCorrect) stats.points += 5;
+    stats.points += isCorrect ? this.POINT_CHANGE : -this.POINT_CHANGE;
+    stats.points = Math.max(0, stats.points);
   }
 
   private updateAnswers(stats: UserStats, isCorrect: boolean): void {

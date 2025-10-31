@@ -8,6 +8,7 @@ import { MessageBuilder } from "../builders/message.builder";
 import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
 import { UserService } from "src/modules/user/user.service";
 import { UserAnswer } from "src/entities/user-answer.entity";
+import { sendCancelMessage } from "../utils/reply-message.util";
 
 interface PartStat {
   correct: number;
@@ -197,7 +198,8 @@ export class ReviewTestHandler extends BaseHandler<MMessageButtonClicked> {
 
       const messagePayload = this.buildResultEmbed(summary, partStats);
 
-      await this.mezonMessage.update(messagePayload);
+      await sendCancelMessage(this.mezonMessage);
+      await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       console.error("❗Error in ReviewTestHandler:", error);
       await this.mezonMessage.reply({

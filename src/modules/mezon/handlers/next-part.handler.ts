@@ -6,7 +6,7 @@ import { BaseHandler, MMessageButtonClicked } from "./base";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 import { updateSession } from "../utils/update-session.util";
-import { replyQuestionMessage, sendAchievementBadgeReply, sendCompletionMessage, sendContinueOrRestartMessage } from "../utils/reply-message.util";
+import { replyQuestionMessage, sendAchievementBadgeReply, sendCompletionMessage, sendContinueOrRestartMessage, sendNoQuestionsMessage } from "../utils/reply-message.util";
 import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
 import { MessageBuilder } from "../builders/message.builder";
 import { ButtonBuilder } from "../builders/button.builder";
@@ -78,7 +78,9 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
           const user = await this.userService.findUserByMezonId(mezonUserId);
           if (user) {
             const newBadges = await this.userStatService.addTestScore(testId, user.id);
-            await sendAchievementBadgeReply(newBadges, this.mezonMessage);
+            if (newBadges && newBadges.length > 0) {
+              await sendAchievementBadgeReply(newBadges, this.mezonMessage);
+            }
           }
 
           return;
@@ -121,6 +123,7 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
         await sendContinueOrRestartMessage({
           testId: testId,
           partId: nextPartId,
+          questionNumber: userProgress.currentQuestionNumber,
           mezonId: mezonUserId,
           mezonMessage: this.mezonMessage
         });
@@ -131,9 +134,12 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
       }
 
       const question = await this.toeicQuestionService.getFirstQuestion(testId, nextPartId);
-      if (!question) return;
+      if (!question) {
+        sendNoQuestionsMessage(testId, partId, this.mezonMessage);
+        return;
+      }
 
-      await updateSession(mezonUserId, question);
+      await updateSession(mezonUserId, question, this.mezonMessage.id);
 
       await this.userProgressService.createProgress({
         userMezonId: mezonUserId,

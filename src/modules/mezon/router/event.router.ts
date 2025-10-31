@@ -6,6 +6,7 @@ import { UserService } from "src/modules/user/user.service";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { MessageBuilder } from "../builders/message.builder";
+import { CommandType } from "../enums/commands.enum";
 
 @Injectable()
 export class EventRouter {
@@ -47,17 +48,39 @@ export class EventRouter {
 
         await this.endUserSession(userId, channel, this.logger);
 
+        if (!Object.values(CommandType).includes(eventName as CommandType)) {
+          return;
+        }
+        const command = eventName as CommandType;
+
+        const VALID_COMMANDS: CommandType[] = [
+          CommandType.COMMAND_PROFILE,
+          CommandType.COMMAND_INIT,
+          CommandType.COMMAND_HELP,
+          CommandType.COMMAND_START,
+          CommandType.COMMAND_ALL_TOPIC,
+          CommandType.COMMAND_ALL_TEST,
+          CommandType.COMMAND_ALL_PART,
+          CommandType.COMMAND_ALL_VOCABULARY_OF_USER
+        ];
+        if (!VALID_COMMANDS.includes(command)) {
+          return;
+        }
+
         const existingUser = await this.userService.findUserByMezonId(userId);
 
-        const PUBLIC_COMMANDS = ["welcome", "help", "init"];
-        const isPublic = PUBLIC_COMMANDS.includes(eventName);
+        const PUBLIC_COMMANDS = [
+          CommandType.COMMAND_INIT,
+          CommandType.COMMAND_HELP
+        ];
+        const isPublic = PUBLIC_COMMANDS.includes(command);
 
         if (!existingUser && !isPublic) {
           await this.sendWarning(channel, "⚠️ You are not registered. Use *init to start.");
           return;
         }
 
-        const handler = this.interactionFactory.getHandler(eventName);
+        const handler = this.interactionFactory.getHandler(command);
         if (handler) {
           await handler.process(event);
         }
