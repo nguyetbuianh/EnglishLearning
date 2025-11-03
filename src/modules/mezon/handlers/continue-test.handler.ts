@@ -1,6 +1,6 @@
 import { MezonClient } from "mezon-sdk";
 import { BaseHandler, MMessageButtonClicked } from "./base";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { ToeicSessionStore } from "../session/toeic-session.store";
@@ -23,7 +23,7 @@ interface LoadQuestionParams {
   passage?: Passage;
 }
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_CONTINUE_TEST)
 export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
   private static readonly COMPLETED_MESSAGE = { t: "✅ You have completed this part!" };

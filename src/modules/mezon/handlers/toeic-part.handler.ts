@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler } from "./base";
 import { ChannelMessageContent, IInteractiveMessageProps, MezonClient } from "mezon-sdk";
@@ -7,8 +7,8 @@ import { MChannelMessage } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
 import { CommandType } from "../enums/commands.enum";
 
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_ALL_PART)
-@Injectable()
 export class ToeicPartHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,

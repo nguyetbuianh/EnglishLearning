@@ -1,15 +1,14 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
-import { BaseHandler, MChannelMessage, MDropdownBoxSelected, MMessageButtonClicked } from "./base";
-import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
+import { BaseHandler, MChannelMessage } from "./base";
+import { MezonClient } from "mezon-sdk";
 import { TopicService } from "src/modules/topic-vocabulary/topic.service";
 import { MessageBuilder } from "../builders/message.builder";
 import { SelectionBuilder } from "../builders/selection.builder";
-import { ButtonBuilder } from "../builders/button.builder";
 import { CommandType } from "../enums/commands.enum";
 import { updateSession } from "../utils/update-session.util";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_ALL_TOPIC)
 export class AllTopicHandler extends BaseHandler<MChannelMessage> {
   constructor(

@@ -1,17 +1,15 @@
-import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
-import { Injectable } from "@nestjs/common";
+import { MezonClient } from "mezon-sdk";
+import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 import { ToeicSessionStore } from "../session/toeic-session.store";
-import { ButtonBuilder } from "../builders/button.builder";
-import { MessageBuilder } from "../builders/message.builder";
 import { CommandType } from "../enums/commands.enum";
 import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
 import { updateSession } from "../utils/update-session.util";
 import { replyQuestionMessage, sendCompletionMessage, sendContinueOrRestartMessage, sendNoQuestionsMessage } from "../utils/reply-message.util";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_CONFIRM_START_TEST)
 export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(

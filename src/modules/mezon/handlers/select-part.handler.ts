@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, Scope } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
@@ -6,11 +6,9 @@ import { BaseHandler } from "./base";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 import { MMessageButtonClicked } from "./base";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.SELECT_PART)
 export class SelectPartHandler extends BaseHandler<MMessageButtonClicked> {
-  private readonly logger = new Logger(SelectPartHandler.name);
-
   constructor(protected readonly client: MezonClient) {
     super(client);
   }

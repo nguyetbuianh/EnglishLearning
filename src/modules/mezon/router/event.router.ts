@@ -7,6 +7,7 @@ import { ToeicSessionStore } from "../session/toeic-session.store";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { MessageBuilder } from "../builders/message.builder";
 import { CommandType } from "../enums/commands.enum";
+import { ModuleRef } from "@nestjs/core";
 
 @Injectable()
 export class EventRouter {
@@ -15,7 +16,8 @@ export class EventRouter {
   constructor(
     private readonly client: MezonClient,
     private readonly interactionFactory: InteractionFactory,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly moduleRef: ModuleRef
   ) { }
 
   public registerListeners() {
@@ -81,8 +83,9 @@ export class EventRouter {
           return;
         }
 
-        const handler = this.interactionFactory.getHandler(command);
-        if (handler) {
+        const HandlerClass = this.interactionFactory.getConstructor(eventName);
+        if (HandlerClass) {
+          const handler = await this.moduleRef.create(HandlerClass);
           await handler.process(event);
         }
 
@@ -102,8 +105,9 @@ export class EventRouter {
         }
       }
 
-      const handler = this.interactionFactory.getHandler(eventName);
-      if (handler) {
+      const HandlerClass = this.interactionFactory.getConstructor(eventName);
+      if (HandlerClass) {
+        const handler = await this.moduleRef.create(HandlerClass);
         await handler.process(event);
       }
     } catch (err) {
