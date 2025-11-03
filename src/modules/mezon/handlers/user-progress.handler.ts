@@ -1,6 +1,6 @@
 import { MezonClient } from "mezon-sdk";
 import { BaseHandler, MChannelMessage } from "./base";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
@@ -26,7 +26,7 @@ const TOTAL_QUESTIONS_BY_PART: Record<number, number> = {
   7: 54,
 };
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_MY_PROGRESS)
 export class UserProgressHandler extends BaseHandler<MChannelMessage> {
   constructor(

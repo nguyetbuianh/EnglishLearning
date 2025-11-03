@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
@@ -8,8 +8,8 @@ import { UserService } from "src/modules/user/user.service";
 import { User } from "src/entities/user.entity";
 import { UserStatService } from "src/modules/daily/services/user-stat.service";
 
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_PROFILE)
-@Injectable()
 export class ProfileHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,

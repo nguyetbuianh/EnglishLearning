@@ -1,12 +1,12 @@
 import { MezonClient } from "mezon-sdk";
 import { BaseHandler } from "./base";
 import { MMessageButtonClicked } from "./base";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { sendCancelMessage } from "../utils/reply-message.util";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_CANCEL_TEST)
 export class CancelTestHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(

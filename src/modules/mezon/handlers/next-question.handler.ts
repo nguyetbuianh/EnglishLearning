@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { MezonClient } from "mezon-sdk";
@@ -50,7 +50,7 @@ interface FinishPartParams {
   mezonMessage: Message;
 }
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_NEXT_QUESTION)
 export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(

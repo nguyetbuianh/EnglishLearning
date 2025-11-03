@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
@@ -13,8 +13,8 @@ import { ButtonBuilder } from "../builders/button.builder";
 import { UserService } from "src/modules/user/user.service";
 import { UserStatService } from "src/modules/daily/services/user-stat.service";
 
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_NEXT_PART)
-@Injectable()
 export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,

@@ -1,6 +1,6 @@
 import { MezonClient } from "mezon-sdk";
 import { BaseHandler, MMessageButtonClicked } from "./base";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { ToeicSessionStore } from "../session/toeic-session.store";
@@ -11,7 +11,7 @@ import { updateSession } from "../utils/update-session.util";
 import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
 import { UserService } from "src/modules/user/user.service";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_RESTART_TEST)
 export class RestartTestHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(

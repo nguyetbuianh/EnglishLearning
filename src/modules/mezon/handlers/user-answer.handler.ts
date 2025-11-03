@@ -1,6 +1,6 @@
 import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { BaseHandler } from "./base";
 import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
 import { UserService } from "src/modules/user/user.service";
@@ -44,9 +44,8 @@ interface AnswerMessageParams {
   includeButtons: boolean,
   mezonId?: string
 }
-
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_USER_ANSWER)
-@Injectable()
 export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,
@@ -284,6 +283,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
 
       if (!messagePayload) return;
 
+      await new Promise((resolve) => setTimeout(resolve, 5000));
       await this.mezonMessage.update(messagePayload, undefined, messagePayload.attachments);
     } catch (error) {
       console.error("❌ Error sending test answer response:", error);

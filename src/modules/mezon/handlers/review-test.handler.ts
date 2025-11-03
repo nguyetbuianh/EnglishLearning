@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
@@ -26,8 +26,8 @@ interface ToeicScoreSummary {
   totalScore: number;
 }
 
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_REVIEW_TEST)
-@Injectable()
 export class ReviewTestHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,

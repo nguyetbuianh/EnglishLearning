@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import {
   EButtonMessageStyle,
@@ -13,7 +13,7 @@ import { MessageBuilder } from "../builders/message.builder";
 import { ButtonBuilder } from "../builders/button.builder";
 import { CommandType } from "../enums/commands.enum";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_SHOW_VOCABULARY)
 export class ShowVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(

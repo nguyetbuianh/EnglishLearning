@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { MezonClient } from "mezon-sdk";
 import { FavoriteVocabularyService } from "src/modules/favorite-vocabulary/favorite-vocabulary.service";
@@ -8,7 +8,7 @@ import { CommandType } from "../enums/commands.enum";
 import { FavoriteVocabulary } from "src/entities/favorite-vocabulary.entity";
 import { UserService } from "src/modules/user/user.service";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_SAVE_VOCABULARY)
 export class SaveVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
