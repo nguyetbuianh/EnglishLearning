@@ -1,11 +1,7 @@
 import {
   ApiMessageAttachment,
   ButtonComponent,
-  ChannelMessageContent,
-  EMessageComponentType,
   IMessageActionRow,
-
-  RadioFieldOption,
   SelectComponent,
 } from "mezon-sdk";
 import { IInteractiveMessageProps } from "mezon-sdk";
