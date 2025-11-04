@@ -1,0 +1,110 @@
+import { Injectable, Scope } from "@nestjs/common";
+import { MezonClient } from "mezon-sdk";
+import { Interaction } from "../decorators/interaction.decorator";
+import { CommandType } from "../enums/commands.enum";
+import { BaseHandler, MMessageButtonClicked } from "./base";
+import { MessageBuilder } from "../builders/message.builder";
+import { Vocabulary } from "src/entities/vocabulary.entity";
+import { VocabularyService } from "src/modules/vocabulary/vocabulary.service";
+
+interface ParsedButtonId {
+  word: string;
+  imageUrl: string;
+  maskedWord: string;
+}
+
+interface MessageAnswer {
+  word: string,
+  imageUrl: string,
+  maskedWord: string,
+  answerValue: string
+}
+
+@Injectable({ scope: Scope.TRANSIENT })
+@Interaction(CommandType.BUTTON_GUESS_WORD_ANSWER)
+export class GuessWordAnswerHandler extends BaseHandler<MMessageButtonClicked> {
+  constructor(
+    protected readonly client: MezonClient,
+    protected readonly vocabService: VocabularyService
+  ) {
+    super(client);
+  }
+
+  async handle(): Promise<void> {
+    try {
+      const extra_data = this.event.extra_data;
+      const parsed = JSON.parse(extra_data);
+      const answerValue = parsed["form-user-guess"];
+
+      const { word, imageUrl, maskedWord } = this.parseButtonId();
+
+      const messageAnswer = await this.sendMessageAnswer({
+        word: word,
+        imageUrl: imageUrl,
+        maskedWord: maskedWord,
+        answerValue: answerValue
+      });
+
+      await this.mezonMessage.update(messageAnswer);
+    } catch (error) {
+      console.error("❗Error in Guess Word Answer Handler:", error);
+      await this.mezonMessage.reply({
+        t: "😢 Oops! Something went wrong. Please try again later!",
+      });
+    }
+  }
+
+  private async sendMessageAnswer(messageAnswer: MessageAnswer) {
+    const { word, imageUrl, maskedWord, answerValue } = messageAnswer;
+    const isCorrect = answerValue.trim().toLowerCase() === word.trim().toLowerCase();
+
+    const vocab = await this.getVocab(word);
+
+    const messagePayload = new MessageBuilder()
+      .createEmbed({
+        color: isCorrect ? "#00FF00" : "#FF0000",
+        title: isCorrect ? "🎉 Correct Answer!" : "😢 Incorrect Answer!",
+        description: `
+          ${isCorrect ? "✅ Great job! You guessed it right!" : "❌ Oops! Better luck next time!"}
+
+          🙋‍♂️ *Your answer:* ${answerValue}
+          📘 *Correct word:* ${word}
+
+          💡 *Meaning:* ${vocab?.meaning || "_(not provided)_"}
+          🔊 *Pronunciation:* ${vocab?.pronounce || "..."} 
+          🧩 *Part of Speech:* ${vocab?.partOfSpeech || "—"}
+          ✏️ *Example:* "${vocab?.exampleSentence || "No example available."}"
+
+          ---
+
+          🕵️‍♀️ *Hint:* The masked version was: ${maskedWord}
+              `,
+        imageUrl,
+        footer: "Vocabulary Guessing Game • Keep learning! 🌟",
+        timestamp: true,
+      })
+      .build();
+
+    return messagePayload;
+  }
+
+
+  private parseButtonId(): ParsedButtonId {
+    const buttonId = this.event.button_id;
+    const parts = buttonId.split("_");
+
+    const word = parts.find((w) => w.startsWith("word:"))?.split(":")[1].trim() || "";
+    const imageUrl = buttonId.match(/imageUrl:([^_]+)/)?.[1] || "";
+    const maskedWord = buttonId.match(/maskedWord:(.+)$/)?.[1] || "";
+
+    return {
+      word: word,
+      imageUrl: imageUrl,
+      maskedWord: maskedWord
+    };
+  }
+
+  private async getVocab(word): Promise<Vocabulary | null> {
+    return await this.vocabService.getVocabByWord(word);
+  }
+}

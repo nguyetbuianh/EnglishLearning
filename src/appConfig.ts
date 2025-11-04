@@ -18,6 +18,8 @@ const EnvSchema = z.object({
   CLOUD_NAME: z.string().min(1, "CLOUD_NAME is required"),
   CLOUD_API_KEY: z.string().min(1, "CLOUD_API_KEY is required"),
   CLOUD_API_SECRET: z.string().min(1, "CLOUD_API_SECRET is required"),
+
+  PEXELS_API_KEY: z.string().min(1, "PEXELS_API_KEY is required")
 });
 
 
@@ -43,4 +45,7 @@ export const appConfig = {
     apiKey: env.CLOUD_API_KEY,
     apiSecret: env.CLOUD_API_SECRET,
   },
+  pexels: {
+    apiKey: env.PEXELS_API_KEY
+  }
 };

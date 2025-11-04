@@ -30,4 +30,24 @@ export class VocabularyService {
       where: { id: vocabularyId }
     });
   }
+
+  async getRandomVocabulary(): Promise<Vocabulary | null> {
+    const count = await this.vocabularyRepo.count();
+    if (count === 0) return null;
+
+    const randomIndex = Math.floor(Math.random() * count);
+    const randomWord = await this.vocabularyRepo
+      .createQueryBuilder('v')
+      .skip(randomIndex)
+      .take(1)
+      .getOne();
+
+    return randomWord;
+  }
+
+  async getVocabByWord(word: string): Promise<Vocabulary | null> {
+    return this.vocabularyRepo.findOne({
+      where: { word: word }
+    })
+  }
 }

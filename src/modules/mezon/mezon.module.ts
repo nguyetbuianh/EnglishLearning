@@ -34,6 +34,9 @@ import { VocabularyOfUserHandler } from './handlers/vocabulary-of-user.handler';
 import { ProfileHandler } from './handlers/profile.handler';
 import { DeleteMyVocabulary } from './handlers/delete-vocabulary-of-user.handler';
 import { UserProgressHandler } from './handlers/user-progress.handler';
+import { RandomWordHandler } from './handlers/random-word.handler';
+import { PexelsService } from './services/pexels.service';
+import { GuessWordAnswerHandler } from './handlers/guess-word-answer.handler';
 
 const commandHandlers = [
   StartTestHandler,
@@ -60,7 +63,9 @@ const commandHandlers = [
   DailyReminderTask,
   ProfileHandler,
   DeleteMyVocabulary,
-  UserProgressHandler
+  UserProgressHandler,
+  RandomWordHandler,
+  GuessWordAnswerHandler
 ];
 
 @Module({
@@ -75,6 +80,7 @@ const commandHandlers = [
   providers: [
     MezonService,
     EventRouter,
+    PexelsService,
     ...commandHandlers,
     {
       provide: MezonClient,
