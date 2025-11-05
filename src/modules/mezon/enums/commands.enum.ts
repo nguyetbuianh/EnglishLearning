@@ -8,6 +8,7 @@ export enum CommandType {
   COMMAND_HELP = 'help',
   COMMAND_ALL_VOCABULARY_OF_USER = 'my-vocab',
   COMMAND_PROFILE = 'profile',
+  COMMAND_GENERATE_TEXT = 'gen-text',
 
   SELECT_PART = 'toeic-part',
   SELECT_TEST = 'toeic-test',

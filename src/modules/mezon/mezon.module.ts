@@ -35,6 +35,9 @@ import { VocabularyOfUserHandler } from './handlers/vocabulary-of-user.handler';
 import { ProfileHandler } from './handlers/profile.handler';
 import { ProfileService } from './services/profile.service';
 import { DeleteMyVocabulary } from './handlers/delete-vocabulary-of-user.handler';
+import { GenerateTextHandler } from './handlers/generate-text.handler';
+import { ToeicImportModule } from '../toeic-import/toeic-import.module';
+import { GoogleAIModule } from '../google-ai/google-ai.module';
 
 const commandHandlers = [
   WelcomeHandler,
@@ -61,7 +64,8 @@ const commandHandlers = [
   SaveVocabularyHandler,
   DailyReminderTask,
   //ProfileHandler,
-  DeleteMyVocabulary
+  DeleteMyVocabulary,
+  GenerateTextHandler
 ];
 
 @Module({
@@ -71,7 +75,9 @@ const commandHandlers = [
     TopicModule,
     VocabularyModule,
     FavoriteVocabularyModule,
-    DailyModule
+    DailyModule,
+    ToeicImportModule,
+    GoogleAIModule
   ],
   providers: [
     MezonService,
