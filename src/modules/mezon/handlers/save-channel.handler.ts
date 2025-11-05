@@ -7,7 +7,7 @@ import { CommandType } from "../enums/commands.enum";
 import { Channel } from "src/entities/channel.entity";
 
 @Injectable({ scope: Scope.TRANSIENT })
-@Interaction(CommandType.COMMAND_ENGLOVER1)
+@Interaction(CommandType.COMMAND_ENGLOVER_HANDLER)
 export class SaveChannelHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,

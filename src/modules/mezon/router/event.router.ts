@@ -68,7 +68,7 @@ export class EventRouter {
           CommandType.COMMAND_ALL_VOCABULARY_OF_USER,
           CommandType.COMMAND_MY_PROGRESS,
           CommandType.COMMAND_ENGLOVER,
-          CommandType.COMMAND_ENGLOVER1
+          CommandType.COMMAND_ENGLOVER_HANDLER
         ];
         if (!VALID_COMMANDS.includes(command)) {
           return;
