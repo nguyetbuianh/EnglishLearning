@@ -8,6 +8,8 @@ export enum CommandType {
   COMMAND_PROFILE = 'e-profile',
   COMMAND_ALL_VOCABULARY_OF_USER = 'e-my-vocab',
   COMMAND_MY_PROGRESS = 'e-my-progress',
+  COMMAND_ENGLOVER = '@EngLover',
+  COMMAND_ENGLOVER1 = 'englover',
 
   SELECT_PART = 'toeic-part',
   SELECT_TEST = 'toeic-test',
