@@ -70,7 +70,7 @@ export class EventRouter {
           return;
         }
 
-        const existingUser = await this.userService.findUserByMezonId(userId);
+        const existingUser = await this.userService.getUserInCache(userId);
 
         const PUBLIC_COMMANDS = [
           CommandType.COMMAND_INIT,
