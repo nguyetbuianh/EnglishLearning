@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import fetch from 'node-fetch';
 import { appConfig } from 'src/appConfig';
 import { Vocabulary } from 'src/entities/vocabulary.entity';
 
