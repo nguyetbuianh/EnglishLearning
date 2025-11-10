@@ -32,13 +32,13 @@ export class Question {
   @JoinColumn({ name: 'passage_id' })
   passage: Passage;
 
-  @Column({ name: 'question_number', type: 'int', nullable: false })
+  @Column({ name: 'question_number', type: 'int', nullable: true })
   questionNumber: number;
 
-  @Column({ name: 'question_text', type: 'text', nullable: false })
+  @Column({ name: 'question_text', type: 'text', nullable: true })
   questionText: string;
 
-  @Column({ name: 'correct_option', type: 'char', length: 1 })
+  @Column({ name: 'correct_option', type: 'char', length: 1, nullable: true })
   correctOption: OptionEnum;
 
   @Column({ type: 'text', nullable: true })

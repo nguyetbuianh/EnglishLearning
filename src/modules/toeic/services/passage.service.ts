@@ -20,4 +20,7 @@ export class PassageService {
     });
     return passage;
   }
+  async savePassage(passage: Passage): Promise<Passage> {
+    return this.passageRepo.save(passage)
+  }
 }
