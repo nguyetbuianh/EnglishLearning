@@ -50,7 +50,6 @@ export class GoogleAIService {
   async generateTextPart1Anwser(pdfBuffer: Buffer): Promise<string> {
     const schema = `[{ 
     question_number: number;
-    question_string: Look at the picture;
     correct_option: string;
     answer: { A: string; B: string; C: string; D: string }
     }]`;
@@ -75,9 +74,10 @@ export class GoogleAIService {
 
   async generateTextPart34Answer(pdfBuffer: Buffer): Promise<string> {
     const schema = `[{ 
+    A passage has 3 answers, then for each answer, give me a all passage.
     question_number: number;
     passage: string;
-    correct: { A: string; B: string; C: string; D: string }
+    correct_option: string;
     }]`;
     return this.processPdf(pdfBuffer, schema);
   }
@@ -91,29 +91,30 @@ export class GoogleAIService {
     return this.processPdf(pdfBuffer, schema);
   }
 
-  async generatePassagePart6Question(pdfBuffer: Buffer): Promise<string> {
+  async generatePassagePart67Question(pdfBuffer: Buffer): Promise<string> {
     const schema = `[{ 
     passage_number: string;
     passage: string;
     }]`;
     return this.processPdf(pdfBuffer, schema);
   }
-  async generateTextPart6Question(pdfBuffer: Buffer): Promise<string> {
+  async generateTextPart67Question(pdfBuffer: Buffer): Promise<string> {
     const schema = `[{ 
-    question_number: number;
-    answer: { A: string; B: string; C: string; D: string }
-    }]`;
-    return this.processPdf(pdfBuffer, schema);
-  }
-
-  async generateTextPart7Question(pdfBuffer: Buffer): Promise<string> {
-    const schema = `[{ 
-    passage_number: string;
-    passage: string;
     question_number: number;
     question_string: string;
     answer: { A: string; B: string; C: string; D: string }
     }]`;
     return this.processPdf(pdfBuffer, schema);
   }
+
+  // async generateTextPart7Question(pdfBuffer: Buffer): Promise<string> {
+  //   const schema = `[{ 
+  //   passage_number: string;
+  //   passage: string;
+  //   question_number: number;
+  //   question_string: string;
+  //   answer: { A: string; B: string; C: string; D: string }
+  //   }]`;
+  //   return this.processPdf(pdfBuffer, schema);
+  // }
 }

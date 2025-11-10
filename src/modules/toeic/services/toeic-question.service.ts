@@ -53,6 +53,7 @@ export class ToeicQuestionService {
     });
   }
 
+
   async getFirstQuestionByPassage(passageId: number): Promise<Question | null> {
     return this.questionRepo.findOne({
       where: {
@@ -107,7 +108,9 @@ export class ToeicQuestionService {
         test: { id: test },
         questionNumber: questionNumber,
       },
-      updateData,
+      {
+        explanation: updateData.explanation,
+      },
     );
   }
 
