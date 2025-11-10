@@ -1,4 +1,4 @@
-import { appConfig } from 'src/appConfig';
+import { appConfig } from './appConfig';
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';

@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DailyPracticeAnswer } from "src/entities/daily-practice-answer.entity";
-import { DailyAnswerService } from "./services/daily-answer.service";
-import { UserStats } from "src/entities/user-stat.entity";
+import { DailyPracticeAnswer } from "../../entities/daily-practice-answer.entity";
+import { UserStats } from "../../entities/user-stat.entity";
 import { UserStatService } from "./services/user-stat.service";
 import { ToeicModule } from "../toeic/toeic.module";
+import { DailyAnswerService } from "./services/daily-answer.service";
 
 @Module({
   imports: [

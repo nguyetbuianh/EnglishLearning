@@ -3,18 +3,18 @@ import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { MezonClient } from "mezon-sdk";
 import { CommandType } from "../enums/commands.enum";
-import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
-import { PassageService } from "src/modules/toeic/services/passage.service";
+import { ToeicQuestionService } from "../../toeic/services/toeic-question.service";
+import { PassageService } from "../../toeic/services/passage.service";
 import { ToeicSessionStore } from "../session/toeic-session.store";
-import { Question } from "src/entities/question.entity";
-import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
+import { Question } from "../../../entities/question.entity";
+import { UserProgressService } from "../../toeic/services/user-progress.service";
 import { replyQuestionMessage, sendAchievementBadgeReply, showAnswerReviewMessage } from "../utils/reply-message.util";
 import { updateSession } from "../utils/update-session.util";
-import { UserService } from "src/modules/user/user.service";
-import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
+import { UserService } from "../../user/user.service";
+import { UserAnswerService } from "../../toeic/services/user-answer.service";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
-import { Passage } from "src/entities/passage.entity";
-import { UserStatService } from "src/modules/daily/services/user-stat.service";
+import { Passage } from "../../../entities/passage.entity";
+import { UserStatService } from "../../daily/services/user-stat.service";
 
 interface PartWithPassageParams {
   mezonUserId: string;

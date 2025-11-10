@@ -4,12 +4,12 @@ import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { ToeicSessionStore } from "../session/toeic-session.store";
-import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
-import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
+import { UserProgressService } from "../../toeic/services/user-progress.service";
+import { ToeicQuestionService } from "../../toeic/services/toeic-question.service";
 import { replyQuestionMessage } from "../utils/reply-message.util";
 import { updateSession } from "../utils/update-session.util";
-import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
-import { UserService } from "src/modules/user/user.service";
+import { UserAnswerService } from "../../toeic/services/user-answer.service";
+import { UserService } from "../../user/user.service";
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_RESTART_TEST)

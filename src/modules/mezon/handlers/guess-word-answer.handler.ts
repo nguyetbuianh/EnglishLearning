@@ -4,8 +4,8 @@ import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
-import { Vocabulary } from "src/entities/vocabulary.entity";
-import { VocabularyService } from "src/modules/vocabulary/vocabulary.service";
+import { Vocabulary } from "../../../entities/vocabulary.entity";
+import { VocabularyService } from "../../vocabulary/vocabulary.service";
 
 interface ParsedButtonId {
   word: string;

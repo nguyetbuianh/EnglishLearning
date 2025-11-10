@@ -4,15 +4,15 @@ import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { ToeicSessionStore } from "../session/toeic-session.store";
-import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
-import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
+import { UserProgressService } from "../../toeic/services/user-progress.service";
+import { ToeicQuestionService } from "../../toeic/services/toeic-question.service";
 import { replyQuestionMessage } from "../utils/reply-message.util";
-import { PassageService } from "src/modules/toeic/services/passage.service";
+import { PassageService } from "../../toeic/services/passage.service";
 import { updateSession } from "../utils/update-session.util";
-import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
-import { UserService } from "src/modules/user/user.service";
-import { Question } from "src/entities/question.entity";
-import { Passage } from "src/entities/passage.entity";
+import { UserAnswerService } from "../../toeic/services/user-answer.service";
+import { UserService } from "../../user/user.service";
+import { Question } from "../../../entities/question.entity";
+import { Passage } from "../../../entities/passage.entity";
 
 interface LoadQuestionParams {
   userId: number;

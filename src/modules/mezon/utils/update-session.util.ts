@@ -1,4 +1,4 @@
-import { Question } from "src/entities/question.entity";
+import { Question } from "../../../entities/question.entity";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 
 export async function updateSession(mezonUserId: string, question?: Question, messageId?: string) {

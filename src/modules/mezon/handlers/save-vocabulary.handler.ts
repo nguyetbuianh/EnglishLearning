@@ -1,12 +1,12 @@
 import { Injectable, Scope } from "@nestjs/common";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { MezonClient } from "mezon-sdk";
-import { FavoriteVocabularyService } from "src/modules/favorite-vocabulary/favorite-vocabulary.service";
-import { VocabularyService } from "src/modules/vocabulary/vocabulary.service";
-import { Interaction } from "../decorators/interaction.decorator";
+import { FavoriteVocabularyService } from "../../favorite-vocabulary/favorite-vocabulary.service";
 import { CommandType } from "../enums/commands.enum";
-import { FavoriteVocabulary } from "src/entities/favorite-vocabulary.entity";
-import { UserService } from "src/modules/user/user.service";
+import { Interaction } from "../decorators/interaction.decorator";
+import { UserService } from "../../user/user.service";
+import { VocabularyService } from "../../vocabulary/vocabulary.service";
+import { FavoriteVocabulary } from "../../../entities/favorite-vocabulary.entity";
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_SAVE_VOCABULARY)

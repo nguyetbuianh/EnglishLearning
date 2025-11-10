@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { Question } from 'src/entities/question.entity';
+import { Question } from '../../../entities/question.entity';
 
 @Injectable()
 export class ToeicQuestionService {
