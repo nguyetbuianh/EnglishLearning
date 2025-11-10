@@ -37,6 +37,9 @@ import { UserProgressHandler } from './handlers/user-progress.handler';
 import { RandomWordHandler } from './handlers/random-word.handler';
 import { PexelsService } from './services/pexels.service';
 import { GuessWordAnswerHandler } from './handlers/guess-word-answer.handler';
+import { SaveChannelHandler } from './handlers/save-channel.handler';
+import { ChannelService } from '../channel/channel.service';
+import { ChannelModule } from '../channel/channel.module';
 
 const commandHandlers = [
   StartTestHandler,
@@ -65,7 +68,8 @@ const commandHandlers = [
   DeleteMyVocabulary,
   UserProgressHandler,
   RandomWordHandler,
-  GuessWordAnswerHandler
+  GuessWordAnswerHandler,
+  SaveChannelHandler
 ];
 
 @Module({
@@ -75,7 +79,8 @@ const commandHandlers = [
     TopicModule,
     VocabularyModule,
     FavoriteVocabularyModule,
-    DailyModule
+    DailyModule,
+    ChannelModule
   ],
   providers: [
     MezonService,

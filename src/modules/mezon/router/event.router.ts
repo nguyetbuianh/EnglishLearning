@@ -42,12 +42,14 @@ export class EventRouter {
 
       const channel = await this.client.channels.fetch(event.channel_id);
 
-      if (event.type === "ChannelMessage" && event.content.t!.startsWith("*")) {
+      if (
+        event.type === "ChannelMessage" &&
+        (event.content.t!.startsWith("*") || event.content.t! === CommandType.COMMAND_ENGLOVER)
+      ) {
         const userId = event.sender_id;
         if (!userId) {
           return;
         }
-
         await this.endUserSession(userId, channel, this.logger);
 
         if (!Object.values(CommandType).includes(eventName as CommandType)) {
@@ -64,7 +66,9 @@ export class EventRouter {
           CommandType.COMMAND_ALL_TEST,
           CommandType.COMMAND_ALL_PART,
           CommandType.COMMAND_ALL_VOCABULARY_OF_USER,
-          CommandType.COMMAND_MY_PROGRESS
+          CommandType.COMMAND_MY_PROGRESS,
+          CommandType.COMMAND_ENGLOVER,
+          CommandType.COMMAND_ENGLOVER_HANDLER
         ];
         if (!VALID_COMMANDS.includes(command)) {
           return;

@@ -1,0 +1,22 @@
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Channel } from "src/entities/channel.entity";
+import { Repository } from "typeorm";
+
+@Injectable()
+export class ChannelService {
+  constructor(
+    @InjectRepository(Channel)
+    private readonly channelRepository: Repository<Channel>
+  ) { }
+
+  async saveChannel(channel: Channel): Promise<Channel> {
+    return this.channelRepository.save(channel);
+  }
+
+  async existingChannel(channelId: string): Promise<Channel | null> {
+    return this.channelRepository.findOne({
+      where: { channelId },
+    });
+  }
+}
