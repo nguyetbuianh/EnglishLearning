@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "types": ["node", "jest", "supertest"]
-  },
-  "include": ["test/**/*.ts", "src/**/*.spec.ts"]
-}
