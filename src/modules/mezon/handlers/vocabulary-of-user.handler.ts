@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MChannelMessage, MMessageButtonClicked } from "./base";
 import {
@@ -13,8 +13,9 @@ import { UserService } from "src/modules/user/user.service";
 import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
 import { CommandType } from "../enums/commands.enum";
+import { updateSession } from "../utils/update-session.util";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_ALL_VOCABULARY_OF_USER)
 export class VocabularyOfUserHandler extends BaseHandler<
   MChannelMessage | MMessageButtonClicked
@@ -44,7 +45,7 @@ export class VocabularyOfUserHandler extends BaseHandler<
           page = Number(match[1]);
           mezonUserId = match[2];
         } else {
-          console.warn("❗ Không đọc được page/id từ button_id:", buttonId);
+          console.warn("❗ Cannot read page/id from node_id:", buttonId);
           mezonUserId = event.user_id;
         }
       } else {
@@ -108,7 +109,7 @@ export class VocabularyOfUserHandler extends BaseHandler<
       if (page > 1) {
         paginationButtons.push(
           new ButtonBuilder()
-            .setId(`my-vocab_page:${page - 1}_id:${mezonUserId}`)
+            .setId(`e-my-vocab_page:${page - 1}_id:${mezonUserId}`)
             .setLabel("⬅ Prev")
             .setStyle(EButtonMessageStyle.SECONDARY)
             .build()
@@ -117,7 +118,7 @@ export class VocabularyOfUserHandler extends BaseHandler<
       if (page * limit < total) {
         paginationButtons.push(
           new ButtonBuilder()
-            .setId(`my-vocab_page:${page + 1}_id:${mezonUserId}`)
+            .setId(`e-my-vocab_page:${page + 1}_id:${mezonUserId}`)
             .setLabel("Next ➡")
             .setStyle(EButtonMessageStyle.PRIMARY)
             .build()
@@ -148,9 +149,11 @@ export class VocabularyOfUserHandler extends BaseHandler<
         .build();
 
       if (isButtonClicked) {
-        await this.mezonMessage.update(messagePayload);
+        const updateMessage = await this.mezonMessage.update(messagePayload);
+        await updateSession(this.mezonMessage.sender_id, undefined, updateMessage.message_id);
       } else {
-        await this.mezonMessage.reply(messagePayload);
+        const replyMessage = await this.mezonMessage.reply(messagePayload);
+        await updateSession(this.mezonMessage.sender_id, undefined, replyMessage.message_id);
       }
     } catch (error) {
       console.error("❌ Error in VocabularyOfUserHandler:", error);

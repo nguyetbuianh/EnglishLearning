@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MezonService } from './services/mezon.service';
 import { InteractionFactory } from './router/interaction-factory';
-import { WelcomeHandler } from './handlers/welcome.handler';
 import { BaseHandler, InteractionEvent } from 'src/modules/mezon/handlers/base';
 import { MezonClient } from 'mezon-sdk';
 import { appConfig } from 'src/appConfig';
@@ -33,14 +32,22 @@ import { FavoriteVocabularyModule } from '../favorite-vocabulary/favorite_vocabu
 import { DailyModule } from '../daily/daily.module';
 import { VocabularyOfUserHandler } from './handlers/vocabulary-of-user.handler';
 import { ProfileHandler } from './handlers/profile.handler';
-import { ProfileService } from './services/profile.service';
 import { DeleteMyVocabulary } from './handlers/delete-vocabulary-of-user.handler';
+<<<<<<< HEAD
 import { GenerateTextHandler } from './handlers/generate-text.handler';
 import { ToeicImportModule } from '../toeic-import/toeic-import.module';
 import { GoogleAIModule } from '../google-ai/google-ai.module';
+=======
+import { UserProgressHandler } from './handlers/user-progress.handler';
+import { RandomWordHandler } from './handlers/random-word.handler';
+import { PexelsService } from './services/pexels.service';
+import { GuessWordAnswerHandler } from './handlers/guess-word-answer.handler';
+import { SaveChannelHandler } from './handlers/save-channel.handler';
+import { ChannelService } from '../channel/channel.service';
+import { ChannelModule } from '../channel/channel.module';
+>>>>>>> 2c6ca6c916b0c6b1718b6c345fdc3b861ac00fb7
 
 const commandHandlers = [
-  WelcomeHandler,
   StartTestHandler,
   InitializationHandler,
   ToeicPartHandler,
@@ -58,14 +65,23 @@ const commandHandlers = [
   HelpHandler,
   NextPartHandler,
   ReviewTestHandler,
-  //DailyReminderTask,
+  DailyReminderTask,
   SaveVocabularyHandler,
   VocabularyOfUserHandler,
   SaveVocabularyHandler,
   DailyReminderTask,
+<<<<<<< HEAD
   //ProfileHandler,
   DeleteMyVocabulary,
   GenerateTextHandler
+=======
+  ProfileHandler,
+  DeleteMyVocabulary,
+  UserProgressHandler,
+  RandomWordHandler,
+  GuessWordAnswerHandler,
+  SaveChannelHandler
+>>>>>>> 2c6ca6c916b0c6b1718b6c345fdc3b861ac00fb7
 ];
 
 @Module({
@@ -76,13 +92,17 @@ const commandHandlers = [
     VocabularyModule,
     FavoriteVocabularyModule,
     DailyModule,
+<<<<<<< HEAD
     ToeicImportModule,
     GoogleAIModule
+=======
+    ChannelModule
+>>>>>>> 2c6ca6c916b0c6b1718b6c345fdc3b861ac00fb7
   ],
   providers: [
     MezonService,
     EventRouter,
-    ProfileService,
+    PexelsService,
     ...commandHandlers,
     {
       provide: MezonClient,

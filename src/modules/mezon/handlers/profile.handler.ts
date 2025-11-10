@@ -1,22 +1,18 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { BaseHandler, MChannelMessage } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
-import { ProfileService } from "../services/profile.service";
 import { UserService } from "src/modules/user/user.service";
-import { UserProgress } from "src/entities/progress.entity";
 import { User } from "src/entities/user.entity";
 import { UserStatService } from "src/modules/daily/services/user-stat.service";
-import { UserStats } from "src/entities/user-stat.entity";
 
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_PROFILE)
-@Injectable()
 export class ProfileHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,
-    private readonly profileService: ProfileService,
     private readonly userService: UserService,
     private readonly userStatService: UserStatService
   ) {
@@ -36,40 +32,28 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
 
       const formattedJoinDate = await this.getJoinAt(user);
       const userStat = await this.userStatService.findUserStats(user.id);
-      if (!userStat) {
-        const messagePayload = new MessageBuilder()
-          .createEmbed({
-            color: "#808080",
-            title: "📊 No Statistics Yet",
-            description:
-              `Hello *${username}*!\n\n` +
-              `It looks like you don’t have any learning statistics yet.\n` +
-              `🎯 Start completing exercises to track your progress and earn achievements!`,
-            imageUrl:
-              "https://media0.giphy.com/media/xT9DPldJHzZKtOnEn6/200w.gif",
-            footer: "Start your learning journey today! 🚀",
-            timestamp: true,
-          })
-          .build();
 
-        await this.mezonMessage.reply(messagePayload);
-        return;
-      }
+      const badges = userStat ? userStat.badges.slice(-3) : [];
+      const points = userStat ? userStat.points : 0;
 
-      const buffer = await this.profileService.generateProfileImage(
-        username!,
-        avatarUrl,
-        userStat.badges.slice(-3),
-        userStat.points,
-        formattedJoinDate
-      );
+      const badgeList = badges.length > 0
+        ? badges.map(b => `${b}`).join(' |')
+        : '_No badges yet_';
 
-      const result = await this.profileService.uploadProfileImage(buffer, `profiles/${mezonUserId}`);
+      const embedDescription = `
+      👤 *Username:* ${username}
+      🏅 *Points:* ${points}
+      📅 *Joined:* ${formattedJoinDate}\n
+      🎖️ *Badges:* ${badgeList}
+      `;
 
       const messagePayload = new MessageBuilder()
         .createEmbed({
-          title: '👤 Your Profile',
-          imageUrl: result.secure_url,
+          title: "🌟 Your English Learning Profile",
+          description: embedDescription.trim(),
+          thumbnail: avatarUrl,
+          footer: "English Learning Bot",
+          timestamp: true,
         })
         .build();
 
@@ -82,7 +66,7 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
     }
   }
 
-  private async getJoinAt(user: User): Promise<string> {
+  private getJoinAt(user: User): string {
     const joinAt = user.joinedAt;
     const formattedJoinDate = joinAt.toISOString().split('T')[0];
 

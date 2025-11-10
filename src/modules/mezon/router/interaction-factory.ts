@@ -1,20 +1,20 @@
 import { BaseHandler, InteractionEvent } from "../handlers/base";
 import { getInteractionName } from "../decorators/interaction.decorator";
+import { Type } from "@nestjs/common";
 
 export class InteractionFactory {
-  private readonly interactionMap = new Map<string, BaseHandler<InteractionEvent>>();
+  private readonly handlerMap = new Map<string, Type<BaseHandler<InteractionEvent>>>();
 
   constructor(handlers: BaseHandler<InteractionEvent>[]) {
     for (const handler of handlers) {
       const commandName = getInteractionName(handler.constructor);
       if (commandName) {
-        this.interactionMap.set(commandName, handler);
+        this.handlerMap.set(commandName, handler.constructor as Type<BaseHandler<InteractionEvent>>);
       }
     }
   }
 
-  getHandler(rawInteraction: string): BaseHandler<InteractionEvent> | null {
-    if (!rawInteraction) return null;
-    return this.interactionMap.get(rawInteraction) ?? null;
+  getConstructor(eventName: string): Type<BaseHandler<InteractionEvent>> | undefined {
+    return this.handlerMap.get(eventName);
   }
 }

@@ -6,6 +6,8 @@ import { UserService } from "src/modules/user/user.service";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { MessageBuilder } from "../builders/message.builder";
+import { CommandType } from "../enums/commands.enum";
+import { ModuleRef } from "@nestjs/core";
 
 @Injectable()
 export class EventRouter {
@@ -14,7 +16,8 @@ export class EventRouter {
   constructor(
     private readonly client: MezonClient,
     private readonly interactionFactory: InteractionFactory,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly moduleRef: ModuleRef
   ) { }
 
   public registerListeners() {
@@ -39,26 +42,54 @@ export class EventRouter {
 
       const channel = await this.client.channels.fetch(event.channel_id);
 
-      if (event.type === "ChannelMessage" && event.content.t!.startsWith("*")) {
+      if (
+        event.type === "ChannelMessage" &&
+        (event.content.t!.startsWith("*") || event.content.t! === CommandType.COMMAND_ENGLOVER)
+      ) {
         const userId = event.sender_id;
         if (!userId) {
           return;
         }
-
         await this.endUserSession(userId, channel, this.logger);
 
-        const existingUser = await this.userService.findUserByMezonId(userId);
+        if (!Object.values(CommandType).includes(eventName as CommandType)) {
+          return;
+        }
+        const command = eventName as CommandType;
 
-        const PUBLIC_COMMANDS = ["welcome", "help", "init"];
-        const isPublic = PUBLIC_COMMANDS.includes(eventName);
+        const VALID_COMMANDS: CommandType[] = [
+          CommandType.COMMAND_PROFILE,
+          CommandType.COMMAND_INIT,
+          CommandType.COMMAND_HELP,
+          CommandType.COMMAND_START,
+          CommandType.COMMAND_ALL_TOPIC,
+          CommandType.COMMAND_ALL_TEST,
+          CommandType.COMMAND_ALL_PART,
+          CommandType.COMMAND_ALL_VOCABULARY_OF_USER,
+          CommandType.COMMAND_MY_PROGRESS,
+          CommandType.COMMAND_ENGLOVER,
+          CommandType.COMMAND_ENGLOVER_HANDLER
+        ];
+        if (!VALID_COMMANDS.includes(command)) {
+          return;
+        }
+
+        const existingUser = await this.userService.getUserInCache(userId);
+
+        const PUBLIC_COMMANDS = [
+          CommandType.COMMAND_INIT,
+          CommandType.COMMAND_HELP
+        ];
+        const isPublic = PUBLIC_COMMANDS.includes(command);
 
         if (!existingUser && !isPublic) {
           await this.sendWarning(channel, "⚠️ You are not registered. Use *init to start.");
           return;
         }
 
-        const handler = this.interactionFactory.getHandler(eventName);
-        if (handler) {
+        const HandlerClass = this.interactionFactory.getConstructor(eventName);
+        if (HandlerClass) {
+          const handler = await this.moduleRef.create(HandlerClass);
           await handler.process(event);
         }
 
@@ -78,8 +109,9 @@ export class EventRouter {
         }
       }
 
-      const handler = this.interactionFactory.getHandler(eventName);
-      if (handler) {
+      const HandlerClass = this.interactionFactory.getConstructor(eventName);
+      if (HandlerClass) {
+        const handler = await this.moduleRef.create(HandlerClass);
         await handler.process(event);
       }
     } catch (err) {

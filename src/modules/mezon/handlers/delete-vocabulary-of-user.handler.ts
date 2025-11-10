@@ -1,21 +1,21 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { MezonClient } from "mezon-sdk";
-import { VocabularyService } from "src/modules/vocabulary/vocabulary.service";
 import { FavoriteVocabularyService } from "src/modules/favorite-vocabulary/favorite-vocabulary.service";
 import { UserService } from "src/modules/user/user.service";
 import { CommandType } from "../enums/commands.enum";
 import { VocabularyOfUserHandler } from "./vocabulary-of-user.handler";
+import { ModuleRef } from "@nestjs/core";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_DELETE_MY_VOCABULARY)
 export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,
     private readonly favoriteVocabularyService: FavoriteVocabularyService,
     private readonly userService: UserService,
-    private readonly vocabularyOfUserHandler: VocabularyOfUserHandler
+    private readonly moduleRef: ModuleRef
   ) {
     super(client);
   }
@@ -28,7 +28,6 @@ export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
       const extra = this.event.extra_data;
       if (!extra) return;
 
-      // ✅ Lấy danh sách ID vocab từ extra_data
       let vocabIds: number[] = [];
       try {
         const data = JSON.parse(extra);
@@ -48,9 +47,10 @@ export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
         user.id
       );
 
-      this.vocabularyOfUserHandler["event"] = this.event;
-      this.vocabularyOfUserHandler["mezonMessage"] = this.mezonMessage;
-      await this.vocabularyOfUserHandler.handle();
+      const vocabHandler = await this.moduleRef.create(VocabularyOfUserHandler);
+      vocabHandler["event"] = this.event;
+      vocabHandler["mezonMessage"] = this.mezonMessage;
+      await vocabHandler.handle();
       await this.mezonMessage.reply({
         t: `✅ Deleted ${vocabIds.length} vocabular${vocabIds.length > 1 ? "ies" : "y"}...`,
       });

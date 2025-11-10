@@ -1,11 +1,7 @@
 import {
   ApiMessageAttachment,
   ButtonComponent,
-  ChannelMessageContent,
-  EMessageComponentType,
   IMessageActionRow,
-
-  RadioFieldOption,
   SelectComponent,
 } from "mezon-sdk";
 import { IInteractiveMessageProps } from "mezon-sdk";
@@ -32,6 +28,7 @@ export class MessageBuilder {
     title?: string;
     description?: string;
     fields?: IInteractiveMessageProps["fields"];
+    thumbnail?: string;
     footer?: string;
     timestamp?: boolean;
     imageUrl?: string;
@@ -46,10 +43,11 @@ export class MessageBuilder {
     }
 
     const embed: IInteractiveMessageProps = {
-      color: options.color ?? "#1abc9c",
+      color: options.color,
       title: options.title,
       description: options.description,
       fields: options.fields,
+      thumbnail: options.thumbnail ? { url: options.thumbnail } : undefined,
       footer: options.footer ? { text: options.footer } : undefined,
       timestamp: options.timestamp ? new Date().toISOString() : undefined,
       image: options.imageUrl ? { url: options.imageUrl } : undefined,

@@ -1,14 +1,14 @@
 import { MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { BaseHandler } from "./base";
 import { UserService } from "src/modules/user/user.service";
 import { MChannelMessage } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
 import { CommandType } from "../enums/commands.enum";
 
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_INIT)
-@Injectable()
 export class InitializationHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,
@@ -47,12 +47,16 @@ export class InitializationHandler extends BaseHandler<MChannelMessage> {
         .createEmbed({
           color: "#2ecc71",
           title: `🎉 Initialization Successful!`,
-          description: `Hello ${displayName || "there"}! 
-                  Your account has been created successfully.  
-                  Let’s start improving your English together! 💪`,
+          description: `Hello ${displayName || "there"}!  
+          Your account has been created successfully.  
+
+          Let’s start improving your English together! 💪  
+
+          👉 To begin, type *e-start to start your first English session!`,
           footer: "English Learning Bot",
         })
         .build();
+
       await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       await this.mezonMessage.reply({

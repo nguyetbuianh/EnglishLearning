@@ -27,6 +27,7 @@ export interface AnswerReviewParams {
 interface ToeiMessageParams {
   testId: number,
   partId: number,
+  questionNumber?: number,
   mezonId: string,
   mezonMessage: Message
 }
@@ -54,6 +55,7 @@ export async function replyQuestionMessage(questionMessageParams: QuestionMessag
         : question.questionText,
       imageUrl: question.imageUrl ?? undefined,
       audioUrl: question.audioUrl ?? undefined,
+      footer: "English Learning Bot"
     })
     .setText(`Start Test ${testId}, Part ${partId}`)
     .addButtonsRow(buttons)
@@ -94,6 +96,7 @@ export async function showAnswerReviewMessage(answerReviewParams: AnswerReviewPa
 
       If you believe any question or answer is incorrect, please contact us to report it.
       `,
+      footer: "English Learning Bot"
     })
     .addButtonsRow([nextPartButton])
     .build();
@@ -109,7 +112,7 @@ export async function sendContinueOrRestartMessage(
   toeiMessageParams: ToeiMessageParams
 ): Promise<void> {
   try {
-    const { testId, partId, mezonId, mezonMessage } = toeiMessageParams;
+    const { testId, partId, questionNumber, mezonId, mezonMessage } = toeiMessageParams;
     const continueButton = new ButtonBuilder()
       .setId(`continue-test_id:${mezonId}`)
       .setLabel("Continue Test")
@@ -125,7 +128,7 @@ export async function sendContinueOrRestartMessage(
     const messagePayload = new MessageBuilder()
       .createEmbed({
         color: "#c12b17ff",
-        title: `🟡 You have started the Test ${testId} - Part ${partId}.\n`,
+        title: `🟡 You have started the Test ${testId} - Part ${partId} - Question ${questionNumber}.\n`,
         description: `Choose Continue Test to continue or Restart Test to start over.`,
         footer: `English Learning Bot`,
       })
@@ -175,7 +178,7 @@ export async function sendCompletionMessage(
 }
 
 export async function sendAchievementBadgeReply(badgeList: string[], mezonMessage: Message) {
-  const formattedBadges = badgeList.map((b) => `🏆 **${b}**`).join("\n");
+  const formattedBadges = badgeList.map((b) => `🏆 ${b}`).join("\n");
   const messagePayload = new MessageBuilder()
     .createEmbed({
       color: "#FFD700",
@@ -188,4 +191,33 @@ export async function sendAchievementBadgeReply(badgeList: string[], mezonMessag
     .build();
 
   await mezonMessage.reply(messagePayload);
+}
+
+export async function sendNoQuestionsMessage(testId: number, partId: number, mezonMessage: Message) {
+  const messagePayload = new MessageBuilder()
+    .createEmbed({
+      color: "#f8f522fd",
+      title: "📭 No Questions Available",
+      description:
+        `It looks like there are no questions available for *Part ${partId}* in *Test ${testId}* yet.\n\n` +
+        `📚 Please check back later when questions have been added.`,
+      footer: "Stay tuned — more questions coming soon! 🕓",
+      timestamp: true,
+    })
+    .build();
+
+  await mezonMessage.update(messagePayload);
+}
+
+export async function sendCancelMessage(mezonMessage: Message) {
+  const messagePayload = new MessageBuilder()
+    .createEmbed({
+      color: "#db3f34ff",
+      title: "❌ TOEIC Test Cancelled",
+      description: "You have successfully cancelled your TOEIC test selection. Feel free to start a new test whenever you're ready!",
+      footer: "English Learning Bot",
+      timestamp: true,
+    })
+    .build();
+  await mezonMessage.update(messagePayload);
 }

@@ -1,7 +1,7 @@
 import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service";
 import { ToeicPartService } from "src/modules/toeic/services/toeic-part.service";
 import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { BaseHandler } from "./base";
@@ -11,13 +11,13 @@ import { MessageBuilder } from "../builders/message.builder";
 import { MChannelMessage } from "./base";
 import { updateSession } from "../utils/update-session.util";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_START)
 export class StartTestHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,
-    private toeicTestService: ToeicTestService,
-    private toeicPartService: ToeicPartService
+    private readonly toeicTestService: ToeicTestService,
+    private readonly toeicPartService: ToeicPartService
   ) {
     super(client);
   }

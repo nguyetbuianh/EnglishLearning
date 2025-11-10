@@ -1,12 +1,12 @@
 import { MezonClient } from "mezon-sdk";
 import { BaseHandler } from "./base";
 import { MMessageButtonClicked } from "./base";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
-import { MessageBuilder } from "../builders/message.builder";
+import { sendCancelMessage } from "../utils/reply-message.util";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_CANCEL_TEST)
 export class CancelTestHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
@@ -17,16 +17,7 @@ export class CancelTestHandler extends BaseHandler<MMessageButtonClicked> {
 
   async handle(): Promise<void> {
     try {
-      const messagePayload = new MessageBuilder()
-        .createEmbed({
-          color: "#db3f34ff",
-          title: "❌ TOEIC Test Cancelled",
-          description: "You have successfully cancelled your TOEIC test selection. Feel free to start a new test whenever you're ready!",
-          footer: "English Learning Bot",
-          timestamp: true,
-        })
-        .build();
-      await this.mezonMessage.update(messagePayload);
+      await sendCancelMessage(this.mezonMessage);
     } catch (error) {
       console.error("❗Error handling the cancel test button:", error);
       await this.mezonMessage.reply({

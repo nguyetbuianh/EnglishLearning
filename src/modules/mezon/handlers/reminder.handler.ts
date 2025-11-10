@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, Scope } from "@nestjs/common";
 import { UserService } from "src/modules/user/user.service";
 import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
 import { ChannelMessageContent, EButtonMessageStyle, MezonClient } from "mezon-sdk";
@@ -7,7 +7,7 @@ import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
 import { TOEIC_TIPS } from "../constants/tips.constant";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 export class DailyReminderTask {
   private readonly logger = new Logger(DailyReminderTask.name);
 
