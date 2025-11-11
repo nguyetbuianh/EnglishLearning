@@ -76,7 +76,7 @@ In the root directory, create a file named .env and paste the environment variab
 Make sure to replace the placeholders with your actual credentials.
 4️⃣ Run database migrations (optional)
 ```
-yarn typeorm migration:run
+yarn migration:run
 ```
 5️⃣ Start the project
 Run the following command to start your application:
