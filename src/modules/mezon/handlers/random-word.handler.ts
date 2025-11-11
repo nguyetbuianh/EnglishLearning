@@ -6,6 +6,7 @@ import { ChannelMessageContent, EButtonMessageStyle, EMessageComponentType, Mezo
 import { Cron } from '@nestjs/schedule';
 import { Injectable } from '@nestjs/common';
 import { ButtonBuilder } from '../builders/button.builder';
+import { ChannelService } from 'src/modules/channel/channel.service';
 
 @Injectable()
 export class RandomWordHandler {
@@ -13,7 +14,7 @@ export class RandomWordHandler {
     private readonly client: MezonClient,
     private readonly vocabService: VocabularyService,
     private readonly pexelsService: PexelsService,
-    private readonly userService: UserService
+    private readonly channelService: ChannelService
   ) { }
 
   @Cron('30 8-22/2 * * *', { timeZone: 'Asia/Ho_Chi_Minh' })
@@ -26,18 +27,18 @@ export class RandomWordHandler {
       let offset = 0;
 
       while (true) {
-        const users = await this.userService.getAllUsersInBatches(batchSize, offset);
-        if (!users.length) {
+        const channels = await this.channelService.getChannelsInBatches(batchSize, offset);
+        if (!channels.length) {
           break;
         }
 
         await Promise.all(
-          users.map(async (user) => {
+          channels.map(async (channel) => {
             try {
               const messagePayload = this.guessWordMessage(word, imageUrl, maskedWord);
-              await this.sendDM(user.mezonUserId, messagePayload);
+              await this.sendMessage(channel.channelId, messagePayload);
             } catch (err) {
-              console.log(`❌ Failed to send to ${user.mezonUserId}`, err);
+              console.log(`❌ Failed to send to ${channel.channelId}`, err);
               return null;
             }
           })
@@ -51,16 +52,16 @@ export class RandomWordHandler {
     }
   }
 
-  private async sendDM(userMezonId: string, content: ChannelMessageContent) {
+  private async sendMessage(channelId: string, content: ChannelMessageContent) {
     try {
       const dmClan = await this.client.clans.fetch('0');
-      const user = await dmClan.users.fetch(userMezonId);
-      if (!user) {
+      const channel = await dmClan.channels.fetch(channelId);
+      if (!channel) {
         return;
       }
-      await user.sendDM(content);
+      await channel.send(content);
     } catch (error) {
-      console.log(`❌ Failed to send DM to ${userMezonId}:`, error);
+      console.log(`❌ Failed to send DM to ${channelId}:`, error);
     }
   }
 

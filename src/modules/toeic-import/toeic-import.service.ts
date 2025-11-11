@@ -43,9 +43,9 @@ export class ToeicImportService {
       return JSON.parse(cleaned) as T[];
     } catch (err: unknown) {
       if (err instanceof Error) {
-        this.logger.error('Lỗi parse JSON:', err.message);
+        this.logger.error('Error parsing JSON:', err.message);
       }
-      throw new BadRequestException('Dữ liệu trả về từ AI không hợp lệ JSON.');
+      throw new BadRequestException('Data returned from AI is not valid JSON.');
     }
   }
 
@@ -105,7 +105,7 @@ export class ToeicImportService {
 
   private async saveQuestionWithLog(question: Question): Promise<void> {
     this.logger.log(
-      `Lưu câu hỏi ${question.questionNumber} - ${question.questionText?.slice(0, 60)}...`,
+      `Save question ${question.questionNumber} - ${question.questionText?.slice(0, 60)}...`,
     );
     const saved = await this.questionService.saveQuestion(question);
     this.logger.debug(`→ Saved question ID: ${saved.id}`);
@@ -120,10 +120,10 @@ export class ToeicImportService {
     if (!pdf?.length) throw new BadRequestException('Invalid PDF file');
 
     const test = await this.testService.findTestById(testNumber);
-    if (!test) throw new BadRequestException('Không tồn tại bài test');
+    if (!test) throw new BadRequestException('No test exists');
 
     const part = await this.partService.findPartById(partNumber);
-    if (!part) throw new BadRequestException('Không tồn tại part');
+    if (!part) throw new BadRequestException('Part does not exist');
 
     let extractedText = '';
     let jsonData: ToeicQuestionData[] | PassageData[] = [];
@@ -207,10 +207,10 @@ export class ToeicImportService {
             item.question_number,
             questionUpdate,
           );
-          this.logger.debug(`Đã cập nhật câu hỏi ${item.question_number}`);
+          this.logger.debug(`Question updated ${item.question_number}`);
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          this.logger.error(`Lỗi khi cập nhật câu hỏi ${item.question_number}: ${message}`);
+          this.logger.error(`Error updating question ${item.question_number}: ${message}`);
         }
       }
     }
@@ -281,7 +281,7 @@ export class ToeicImportService {
     }
 
     if (!extractedText?.trim()) {
-      throw new BadRequestException('Không thể trích xuất được nội dung từ PDF.');
+      throw new BadRequestException('Unable to extract content from PDF.');
     }
 
     return {

@@ -25,7 +25,7 @@ export class GenerateTextHandler extends BaseHandler<MChannelMessage> {
       mezonUserId !== process.env.MEZON_BOT_ID_3
     ) {
       await this.mezonMessage.reply({
-        t: "❌ Bạn không có quyền !!"
+        t: "❌ You have no rights !!"
       });
     }
     const content = this.event.content.t || "";
@@ -46,11 +46,11 @@ export class GenerateTextHandler extends BaseHandler<MChannelMessage> {
     const fileName = pdfFile.filename;
 
     if (!pdfUrl || !fileName) {
-      throw new BadRequestException("Thiếu thông tin file (url hoặc tên file).");
+      throw new BadRequestException("Missing file information (url or file name).");
     }
 
     if (!fileName.toLowerCase().endsWith(".pdf")) {
-      throw new BadRequestException(`File "${fileName}" không phải là PDF.`);
+      throw new BadRequestException(`File "${fileName}" is not a PDF.`);
     }
 
     try {
@@ -58,7 +58,10 @@ export class GenerateTextHandler extends BaseHandler<MChannelMessage> {
       const pdfBuffer = Buffer.from(response.data);
 
       const textResult = await this.toeicImportService.uploadPDF(testNumber, partNumber, qaItem, pdfBuffer);
-      this.logger.log(textResult)
+      this.logger.log(textResult);
+      this.mezonMessage.reply({
+        t: `✅ Successfully created the question list from the PDF file!`,
+      });
     } catch (error) {
     }
   }
