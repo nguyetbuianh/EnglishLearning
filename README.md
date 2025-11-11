@@ -59,6 +59,7 @@ PEXELS_API_KEY=your-pexels-api-key
 REDIS_HOST=your-redis-host
 REDIS_PORT=your-redis-port
 REDIS_PASSWORD=your-redis-password
+```
 
 ## 🛠️ Setup Guide
 1️⃣ Clone the repository
