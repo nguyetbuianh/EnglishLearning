@@ -33,19 +33,15 @@ import { DailyModule } from '../daily/daily.module';
 import { VocabularyOfUserHandler } from './handlers/vocabulary-of-user.handler';
 import { ProfileHandler } from './handlers/profile.handler';
 import { DeleteMyVocabulary } from './handlers/delete-vocabulary-of-user.handler';
-<<<<<<< HEAD
 import { GenerateTextHandler } from './handlers/generate-text.handler';
 import { ToeicImportModule } from '../toeic-import/toeic-import.module';
 import { GoogleAIModule } from '../google-ai/google-ai.module';
-=======
 import { UserProgressHandler } from './handlers/user-progress.handler';
 import { RandomWordHandler } from './handlers/random-word.handler';
 import { PexelsService } from './services/pexels.service';
 import { GuessWordAnswerHandler } from './handlers/guess-word-answer.handler';
 import { SaveChannelHandler } from './handlers/save-channel.handler';
-import { ChannelService } from '../channel/channel.service';
 import { ChannelModule } from '../channel/channel.module';
->>>>>>> 2c6ca6c916b0c6b1718b6c345fdc3b861ac00fb7
 
 const commandHandlers = [
   StartTestHandler,
@@ -68,20 +64,13 @@ const commandHandlers = [
   DailyReminderTask,
   SaveVocabularyHandler,
   VocabularyOfUserHandler,
-  SaveVocabularyHandler,
-  DailyReminderTask,
-<<<<<<< HEAD
-  //ProfileHandler,
-  DeleteMyVocabulary,
-  GenerateTextHandler
-=======
   ProfileHandler,
   DeleteMyVocabulary,
+  GenerateTextHandler,
   UserProgressHandler,
   RandomWordHandler,
   GuessWordAnswerHandler,
   SaveChannelHandler
->>>>>>> 2c6ca6c916b0c6b1718b6c345fdc3b861ac00fb7
 ];
 
 @Module({
@@ -92,12 +81,9 @@ const commandHandlers = [
     VocabularyModule,
     FavoriteVocabularyModule,
     DailyModule,
-<<<<<<< HEAD
     ToeicImportModule,
-    GoogleAIModule
-=======
+    GoogleAIModule,
     ChannelModule
->>>>>>> 2c6ca6c916b0c6b1718b6c345fdc3b861ac00fb7
   ],
   providers: [
     MezonService,
