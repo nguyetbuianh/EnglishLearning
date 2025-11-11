@@ -9,7 +9,7 @@ This guide covers the **features**, **environment setup**, and **how to run the 
 - 📝 Practice TOEIC test  
 - 📚 Learn vocabulary by TOEIC topics  
 - 📈 Track your learning progress  
-- 🎁 Daily rewards  
+- 🎁 Daily challenges  
 
 ---
 
