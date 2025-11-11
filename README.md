@@ -63,21 +63,25 @@ REDIS_PASSWORD=your-redis-password
 
 ## 🛠️ Setup Guide
 1️⃣ Clone the repository
-```git clone https://github.com/nguyetbuianh/EnglishLearning.git
+```
+git clone https://github.com/nguyetbuianh/EnglishLearning.git
 cd EnglishLearning
 ```
 2️⃣ Install dependencies
-```yarn install
+```
+yarn install
 ```
 3️⃣ Create environment file
 In the root directory, create a file named .env and paste the environment variables from the section above.
 Make sure to replace the placeholders with your actual credentials.
 4️⃣ Run database migrations (optional)
-```yarn typeorm migration:run
+```
+yarn typeorm migration:run
 ```
 5️⃣ Start the project
 Run the following command to start your application:
-```yarn start
+```
+yarn start
 ```
 Once the project starts successfully, the English Learning Bot will connect automatically to Mezon API 🚀
 
