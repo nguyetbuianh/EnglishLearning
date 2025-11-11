@@ -19,4 +19,11 @@ export class ChannelService {
       where: { channelId },
     });
   }
+
+  async getChannelsInBatches(limit: number, offset = 0): Promise<Channel[]> {
+    return this.channelRepository.find({
+      skip: offset,
+      take: limit,
+    });
+  }
 }
