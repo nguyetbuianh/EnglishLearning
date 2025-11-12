@@ -26,4 +26,8 @@ export class ChannelService {
       take: limit,
     });
   }
+
+  async deleteChannel(channelId: string): Promise<void> {
+    await this.channelRepository.delete({ channelId: channelId });
+  }
 }
