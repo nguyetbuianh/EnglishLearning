@@ -142,7 +142,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       questionId: question.id
     });
 
-    const newBadges = await this.userStatService.updateUserStats(existingUser.id, true);
+    const newBadges = await this.userStatService.updateUserStats(existingUser.id, isCorrect);
     if (newBadges && newBadges.length > 0) {
       await sendAchievementBadgeReply(newBadges, this.mezonMessage);
     }

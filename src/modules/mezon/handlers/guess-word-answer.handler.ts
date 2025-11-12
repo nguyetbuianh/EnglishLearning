@@ -4,8 +4,11 @@ import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
-import { Vocabulary } from "../../../entities/vocabulary.entity";
-import { VocabularyService } from "../../vocabulary/vocabulary.service";
+import { Vocabulary } from "src/entities/vocabulary.entity";
+import { VocabularyService } from "src/modules/vocabulary/vocabulary.service";
+import { UserStatService } from "src/modules/daily/services/user-stat.service";
+import { sendAchievementBadgeReply } from "../utils/reply-message.util";
+import { UserService } from "src/modules/user/user.service";
 
 interface ParsedButtonId {
   word: string;
@@ -25,7 +28,9 @@ interface MessageAnswer {
 export class GuessWordAnswerHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,
-    protected readonly vocabService: VocabularyService
+    protected readonly vocabService: VocabularyService,
+    protected readonly userStatService: UserStatService,
+    protected readonly userService: UserService
   ) {
     super(client);
   }
@@ -33,6 +38,7 @@ export class GuessWordAnswerHandler extends BaseHandler<MMessageButtonClicked> {
   async handle(): Promise<void> {
     try {
       const extra_data = this.event.extra_data;
+      const mezonUserId = this.event.user_id;
       const parsed = JSON.parse(extra_data);
       const answerValue = parsed["form-user-guess"];
 
@@ -44,6 +50,14 @@ export class GuessWordAnswerHandler extends BaseHandler<MMessageButtonClicked> {
         maskedWord: maskedWord,
         answerValue: answerValue
       });
+
+      const user = await this.userService.findUserByMezonId(mezonUserId);
+      if (!user) return;
+      const isCorrect = answerValue.trim().toLowerCase() === word.trim().toLowerCase();
+      const newBadges = await this.userStatService.updateUserStats(user.id, isCorrect);
+      if (newBadges && newBadges.length > 0) {
+        await sendAchievementBadgeReply(newBadges, this.mezonMessage);
+      }
 
       await this.mezonMessage.update(messageAnswer);
     } catch (error) {

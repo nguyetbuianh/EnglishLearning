@@ -33,12 +33,14 @@ import { DailyModule } from '../daily/daily.module';
 import { VocabularyOfUserHandler } from './handlers/vocabulary-of-user.handler';
 import { ProfileHandler } from './handlers/profile.handler';
 import { DeleteMyVocabulary } from './handlers/delete-vocabulary-of-user.handler';
+import { GenerateTextHandler } from './handlers/generate-text.handler';
+import { ToeicImportModule } from '../toeic-import/toeic-import.module';
+import { GoogleAIModule } from '../google-ai/google-ai.module';
 import { UserProgressHandler } from './handlers/user-progress.handler';
 import { RandomWordHandler } from './handlers/random-word.handler';
 import { PexelsService } from './services/pexels.service';
 import { GuessWordAnswerHandler } from './handlers/guess-word-answer.handler';
 import { SaveChannelHandler } from './handlers/save-channel.handler';
-import { ChannelService } from '../channel/channel.service';
 import { ChannelModule } from '../channel/channel.module';
 
 const commandHandlers = [
@@ -62,10 +64,9 @@ const commandHandlers = [
   DailyReminderTask,
   SaveVocabularyHandler,
   VocabularyOfUserHandler,
-  SaveVocabularyHandler,
-  DailyReminderTask,
   ProfileHandler,
   DeleteMyVocabulary,
+  GenerateTextHandler,
   UserProgressHandler,
   RandomWordHandler,
   GuessWordAnswerHandler,
@@ -80,6 +81,8 @@ const commandHandlers = [
     VocabularyModule,
     FavoriteVocabularyModule,
     DailyModule,
+    ToeicImportModule,
+    GoogleAIModule,
     ChannelModule
   ],
   providers: [

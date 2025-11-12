@@ -8,6 +8,9 @@ import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChan
 import { MessageBuilder } from "../builders/message.builder";
 import { CommandType } from "../enums/commands.enum";
 import { ModuleRef } from "@nestjs/core";
+import { ChannelService } from "src/modules/channel/channel.service";
+import { UserChannelRemoved } from "mezon-sdk";
+import { appConfig } from "src/appConfig";
 
 @Injectable()
 export class EventRouter {
@@ -17,7 +20,8 @@ export class EventRouter {
     private readonly client: MezonClient,
     private readonly interactionFactory: InteractionFactory,
     private readonly userService: UserService,
-    private readonly moduleRef: ModuleRef
+    private readonly moduleRef: ModuleRef,
+    private readonly channelService: ChannelService
   ) { }
 
   public registerListeners() {
@@ -30,7 +34,9 @@ export class EventRouter {
     this.client.onDropdownBoxSelected((event) =>
       this.handleEvent({ ...event, type: "DropdownBoxSelected" })
     );
-
+    this.client.onUserChannelRemoved((event) =>
+      this.handleRemoveBot(event)
+    );
     this.logger.log("✅ Mezon event listeners registered.");
   }
 
@@ -116,6 +122,13 @@ export class EventRouter {
       }
     } catch (err) {
       this.logger.error(`❌ Error handling event: ${err.message}`);
+    }
+  }
+
+  private async handleRemoveBot(event: UserChannelRemoved) {
+    const botIdList = event.user_ids;
+    if (botIdList.includes(appConfig.bot.id)) {
+      await this.channelService.deleteChannel(event.channel_id);
     }
   }
 

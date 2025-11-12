@@ -53,6 +53,7 @@ export class ToeicQuestionService {
     });
   }
 
+
   async getFirstQuestionByPassage(passageId: number): Promise<Question | null> {
     return this.questionRepo.findOne({
       where: {
@@ -90,4 +91,27 @@ export class ToeicQuestionService {
 
     return question || null;
   }
+
+  async saveQuestion(question: Question): Promise<Question> {
+    return this.questionRepo.save(question)
+  }
+
+  async updateQuestion(
+    part: number,
+    test: number,
+    questionNumber: number,
+    updateData: Partial<Question>,
+  ): Promise<void> {
+    await this.questionRepo.update(
+      {
+        part: { id: part },
+        test: { id: test },
+        questionNumber: questionNumber,
+      },
+      {
+        explanation: updateData.explanation,
+      },
+    );
+  }
+
 }

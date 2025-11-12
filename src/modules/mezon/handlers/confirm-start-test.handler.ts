@@ -72,9 +72,9 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
         testId: testId,
         partId: partId,
         currentQuestionNumber: firstQuestion.questionNumber,
-        currentPassageNumber: partId === 6 || partId === 7 ? 1 : undefined,
+        currentPassageNumber: partId === 6 || partId === 7 ? firstQuestion.passage.id : undefined,
       });
-
+      
       await updateSession(mezonUserId, firstQuestion, this.mezonMessage.id);
 
       replyQuestionMessage({

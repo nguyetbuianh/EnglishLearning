@@ -7,7 +7,7 @@ import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
 import { TOEIC_TIPS } from "../constants/tips.constant";
 
-@Injectable({ scope: Scope.TRANSIENT })
+@Injectable()
 export class DailyReminderTask {
   private readonly logger = new Logger(DailyReminderTask.name);
 

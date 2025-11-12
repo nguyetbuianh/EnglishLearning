@@ -115,7 +115,7 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
       testId: testId,
       partId: partId,
       currentQuestionNumber: question.questionNumber,
-      currentPassageNumber: question.passage?.passageNumber,
+      currentPassageNumber: question.passage?.id,
     });
 
     await updateSession(mezonUserId, question, this.mezonMessage.id);

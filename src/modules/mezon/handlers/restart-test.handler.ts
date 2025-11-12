@@ -49,7 +49,7 @@ export class RestartTestHandler extends BaseHandler<MMessageButtonClicked> {
         testId,
         partId,
         currentQuestionNumber: firstQuestion.questionNumber,
-        currentPassageNumber: firstQuestion.passage ? firstQuestion.passage.passageNumber : undefined,
+        currentPassageNumber: firstQuestion.passage ? firstQuestion.passage.id : undefined,
         isCompleted: false
       });
 

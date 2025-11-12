@@ -30,6 +30,7 @@ export class DailyAnswerService {
       chosenOption,
       isCorrect,
     });
-    await this.dailyAnswerRepo.save(answer);
+
+    await this.dailyAnswerRepo.upsert(answer, ['user', 'question']);
   }
 }
