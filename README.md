@@ -95,7 +95,6 @@ Once the project starts successfully, the English Learning Bot will connect auto
 ## 🚀 Deployment Guide - NestJS with PM2 (Yarn Version)
 
 ### 📋 Table of Contents
-
 - Prerequisites
 - Quick Start
 - Manual Setup
@@ -104,7 +103,6 @@ Once the project starts successfully, the English Learning Bot will connect auto
 - Nginx Setup
   
 ### 🛠 Prerequisites
-
 - System Requirements
   + OS: Ubuntu 18.04+ / CentOS 7+
   + Node.js: Version 16+ (Recommended: 18/20 LTS)
@@ -117,7 +115,6 @@ Once the project starts successfully, the English Learning Bot will connect auto
   + git --version     # Any recent version
     
 ### ⚡ Quick Start
-
 - Automated Deployment Script for Yarn
   + Download and run deployment script
     curl -L https://raw.githubusercontent.com/your-repo/deploy-yarn.sh | bash
@@ -128,7 +125,6 @@ Once the project starts successfully, the English Learning Bot will connect auto
     ./deploy-yarn.sh
     
 ### 🔧 Manual Setup
-
 #### 1. Server Preparation
 - Update system
   + sudo apt update && sudo apt upgrade -y
@@ -159,7 +155,6 @@ Once the project starts successfully, the English Learning Bot will connect auto
   + yarn install
     
 ### ⚙️ Environment Configuration
-
 #### 1. Create Environment File
 ```
 cp .env.example .env
@@ -178,7 +173,6 @@ ls -la dist/
 ```
     
 ### 🚀 PM2 Management with Yarn
-
 #### 1. Starting Application with Yarn Commands
 - Method 1: Using yarn start:prod
   + pm2 start yarn --name "your-app" -- start:prod
@@ -211,7 +205,6 @@ ls -la dist/
   + pm2 reload your-app
     
 ### 🌐 Nginx Setup (Same as before)
-
 - Install Nginx
   + sudo apt install nginx -y
 - Create Nginx Configuration
