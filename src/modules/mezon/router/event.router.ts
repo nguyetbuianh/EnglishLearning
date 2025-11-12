@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { MezonClient } from "mezon-sdk";
+import { MezonClient, UserChannelAddedEvent } from "mezon-sdk";
 import { InteractionFactory } from "./interaction-factory";
 import { InteractionEvent } from "../handlers/base";
 import { UserService } from "src/modules/user/user.service";
@@ -37,6 +37,9 @@ export class EventRouter {
     this.client.onUserChannelRemoved((event) =>
       this.handleRemoveBot(event)
     );
+    this.client.onUserChannelAdded((event) =>
+      this.handleAddBot(event)
+    );
     this.logger.log("✅ Mezon event listeners registered.");
   }
 
@@ -49,8 +52,7 @@ export class EventRouter {
       const channel = await this.client.channels.fetch(event.channel_id);
 
       if (
-        event.type === "ChannelMessage" &&
-        (event.content.t!.startsWith("*") || event.content.t! === CommandType.COMMAND_ENGLOVER)
+        event.type === "ChannelMessage" && (event.content.t!.startsWith("*"))
       ) {
         const userId = event.sender_id;
         if (!userId) {
@@ -72,9 +74,7 @@ export class EventRouter {
           CommandType.COMMAND_ALL_TEST,
           CommandType.COMMAND_ALL_PART,
           CommandType.COMMAND_ALL_VOCABULARY_OF_USER,
-          CommandType.COMMAND_MY_PROGRESS,
-          CommandType.COMMAND_ENGLOVER,
-          CommandType.COMMAND_ENGLOVER_HANDLER
+          CommandType.COMMAND_MY_PROGRESS
         ];
         if (!VALID_COMMANDS.includes(command)) {
           return;
@@ -122,6 +122,24 @@ export class EventRouter {
       }
     } catch (err) {
       this.logger.error(`❌ Error handling event: ${err.message}`);
+    }
+  }
+
+  private async handleAddBot(event: UserChannelAddedEvent) {
+    const botId = event.users[0].user_id;
+    const channelId = event.channel_desc.channel_id;
+    const channelName = event.channel_desc.channel_label;
+
+    if (botId === appConfig.bot.id) {
+      const existingChannel = await this.channelService.existingChannel(channelId!);
+      if (!existingChannel) {
+        await this.channelService.saveChannel({
+          channelId: channelId,
+          channelName: channelName
+        });
+      } else {
+        console.debug(`Channel already exists: ${channelName} (${channelId})`);
+      }
     }
   }
 

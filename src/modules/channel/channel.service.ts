@@ -10,8 +10,9 @@ export class ChannelService {
     private readonly channelRepository: Repository<Channel>
   ) { }
 
-  async saveChannel(channel: Channel): Promise<Channel> {
-    return this.channelRepository.save(channel);
+  async saveChannel(data: Partial<Channel>): Promise<Channel> {
+    const newChannel = this.channelRepository.create(data);
+    return await this.channelRepository.save(newChannel);
   }
 
   async existingChannel(channelId: string): Promise<Channel | null> {
