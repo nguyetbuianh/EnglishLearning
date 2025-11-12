@@ -93,6 +93,7 @@ Once the project starts successfully, the English Learning Bot will connect auto
   ---
   
 ## 🚀 Deployment Guide - NestJS with PM2 (Yarn Version)
+---
 ### 📋 Table of Contents
 - Prerequisites
 - Quick Start
@@ -172,7 +173,7 @@ ls -la dist/
 ```
     
 ### 🚀 PM2 Management with Yarn
-1. Starting Application with Yarn Commands
+#### 1. Starting Application with Yarn Commands
 - Method 1: Using yarn start:prod
   + pm2 start yarn --name "your-app" -- start:prod
 - Method 2: Using yarn start
@@ -181,14 +182,14 @@ ls -la dist/
   + pm2 start dist/main.js --name "your-app"
 - Method 4: With specific Yarn script
   + pm2 start yarn --name "your-app" -- run start:prod
-2. PM2 Configuration for Yarn Projects
+#### 2. PM2 Configuration for Yarn Projects
 - Setup startup script
   + pm2 startup
 - Save current process list
   + pm2 save
 - Enable monitoring
   + pm2 monit
-3. Yarn-specific PM2 Commands
+#### 3. Yarn-specific PM2 Commands
 - Check status
   + pm2 status
 - View Yarn application logs
