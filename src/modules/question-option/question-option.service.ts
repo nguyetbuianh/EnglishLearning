@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { QuestionOption } from "src/entities/question-option.entity";
+import { QuestionOption } from "../../entities/question-option.entity";
 import { Repository } from "typeorm";
 
 @Injectable()
