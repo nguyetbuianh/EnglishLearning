@@ -4,7 +4,8 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
-  JoinColumn
+  JoinColumn,
+  Unique
 } from 'typeorm';
 import { User } from './user.entity';
 import { ToeicPart } from './toeic-part.entity';
@@ -13,6 +14,7 @@ import { OptionEnum } from '../enum/option.enum';
 import { Question } from './question.entity';
 
 @Entity({ name: 'user_answer' })
+@Unique(['question', 'user', 'toeicTest', 'toeicPart'])
 export class UserAnswer {
   @PrimaryGeneratedColumn()
   id: number;

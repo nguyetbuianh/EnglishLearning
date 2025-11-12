@@ -55,7 +55,6 @@ export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
         t: `✅ Deleted ${vocabIds.length} vocabular${vocabIds.length > 1 ? "ies" : "y"}...`,
       });
 
-
     } catch (error) {
       console.error("❌ Error in DeleteMyVocabulary:", error);
       await this.mezonMessage.reply({

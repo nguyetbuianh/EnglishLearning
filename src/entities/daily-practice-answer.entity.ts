@@ -1,9 +1,10 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { User } from "./user.entity";
 import { Question } from "./question.entity";
 import { OptionEnum } from "../enum/option.enum";
 
 @Entity({ name: 'daily_practice_answer' })
+@Unique(['question', 'user'])
 export class DailyPracticeAnswer {
   @PrimaryGeneratedColumn()
   id: number;
