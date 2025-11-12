@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DailyPracticeAnswer } from "src/entities/daily-practice-answer.entity";
-import { Question } from "src/entities/question.entity";
-import { User } from "src/entities/user.entity";
-import { OptionEnum } from "src/enum/option.enum";
+import { DailyPracticeAnswer } from "../../../entities/daily-practice-answer.entity";
+import { Question } from "../../../entities/question.entity";
+import { User } from "../../../entities/user.entity";
+import { OptionEnum } from "../../../enum/option.enum";
 import { Repository } from "typeorm";
 
 @Injectable()
@@ -30,6 +30,7 @@ export class DailyAnswerService {
       chosenOption,
       isCorrect,
     });
-    await this.dailyAnswerRepo.save(answer);
+
+    await this.dailyAnswerRepo.upsert(answer, ['user', 'question']);
   }
 }

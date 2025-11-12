@@ -1,25 +1,24 @@
 import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
 import { Injectable, Scope } from "@nestjs/common";
-import { BaseHandler } from "./base";
-import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
-import { UserService } from "src/modules/user/user.service";
-import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
-import { ToeicPartService } from "src/modules/toeic/services/toeic-part.service";
-import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service";
-import { UserAnswer } from "src/entities/user-answer.entity";
-import { OptionEnum } from "src/enum/option.enum";
-import { parseOption } from "src/utils/option.util";
-import { MMessageButtonClicked } from "./base";
-import { MessageBuilder } from "../builders/message.builder";
-import { Question } from "src/entities/question.entity";
-import { ButtonBuilder } from "../builders/button.builder";
+import { BaseHandler, MMessageButtonClicked } from "./base";
+import { UserAnswerService } from "../../toeic/services/user-answer.service";
+import { UserService } from "../../user/user.service";
+import { ToeicQuestionService } from "../../toeic/services/toeic-question.service";
+import { ToeicPartService } from "../../toeic/services/toeic-part.service";
+import { ToeicTestService } from "../../toeic/services/toeic-test.service";
+import { UserAnswer } from "../../../entities/user-answer.entity";
+import { OptionEnum } from "../../../enum/option.enum";
+import { parseOption } from "../../../utils/option.util";
+import { Question } from "../../../entities/question.entity";
 import { CommandType } from "../enums/commands.enum";
-import { DailyAnswerService } from "src/modules/daily/services/daily-answer.service";
-import { UserStatService } from "src/modules/daily/services/user-stat.service";
+import { DailyAnswerService } from "../../daily/services/daily-answer.service";
+import { QuestionOptionService } from "../../toeic/services/question-option.service";
+import { UserStatService } from "../../daily/services/user-stat.service";
 import { sendAchievementBadgeReply } from "../utils/reply-message.util";
-import { QuestionOptionService } from "src/modules/toeic/services/question-option.service";
-import { QuestionOption } from "src/entities/question-option.entity";
+import { QuestionOption } from "../../../entities/question-option.entity";
+import { ButtonBuilder } from "../builders/button.builder";
+import { MessageBuilder } from "../builders/message.builder";
 
 interface ParsedButtonId {
   type?: string;
@@ -143,7 +142,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       questionId: question.id
     });
 
-    const newBadges = await this.userStatService.updateUserStats(existingUser.id, true);
+    const newBadges = await this.userStatService.updateUserStats(existingUser.id, isCorrect);
     if (newBadges && newBadges.length > 0) {
       await sendAchievementBadgeReply(newBadges, this.mezonMessage);
     }

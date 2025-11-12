@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserAnswer } from "src/entities/user-answer.entity";
+import { UserAnswer } from "../../../entities/user-answer.entity";
 import { Repository } from "typeorm";
 
 @Injectable()
@@ -10,8 +10,8 @@ export class UserAnswerService {
     private readonly userAnswerRepo: Repository<UserAnswer>
   ) { }
 
-  async recordAnswer(userAnswer: UserAnswer): Promise<UserAnswer> {
-    return this.userAnswerRepo.save(userAnswer);
+  async recordAnswer(userAnswer: UserAnswer): Promise<void> {
+    await this.userAnswerRepo.upsert(userAnswer, ['question', 'user', 'toeicTest', 'toeicPart']);
   }
 
   async getUserAnswersByPartAndTest(

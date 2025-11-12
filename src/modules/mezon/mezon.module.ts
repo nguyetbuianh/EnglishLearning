@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MezonService } from './services/mezon.service';
 import { InteractionFactory } from './router/interaction-factory';
-import { BaseHandler, InteractionEvent } from 'src/modules/mezon/handlers/base';
+import { BaseHandler, InteractionEvent } from './handlers/base';
+import { appConfig } from '../../appConfig';
 import { MezonClient } from 'mezon-sdk';
-import { appConfig } from 'src/appConfig';
 import { EventRouter } from './router/event.router';
 import { InitializationHandler } from './handlers/initialization.handler';
 import { UserModule } from '../user/user.module';
@@ -41,7 +41,6 @@ import { RandomWordHandler } from './handlers/random-word.handler';
 import { PexelsService } from './services/pexels.service';
 import { GuessWordAnswerHandler } from './handlers/guess-word-answer.handler';
 import { SaveChannelHandler } from './handlers/save-channel.handler';
-import { ChannelService } from '../channel/channel.service';
 import { ChannelModule } from '../channel/channel.module';
 
 const commandHandlers = [
@@ -72,6 +71,7 @@ const commandHandlers = [
   GenerateTextHandler,
   ProfileHandler,
   DeleteMyVocabulary,
+  GenerateTextHandler,
   UserProgressHandler,
   RandomWordHandler,
   GuessWordAnswerHandler,

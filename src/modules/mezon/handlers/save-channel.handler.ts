@@ -2,9 +2,9 @@ import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MChannelMessage } from "./base";
 import { MezonClient } from "mezon-sdk";
-import { ChannelService } from "src/modules/channel/channel.service";
+import { ChannelService } from "../../channel/channel.service";
+import { Channel } from "../../../entities/channel.entity";
 import { CommandType } from "../enums/commands.enum";
-import { Channel } from "src/entities/channel.entity";
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_ENGLOVER_HANDLER)

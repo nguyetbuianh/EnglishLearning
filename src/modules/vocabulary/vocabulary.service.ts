@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Vocabulary } from "src/entities/vocabulary.entity";
+import { Vocabulary } from "../../entities/vocabulary.entity";
 import { Repository } from "typeorm";
 
 @Injectable()

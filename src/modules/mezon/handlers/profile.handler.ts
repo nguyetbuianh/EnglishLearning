@@ -4,9 +4,9 @@ import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { BaseHandler, MChannelMessage } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
-import { UserService } from "src/modules/user/user.service";
-import { User } from "src/entities/user.entity";
-import { UserStatService } from "src/modules/daily/services/user-stat.service";
+import { UserService } from "../../user/user.service";
+import { User } from "../../../entities/user.entity";
+import { UserStatService } from "../../daily/services/user-stat.service";
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_PROFILE)

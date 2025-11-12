@@ -2,7 +2,7 @@ import { MezonClient } from "mezon-sdk";
 import { Interaction } from "../decorators/interaction.decorator";
 import { Injectable, Scope } from "@nestjs/common";
 import { BaseHandler } from "./base";
-import { UserService } from "src/modules/user/user.service";
+import { UserService } from "../../user/user.service";
 import { MChannelMessage } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
 import { CommandType } from "../enums/commands.enum";

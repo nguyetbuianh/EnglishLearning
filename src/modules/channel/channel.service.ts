@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Channel } from "src/entities/channel.entity";
+import { Channel } from "../../entities/channel.entity";
 import { Repository } from "typeorm";
 
 @Injectable()
@@ -18,5 +18,16 @@ export class ChannelService {
     return this.channelRepository.findOne({
       where: { channelId },
     });
+  }
+
+  async getChannelsInBatches(limit: number, offset = 0): Promise<Channel[]> {
+    return this.channelRepository.find({
+      skip: offset,
+      take: limit,
+    });
+  }
+
+  async deleteChannel(channelId: string): Promise<void> {
+    await this.channelRepository.delete({ channelId: channelId });
   }
 }

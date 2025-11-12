@@ -8,8 +8,8 @@ import {
   MezonClient,
   RadioFieldOption,
 } from "mezon-sdk";
-import { FavoriteVocabularyService } from "src/modules/favorite-vocabulary/favorite-vocabulary.service";
-import { UserService } from "src/modules/user/user.service";
+import { FavoriteVocabularyService } from "../../favorite-vocabulary/favorite-vocabulary.service";
+import { UserService } from "../../user/user.service";
 import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
 import { CommandType } from "../enums/commands.enum";

@@ -2,8 +2,8 @@ import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { MezonClient } from "mezon-sdk";
-import { FavoriteVocabularyService } from "src/modules/favorite-vocabulary/favorite-vocabulary.service";
-import { UserService } from "src/modules/user/user.service";
+import { FavoriteVocabularyService } from "../../favorite-vocabulary/favorite-vocabulary.service";
+import { UserService } from "../../user/user.service";
 import { CommandType } from "../enums/commands.enum";
 import { VocabularyOfUserHandler } from "./vocabulary-of-user.handler";
 import { ModuleRef } from "@nestjs/core";
@@ -63,7 +63,6 @@ export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
       await this.mezonMessage.reply({
         t: `✅ Deleted ${vocabIds.length} vocabular${vocabIds.length > 1 ? "ies" : "y"}...`,
       });
-
 
     } catch (error) {
       console.error("❌ Error in DeleteMyVocabulary:", error);

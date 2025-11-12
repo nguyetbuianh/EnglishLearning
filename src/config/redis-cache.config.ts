@@ -1,6 +1,6 @@
 import { CacheModuleOptions, CacheOptionsFactory } from '@nestjs/cache-manager';
 import { createClient } from 'redis';
-import { appConfig } from 'src/appConfig';
+import { appConfig } from '../appConfig';
 
 export class RedisCacheConfigService implements CacheOptionsFactory {
   async createCacheOptions(): Promise<CacheModuleOptions> {

@@ -51,6 +51,10 @@ export class HelpHandler extends BaseHandler<MChannelMessage> {
               value: "View your saved vocabulary words and review them anytime to strengthen your memory! 🧠",
             },
             {
+              name: "📊 `*e-my-progress`",
+              value: "Check your learning progress and see how much your TOEIC has improved over time! 📈",
+            },
+            {
               name: "💡 `*e-help`",
               value: "🔍 Need guidance? Open this help menu anytime to explore all available commands! 🧭",
             },

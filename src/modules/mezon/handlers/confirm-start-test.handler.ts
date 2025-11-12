@@ -2,10 +2,10 @@ import { MezonClient } from "mezon-sdk";
 import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MMessageButtonClicked } from "./base";
-import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
+import { ToeicQuestionService } from "../../toeic/services/toeic-question.service";
+import { UserProgressService } from "../../toeic/services/user-progress.service";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 import { CommandType } from "../enums/commands.enum";
-import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
 import { updateSession } from "../utils/update-session.util";
 import { replyQuestionMessage, sendCompletionMessage, sendContinueOrRestartMessage, sendNoQuestionsMessage } from "../utils/reply-message.util";
 
@@ -72,9 +72,9 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
         testId: testId,
         partId: partId,
         currentQuestionNumber: firstQuestion.questionNumber,
-        currentPassageNumber: partId === 6 || partId === 7 ? 1 : undefined,
+        currentPassageNumber: partId === 6 || partId === 7 ? firstQuestion.passage.id : undefined,
       });
-
+      
       await updateSession(mezonUserId, firstQuestion, this.mezonMessage.id);
 
       replyQuestionMessage({
