@@ -1,16 +1,4 @@
 export enum CommandType {
-<<<<<<< HEAD
-  COMMAND_WELCOME = 'welcome',
-  COMMAND_START = 'start',
-  COMMAND_INIT = 'init',
-  COMMAND_ALL_PART = 'all-part',
-  COMMAND_ALL_TEST = 'all-test',
-  COMMAND_ALL_TOPIC = 'all-topic',
-  COMMAND_HELP = 'help',
-  COMMAND_ALL_VOCABULARY_OF_USER = 'my-vocab',
-  COMMAND_PROFILE = 'profile',
-  COMMAND_GENERATE_TEXT = 'gen-text',
-=======
   COMMAND_START = 'e-start',
   COMMAND_INIT = 'e-init',
   COMMAND_ALL_PART = 'e-part',
@@ -22,7 +10,6 @@ export enum CommandType {
   COMMAND_MY_PROGRESS = 'e-my-progress',
   COMMAND_ENGLOVER = '@EngLover',
   COMMAND_ENGLOVER_HANDLER = 'englover',
->>>>>>> 2c6ca6c916b0c6b1718b6c345fdc3b861ac00fb7
 
   SELECT_PART = 'toeic-part',
   SELECT_TEST = 'toeic-test',
