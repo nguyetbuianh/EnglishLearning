@@ -5,8 +5,7 @@ import { ChannelMessageContent, EButtonMessageStyle, EMessageComponentType, Mezo
 import { Cron } from '@nestjs/schedule';
 import { Injectable } from '@nestjs/common';
 import { ButtonBuilder } from '../builders/button.builder';
-import { ChannelService } from 'src/modules/channel/channel.service';
-import { UserService } from '../../user/user.service';
+import { ChannelService } from '../../channel/channel.service';
 
 @Injectable()
 export class RandomWordHandler {

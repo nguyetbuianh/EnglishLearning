@@ -4,13 +4,13 @@ import { ToeicQuestionService } from '../toeic/services/toeic-question.service';
 import { ToeicTestService } from '../toeic/services/toeic-test.service';
 import { ToeicPartService } from '../toeic/services/toeic-part.service';
 import { PassageService } from '../toeic/services/passage.service';
-import { Question } from 'src/entities/question.entity';
-import { Passage } from 'src/entities/passage.entity';
-import { OptionEnum } from 'src/enum/option.enum';
-import { ToeicPart } from 'src/entities/toeic-part.entity';
-import { ToeicTest } from 'src/entities/toeic-test.entity';
+import { Question } from '../../entities/question.entity';
+import { Passage } from '../../entities/passage.entity';
+import { OptionEnum } from '../../enum/option.enum';
+import { ToeicPart } from '../../entities/toeic-part.entity';
+import { ToeicTest } from '../../entities/toeic-test.entity';
 import { QuestionOptionService } from '../question-option/question-option.service';
-import { QuestionOption } from 'src/entities/question-option.entity';
+import { QuestionOption } from '../../entities/question-option.entity';
 
 interface ToeicQuestionData {
   question_number: number;
