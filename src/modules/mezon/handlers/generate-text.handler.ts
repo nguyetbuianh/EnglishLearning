@@ -2,7 +2,7 @@ import { Injectable, Logger, BadRequestException } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MChannelMessage } from "./base";
 import { MezonClient } from "mezon-sdk";
-import { ToeicImportService } from "src/modules/toeic-import/toeic-import.service";
+import { ToeicImportService } from "../../toeic-import/toeic-import.service"; 
 import axios from "axios";
 
 @Injectable()
