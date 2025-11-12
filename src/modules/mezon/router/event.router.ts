@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { MezonClient } from "mezon-sdk";
 import { InteractionFactory } from "./interaction-factory";
 import { InteractionEvent } from "../handlers/base";
-import { UserService } from "src/modules/user/user.service";
+import { UserService } from "../../user/user.service";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { MessageBuilder } from "../builders/message.builder";

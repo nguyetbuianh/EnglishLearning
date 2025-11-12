@@ -3,9 +3,9 @@ import { BaseHandler, MChannelMessage } from "./base";
 import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
-import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
-import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
-import { UserService } from "src/modules/user/user.service";
+import { UserProgressService } from "../../toeic/services/user-progress.service";
+import { UserAnswerService } from "../../toeic/services/user-answer.service";
+import { UserService } from "../../user/user.service";
 import { MessageBuilder } from "../builders/message.builder";
 
 interface Parts {

@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserStats } from "src/entities/user-stat.entity";
-import { User } from "src/entities/user.entity";
-import { BadgeEnum } from "src/enum/badge.enum";
-import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
+import { UserStats } from "../../../entities/user-stat.entity";
+import { User } from "../../../entities/user.entity";
+import { BadgeEnum } from "../../../enum/badge.enum";
+import { UserAnswerService } from "../../toeic/services/user-answer.service";
 import { Repository } from "typeorm";
 
 @Injectable()

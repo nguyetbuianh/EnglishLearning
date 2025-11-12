@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserProgress } from 'src/entities/progress.entity';
+import { UserProgress } from '../../../entities/progress.entity';
 
 @Injectable()
 export class UserProgressService {

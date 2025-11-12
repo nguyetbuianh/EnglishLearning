@@ -1,5 +1,5 @@
-import { ToeicTestService } from "src/modules/toeic/services/toeic-test.service";
-import { ToeicPartService } from "src/modules/toeic/services/toeic-part.service";
+import { ToeicTestService } from "../../toeic/services/toeic-test.service";
+import { ToeicPartService } from "../../toeic/services/toeic-part.service";
 import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
 import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";

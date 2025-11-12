@@ -1,12 +1,12 @@
-import { VocabularyService } from 'src/modules/vocabulary/vocabulary.service';
+import { VocabularyService } from '../../vocabulary/vocabulary.service';
 import { PexelsService } from '../services/pexels.service';
-import { UserService } from 'src/modules/user/user.service';
 import { MessageBuilder } from '../builders/message.builder';
 import { ChannelMessageContent, EButtonMessageStyle, EMessageComponentType, MezonClient } from 'mezon-sdk';
 import { Cron } from '@nestjs/schedule';
 import { Injectable } from '@nestjs/common';
 import { ButtonBuilder } from '../builders/button.builder';
 import { ChannelService } from 'src/modules/channel/channel.service';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class RandomWordHandler {

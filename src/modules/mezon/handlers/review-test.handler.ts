@@ -5,9 +5,9 @@ import { CommandType } from "../enums/commands.enum";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 import { MessageBuilder } from "../builders/message.builder";
-import { UserAnswerService } from "src/modules/toeic/services/user-answer.service";
-import { UserService } from "src/modules/user/user.service";
-import { UserAnswer } from "src/entities/user-answer.entity";
+import { UserAnswerService } from "../../toeic/services/user-answer.service";
+import { UserService } from "../../user/user.service";
+import { UserAnswer } from "../../../entities/user-answer.entity";
 import { sendCancelMessage } from "../utils/reply-message.util";
 
 interface PartStat {

@@ -7,7 +7,7 @@ import {
   ButtonComponent,
   RadioFieldOption,
 } from "mezon-sdk";
-import { VocabularyService } from "src/modules/vocabulary/vocabulary.service";
+import { VocabularyService } from "../../vocabulary/vocabulary.service";
 import { Interaction } from "../decorators/interaction.decorator";
 import { MessageBuilder } from "../builders/message.builder";
 import { ButtonBuilder } from "../builders/button.builder";
