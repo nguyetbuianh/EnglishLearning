@@ -40,7 +40,6 @@ import { UserProgressHandler } from './handlers/user-progress.handler';
 import { RandomWordHandler } from './handlers/random-word.handler';
 import { PexelsService } from './services/pexels.service';
 import { GuessWordAnswerHandler } from './handlers/guess-word-answer.handler';
-import { SaveChannelHandler } from './handlers/save-channel.handler';
 import { ChannelModule } from '../channel/channel.module';
 
 const commandHandlers = [
@@ -64,13 +63,17 @@ const commandHandlers = [
   DailyReminderTask,
   SaveVocabularyHandler,
   VocabularyOfUserHandler,
+  SaveVocabularyHandler,
+  DailyReminderTask,
+  ProfileHandler,
+  DeleteMyVocabulary,
+  GenerateTextHandler,
   ProfileHandler,
   DeleteMyVocabulary,
   GenerateTextHandler,
   UserProgressHandler,
   RandomWordHandler,
-  GuessWordAnswerHandler,
-  SaveChannelHandler
+  GuessWordAnswerHandler
 ];
 
 @Module({

@@ -47,6 +47,15 @@ export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
         user.id
       );
 
+      const remaining = await this.favoriteVocabularyService.getVocabulary(user.id);
+
+      if (!remaining || remaining.data.length === 0) {
+        await this.mezonMessage.update({
+          t: "🫠 You have no more words in your favorites list.",
+        });
+        return;
+      }
+
       const vocabHandler = await this.moduleRef.create(VocabularyOfUserHandler);
       vocabHandler["event"] = this.event;
       vocabHandler["mezonMessage"] = this.mezonMessage;
