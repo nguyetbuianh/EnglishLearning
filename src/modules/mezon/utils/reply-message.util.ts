@@ -1,5 +1,5 @@
-import { Passage } from "src/entities/passage.entity";
-import { Question } from "src/entities/question.entity";
+import { Passage } from "../../../entities/passage.entity";
+import { Question } from "../../../entities/question.entity";
 import { ButtonBuilder } from "../builders/button.builder";
 import { EButtonMessageStyle } from "mezon-sdk";
 import { MessageBuilder } from "../builders/message.builder";

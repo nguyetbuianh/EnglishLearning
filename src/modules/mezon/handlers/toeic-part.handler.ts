@@ -2,7 +2,7 @@ import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler } from "./base";
 import { ChannelMessageContent, IInteractiveMessageProps, MezonClient } from "mezon-sdk";
-import { ToeicPartService } from "src/modules/toeic/services/toeic-part.service";
+import { ToeicPartService } from "../../toeic/services/toeic-part.service";
 import { MChannelMessage } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
 import { CommandType } from "../enums/commands.enum";

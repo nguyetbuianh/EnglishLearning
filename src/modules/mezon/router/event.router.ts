@@ -2,15 +2,15 @@ import { Injectable, Logger } from "@nestjs/common";
 import { MezonClient, UserChannelAddedEvent } from "mezon-sdk";
 import { InteractionFactory } from "./interaction-factory";
 import { InteractionEvent } from "../handlers/base";
-import { UserService } from "src/modules/user/user.service";
+import { UserService } from "../../user/user.service";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { MessageBuilder } from "../builders/message.builder";
 import { CommandType } from "../enums/commands.enum";
 import { ModuleRef } from "@nestjs/core";
-import { ChannelService } from "src/modules/channel/channel.service";
+import { ChannelService } from "../../channel/channel.service";
 import { UserChannelRemoved } from "mezon-sdk";
-import { appConfig } from "src/appConfig";
+import { appConfig } from "../../../appConfig";
 
 @Injectable()
 export class EventRouter {

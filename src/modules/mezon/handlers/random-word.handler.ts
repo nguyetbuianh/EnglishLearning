@@ -1,6 +1,5 @@
-import { VocabularyService } from 'src/modules/vocabulary/vocabulary.service';
+import { VocabularyService } from '../../vocabulary/vocabulary.service';
 import { PexelsService } from '../services/pexels.service';
-import { UserService } from 'src/modules/user/user.service';
 import { MessageBuilder } from '../builders/message.builder';
 import { ChannelMessageContent, EButtonMessageStyle, EMessageComponentType, MezonClient } from 'mezon-sdk';
 import { Cron } from '@nestjs/schedule';

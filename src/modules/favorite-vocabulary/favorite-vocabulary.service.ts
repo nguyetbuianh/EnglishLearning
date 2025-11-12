@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FavoriteVocabulary } from "src/entities/favorite-vocabulary.entity";
-import { Vocabulary } from "src/entities/vocabulary.entity";
+import { FavoriteVocabulary } from "../../entities/favorite-vocabulary.entity";
 import { In, Repository } from "typeorm";
 
 @Injectable()
@@ -45,6 +44,22 @@ export class FavoriteVocabularyService {
     });
 
     return { data, total };
+  }
+
+  async getVocabulary(
+    userId: number
+  ): Promise<{ data: FavoriteVocabulary[] }> {
+    const [data] = await this.favoriteVocabularyRepo.findAndCount({
+      where: {
+        user: { id: userId },
+      },
+      relations: ['vocabulary'],
+      order: {
+        createdAt: 'DESC',
+      }
+    });
+
+    return { data };
   }
 
   async deleteVocabularyOfUser(vocabIds: number[], userId: number): Promise<void> {

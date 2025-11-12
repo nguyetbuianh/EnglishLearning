@@ -4,14 +4,14 @@ import { Interaction } from "../decorators/interaction.decorator";
 import { CommandType } from "../enums/commands.enum";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { ToeicSessionStore } from "../session/toeic-session.store";
-import { ToeicQuestionService } from "src/modules/toeic/services/toeic-question.service";
-import { updateSession } from "../utils/update-session.util";
-import { replyQuestionMessage, sendAchievementBadgeReply, sendCompletionMessage, sendContinueOrRestartMessage, sendNoQuestionsMessage } from "../utils/reply-message.util";
-import { UserProgressService } from "src/modules/toeic/services/user-progress.service";
-import { MessageBuilder } from "../builders/message.builder";
+import { ToeicQuestionService } from "../../toeic/services/toeic-question.service";
+import { UserProgressService } from "../../toeic/services/user-progress.service";
+import { UserService } from "../../user/user.service";
+import { UserStatService } from "../../daily/services/user-stat.service";
 import { ButtonBuilder } from "../builders/button.builder";
-import { UserService } from "src/modules/user/user.service";
-import { UserStatService } from "src/modules/daily/services/user-stat.service";
+import { MessageBuilder } from "../builders/message.builder";
+import { replyQuestionMessage, sendAchievementBadgeReply, sendCompletionMessage, sendContinueOrRestartMessage, sendNoQuestionsMessage } from "../utils/reply-message.util";
+import { updateSession } from "../utils/update-session.util";
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_NEXT_PART)

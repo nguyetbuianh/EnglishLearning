@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QuestionOption } from 'src/entities/question-option.entity';
-import { OptionEnum } from 'src/enum/option.enum';
+import { QuestionOption } from '../../../entities/question-option.entity';
+import { OptionEnum } from '../../../enum/option.enum';
 import { Repository } from 'typeorm';
 
 @Injectable()

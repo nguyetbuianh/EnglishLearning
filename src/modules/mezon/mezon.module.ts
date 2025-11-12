@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MezonService } from './services/mezon.service';
 import { InteractionFactory } from './router/interaction-factory';
-import { BaseHandler, InteractionEvent } from 'src/modules/mezon/handlers/base';
+import { BaseHandler, InteractionEvent } from './handlers/base';
+import { appConfig } from '../../appConfig';
 import { MezonClient } from 'mezon-sdk';
-import { appConfig } from 'src/appConfig';
 import { EventRouter } from './router/event.router';
 import { InitializationHandler } from './handlers/initialization.handler';
 import { UserModule } from '../user/user.module';
@@ -63,6 +63,11 @@ const commandHandlers = [
   DailyReminderTask,
   SaveVocabularyHandler,
   VocabularyOfUserHandler,
+  SaveVocabularyHandler,
+  DailyReminderTask,
+  ProfileHandler,
+  DeleteMyVocabulary,
+  GenerateTextHandler,
   ProfileHandler,
   DeleteMyVocabulary,
   GenerateTextHandler,

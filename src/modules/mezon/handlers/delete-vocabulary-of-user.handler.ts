@@ -2,8 +2,8 @@ import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { MezonClient } from "mezon-sdk";
-import { FavoriteVocabularyService } from "src/modules/favorite-vocabulary/favorite-vocabulary.service";
-import { UserService } from "src/modules/user/user.service";
+import { FavoriteVocabularyService } from "../../favorite-vocabulary/favorite-vocabulary.service";
+import { UserService } from "../../user/user.service";
 import { CommandType } from "../enums/commands.enum";
 import { VocabularyOfUserHandler } from "./vocabulary-of-user.handler";
 import { ModuleRef } from "@nestjs/core";
@@ -46,6 +46,15 @@ export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
         vocabIds,
         user.id
       );
+
+      const remaining = await this.favoriteVocabularyService.getVocabulary(user.id);
+
+      if (!remaining || remaining.data.length === 0) {
+        await this.mezonMessage.update({
+          t: "🫠 You have no more words in your favorites list.",
+        });
+        return;
+      }
 
       const vocabHandler = await this.moduleRef.create(VocabularyOfUserHandler);
       vocabHandler["event"] = this.event;
