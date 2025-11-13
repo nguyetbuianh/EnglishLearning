@@ -9,6 +9,7 @@ export enum CommandType {
   COMMAND_ALL_VOCABULARY_OF_USER = 'e-my-vocab',
   COMMAND_MY_PROGRESS = 'e-my-progress',
   COMMAND_GENERATE_TEXT = 'gen-text',
+  COMMAND_ELAKOTHE = 'e-lakhongthe',
 
   SELECT_PART = 'toeic-part',
   SELECT_TEST = 'toeic-test',

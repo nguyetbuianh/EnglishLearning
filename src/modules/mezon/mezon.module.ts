@@ -41,6 +41,7 @@ import { RandomWordHandler } from './handlers/random-word.handler';
 import { PexelsService } from './services/pexels.service';
 import { GuessWordAnswerHandler } from './handlers/guess-word-answer.handler';
 import { ChannelModule } from '../channel/channel.module';
+import { ELaKoTheHandler } from './handlers/elakhongthe.handler';
 
 const commandHandlers = [
   StartTestHandler,
@@ -73,7 +74,8 @@ const commandHandlers = [
   GenerateTextHandler,
   UserProgressHandler,
   RandomWordHandler,
-  GuessWordAnswerHandler
+  GuessWordAnswerHandler,
+  ELaKoTheHandler
 ];
 
 @Module({
