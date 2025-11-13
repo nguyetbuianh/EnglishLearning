@@ -89,7 +89,7 @@ export class EventRouter {
         const isPublic = PUBLIC_COMMANDS.includes(command);
 
         if (!existingUser && !isPublic) {
-          await this.sendWarning(channel, "⚠️ You are not registered. Use *init to start.");
+          await this.sendWarning(channel, "⚠️ You are not registered. Use *e-init to start.");
           return;
         }
 
@@ -110,7 +110,7 @@ export class EventRouter {
 
         const userId = event.user_id;
         if (ownerId && userId !== ownerId) {
-          await this.sendWarning(channel, "❌ You are not allowed to interact with this form.");
+          // await this.sendWarning(channel, "❌ You are not allowed to interact with this form.");
           return;
         }
       }

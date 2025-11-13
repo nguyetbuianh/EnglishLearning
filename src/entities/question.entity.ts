@@ -6,7 +6,8 @@ import {
   CreateDateColumn,
   OneToMany,
   JoinColumn,
-  Unique
+  Unique,
+  RelationId
 } from 'typeorm';
 import { ToeicTest } from './toeic-test.entity';
 import { ToeicPart } from './toeic-part.entity';
@@ -24,9 +25,15 @@ export class Question {
   @JoinColumn({ name: 'test_id' })
   test: ToeicTest;
 
+  @RelationId((question: Question) => question.test)
+  testId: number;
+
   @ManyToOne(() => ToeicPart, (part) => part.questions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'part_id' })
   part: ToeicPart;
+
+  @RelationId((question: Question) => question.part)
+  partId: number;
 
   @ManyToOne(() => Passage, (p) => p.questions, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'passage_id' })
