@@ -46,7 +46,7 @@ export class EventRouter {
   private async handleEvent<T extends InteractionEvent>(event: T) {
     try {
       const eventName = this.getEventName(event);
-
+      
       if (!eventName) return;
 
       const channel = await this.client.channels.fetch(event.channel_id);
@@ -74,7 +74,8 @@ export class EventRouter {
           CommandType.COMMAND_ALL_TEST,
           CommandType.COMMAND_ALL_PART,
           CommandType.COMMAND_ALL_VOCABULARY_OF_USER,
-          CommandType.COMMAND_MY_PROGRESS
+          CommandType.COMMAND_MY_PROGRESS,
+          CommandType.COMMAND_ELAKOTHE
         ];
         if (!VALID_COMMANDS.includes(command)) {
           return;
