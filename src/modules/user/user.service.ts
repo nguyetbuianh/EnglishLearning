@@ -5,6 +5,13 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { User } from "../../entities/user.entity";
 
+export interface CachedUser {
+  id: number;
+  mezonUserId: string;
+  username: string;
+  joinedAt: Date;
+}
+
 @Injectable()
 export class UserService {
   constructor(
@@ -35,20 +42,25 @@ export class UserService {
     });
   }
 
-  async getUserInCache(mezonUserId: string) {
+  async getUserInCache(mezonUserId: string): Promise<CachedUser | null> {
     const key = `user:${mezonUserId}`;
-    const cached = await this.cache.get(key);
+    const cached = await this.cache.get<CachedUser>(key);
+
     if (cached) {
       return cached;
     }
 
     const user = await this.findUserByMezonId(mezonUserId);
-    await this.cache.set(key, {
-      id: user?.id,
-      mezonUserId: user?.mezonUserId,
-      username: user?.username,
-      joinedAt: user?.joinedAt
-    }, 86_400_000);
-    return user;
+    if (!user) return null;
+
+    const cachedUser: CachedUser = {
+      id: user.id,
+      mezonUserId: user.mezonUserId,
+      username: user.username,
+      joinedAt: user.joinedAt,
+    };
+
+    await this.cache.set(key, cachedUser, 86_400_000);
+    return cachedUser;
   }
 }
