@@ -126,7 +126,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     const questionIdNumber = Number(questionId);
     const chosenOption = parseOption(answerOption);
     const question = await this.questionService.findQuestionById(questionIdNumber);
-    const existingUser = await this.userService.findUserByMezonId(mezonId);
+    const existingUser = await this.userService.getUserInCache(mezonId);
     if (!chosenOption || !question || !existingUser) {
       await this.mezonMessage.reply({ t: "⚠️ Missing data." });
       return;
@@ -137,17 +137,21 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       userId: existingUser.id,
       chosenOption: chosenOption,
       isCorrect: isCorrect,
-      partId: question.part.id,
-      testId: question.test.id,
+      partId: question.partId,
+      testId: question.testId,
       questionId: question.id
     });
 
     const newBadges = await this.userStatService.updateUserStats(existingUser.id, isCorrect);
-    if (newBadges && newBadges.length > 0) {
-      await sendAchievementBadgeReply(newBadges, this.mezonMessage);
-    }
 
-    await this.sendAnswerTestResponse(isCorrect, question, mezonId, chosenOption);
+    if (newBadges && newBadges.length > 0) {
+      await Promise.all([
+        sendAchievementBadgeReply(newBadges, this.mezonMessage),
+        this.sendAnswerTestResponse(isCorrect, question, mezonId, chosenOption),
+      ]);
+    } else {
+      await this.sendAnswerTestResponse(isCorrect, question, mezonId, chosenOption);
+    }
   }
 
   private parseButtonId(): ParsedButtonId {
@@ -172,33 +176,26 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
   ): Promise<void> {
     try {
       const { userId, chosenOption, isCorrect, partId, testId, questionId } = saveUserAnswerParams;
-      const existingUser = await this.userService.findUserById(userId);
-      if (!existingUser) {
-        console.warn(`⚠️ User with user id ${userId} not found`);
-        return;
-      }
-      const existingPart = await this.toeicPartService.findPartById(partId);
-      if (!existingPart) {
-        console.warn(`⚠️ Part with part id ${partId} not found`);
-        return;
-      }
-      const existingTest = await this.toeicTestService.findTestById(testId);
-      if (!existingTest) {
-        return;
-      }
+      const [existingUser, existingPart, existingTest, existingQuestion] = await Promise.all([
+        this.userService.findUserById(userId),
+        this.toeicPartService.findPartById(partId),
+        this.toeicTestService.findTestById(testId),
+        this.questionService.findQuestionById(questionId),
+      ]);
 
-      const existingQuestion = await this.questionService.findQuestionById(questionId);
-      if (!existingQuestion) {
-        return;
+      if (!existingUser || !existingPart || !existingTest || !existingQuestion) {
+        console.warn(
+          `⚠️ Missing required data when saving user answer:
+          user=${!!existingUser}, part=${!!existingPart}, test=${!!existingTest}, question=${!!existingQuestion}`
+        );
       }
-
       const newUserAnswer = new UserAnswer();
-      newUserAnswer.user = existingUser;
+      newUserAnswer.user = existingUser!;
       newUserAnswer.chosenOption = chosenOption;
       newUserAnswer.isCorrect = isCorrect;
-      newUserAnswer.toeicPart = existingPart;
-      newUserAnswer.toeicTest = existingTest;
-      newUserAnswer.question = existingQuestion;
+      newUserAnswer.toeicPart = existingPart!;
+      newUserAnswer.toeicTest = existingTest!;
+      newUserAnswer.question = existingQuestion!;
 
       await this.userAnswerService.recordAnswer(newUserAnswer);
     } catch (error) {
@@ -244,7 +241,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
         imageUrl: question.imageUrl || undefined,
         audioUrl: question.audioUrl || undefined,
       })
-      .setText(`Start Test ${question.test?.id ?? "?"}, Part ${question.part?.id ?? "?"}`);
+      .setText(`Start Test ${question.testId}, Part ${question.partId}`);
 
     if (includeButtons && mezonId) {
       const nextQuestionButton = new ButtonBuilder()
@@ -282,7 +279,6 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
 
       if (!messagePayload) return;
 
-      await new Promise((resolve) => setTimeout(resolve, 5000));
       await this.mezonMessage.update(messagePayload, undefined, messagePayload.attachments);
     } catch (error) {
       console.error("❌ Error sending test answer response:", error);
