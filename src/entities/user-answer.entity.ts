@@ -5,7 +5,8 @@ import {
   ManyToOne,
   CreateDateColumn,
   JoinColumn,
-  Unique
+  Unique,
+  RelationId
 } from 'typeorm';
 import { User } from './user.entity';
 import { ToeicPart } from './toeic-part.entity';
@@ -23,9 +24,15 @@ export class UserAnswer {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
+  @RelationId((user: User) => user.userAnswer)
+  userId: number;
+
   @ManyToOne(() => Question, (q) => q.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'question_id' })
   question: Question;
+
+  @RelationId((question: Question) => question.userAnswers)
+  questionId: number;
 
   @Column({ type: 'enum', enum: OptionEnum, nullable: false })
   chosenOption: OptionEnum;
@@ -38,9 +45,15 @@ export class UserAnswer {
 
   @ManyToOne(() => ToeicPart, (p) => p.userAnswers, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'toeic_part_id' })
-  toeicPart: ToeicPart;
+  part: ToeicPart;
+
+  @RelationId((part: ToeicPart) => part.userAnswers)
+  partId: number;
 
   @ManyToOne(() => ToeicTest, (t) => t.userAnswers, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'toeic_test_id' })
-  toeicTest: ToeicTest;
+  test: ToeicTest;
+
+  @RelationId((test: ToeicTest) => test.userAnswers)
+  testId: number;
 }

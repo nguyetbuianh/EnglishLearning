@@ -4,24 +4,32 @@ import {
   Column,
   ManyToOne,
   OneToMany,
-  JoinColumn
+  JoinColumn,
+  RelationId
 } from 'typeorm';
 import { ToeicPart } from './toeic-part.entity';
 import { ToeicTest } from './toeic-test.entity';
 import { Question } from './question.entity';
+import { Test } from '@nestjs/testing';
 
 @Entity('passages')
 export class Passage {
   @PrimaryGeneratedColumn()
   id: number;
-  
+
   @ManyToOne(() => ToeicTest, (test) => test.passages, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'test_id' })
   test: ToeicTest;
 
+  @RelationId((test: ToeicTest) => test.passages)
+  testId: number;
+
   @ManyToOne(() => ToeicPart, (part) => part.passages, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'part_id' })
   part: ToeicPart;
+
+  @RelationId((part: ToeicPart) => part.passages)
+  partId: number;
 
   @Column({ name: 'passage_number', type: 'int', nullable: false })
   passageNumber: number;

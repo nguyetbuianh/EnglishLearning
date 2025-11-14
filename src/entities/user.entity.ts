@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
 import { UserAnswer } from './user-answer.entity';
 import { FavoriteVocabulary } from './favorite-vocabulary.entity';
+import { DailyPracticeAnswer } from './daily-practice-answer.entity';
 
 @Entity('users')
 export class User {
@@ -21,4 +22,7 @@ export class User {
 
   @OneToMany(() => FavoriteVocabulary, (fav) => fav.user)
   favorites: FavoriteVocabulary[];
+
+  @OneToMany(() => DailyPracticeAnswer, (dpa) => dpa.user)
+  dailyPracticeAnswers: DailyPracticeAnswer[];
 }
