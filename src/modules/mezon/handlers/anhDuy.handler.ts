@@ -6,7 +6,7 @@ import { CommandType } from "../enums/commands.enum";
 import { MessageBuilder } from "../builders/message.builder";
 
 @Injectable()
-@Interaction(CommandType.COMMAND_DUYNEN)
+//@Interaction(CommandType.COMMAND_DUYNEN)
 export class AnhDuyHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,
