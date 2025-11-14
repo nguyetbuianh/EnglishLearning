@@ -17,7 +17,7 @@ export class DailyReminderTask {
     private readonly toeicQuestionService: ToeicQuestionService,
   ) { }
 
-  @Cron("0 8-22 * * *")
+  //@Cron("0 8-22 * * *")
   async sendDailyMessageToAllUsers() {
     try {
       const batchSize = 100;
