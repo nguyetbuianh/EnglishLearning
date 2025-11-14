@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   JoinColumn,
   Unique,
+  RelationId,
 } from "typeorm";
 import { Vocabulary } from "./vocabulary.entity";
 import { User } from "./user.entity";
@@ -21,9 +22,15 @@ export class FavoriteVocabulary {
   @JoinColumn({ name: "user_id" })
   user: User;
 
+  @RelationId((user: User) => user.favorites)
+  userId: number;
+
   @ManyToOne(() => Vocabulary, { eager: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "vocabulary_id" })
   vocabulary: Vocabulary;
+
+  @RelationId((user: Vocabulary) => user.favorites)
+  vocabularyId: number;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;

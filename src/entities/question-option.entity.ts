@@ -3,7 +3,8 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
+  RelationId
 } from 'typeorm';
 import { Question } from './question.entity';
 import { OptionEnum } from '../enum/option.enum';
@@ -16,6 +17,9 @@ export class QuestionOption {
   @ManyToOne(() => Question, (q) => q.options, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'question_id' })
   question: Question;
+
+  @RelationId((question: Question) => question.options)
+  questionId: number;
 
   @Column({ name: "option_label", type: 'char', length: 1, nullable: false })
   optionLabel: OptionEnum;

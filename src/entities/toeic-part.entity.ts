@@ -8,6 +8,7 @@ import {
 import { Question } from './question.entity';
 import { Passage } from './passage.entity';
 import { UserAnswer } from './user-answer.entity';
+import { UserProgress } from './progress.entity';
 
 @Entity('toeic_parts')
 @Check(`"part_number" >= 1 AND "part_number" <= 7`)
@@ -30,6 +31,9 @@ export class ToeicPart {
   @OneToMany(() => Passage, (p) => p.part)
   passages: Passage[];
 
-  @OneToMany(() => UserAnswer, (ua) => ua.toeicPart)
+  @OneToMany(() => UserAnswer, (ua) => ua.part)
   userAnswers: UserAnswer[];
+
+  @OneToMany(() => UserProgress, (up) => up.part)
+  userProgresses: UserProgress[];
 }

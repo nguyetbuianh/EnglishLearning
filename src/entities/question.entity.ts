@@ -14,6 +14,9 @@ import { ToeicPart } from './toeic-part.entity';
 import { QuestionOption } from './question-option.entity';
 import { Passage } from './passage.entity';
 import { OptionEnum } from '../enum/option.enum';
+import { DailyPracticeAnswer } from './daily-practice-answer.entity';
+import { User } from 'mezon-sdk/dist/cjs/api/api';
+import { UserAnswer } from './user-answer.entity';
 
 @Entity('questions')
 @Unique(['test', 'part', 'questionNumber'])
@@ -39,6 +42,9 @@ export class Question {
   @JoinColumn({ name: 'passage_id' })
   passage: Passage;
 
+  @RelationId((passage: Passage) => passage.questions)
+  passageId: number;
+
   @Column({ name: 'question_number', type: 'int', nullable: true })
   questionNumber: number;
 
@@ -62,4 +68,10 @@ export class Question {
 
   @OneToMany(() => QuestionOption, (opt) => opt.question)
   options: QuestionOption[];
+
+  @OneToMany(() => DailyPracticeAnswer, (dpa) => dpa.question)
+  dailyPracticeAnswers: DailyPracticeAnswer[];
+
+  @OneToMany(() => UserAnswer, (ua) => ua.question)
+  userAnswers: UserAnswer[];
 }

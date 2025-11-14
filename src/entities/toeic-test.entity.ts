@@ -7,6 +7,7 @@ import {
 import { Question } from './question.entity';
 import { Passage } from './passage.entity';
 import { UserAnswer } from './user-answer.entity';
+import { UserProgress } from './progress.entity';
 
 @Entity('toeic_tests')
 export class ToeicTest {
@@ -28,6 +29,9 @@ export class ToeicTest {
   @OneToMany(() => Passage, (p) => p.part)
   passages: Passage[];
 
-  @OneToMany(() => UserAnswer, (ua) => ua.toeicTest)
+  @OneToMany(() => UserAnswer, (ua) => ua.test)
   userAnswers: UserAnswer[];
+
+  @OneToMany(() => UserProgress, (up) => up.test)
+  userProgresses: UserProgress[];
 }
