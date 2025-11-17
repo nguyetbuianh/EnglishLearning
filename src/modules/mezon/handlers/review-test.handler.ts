@@ -182,7 +182,7 @@ export class ReviewTestHandler extends BaseHandler<MMessageButtonClicked> {
       }
 
       const { testId } = session;
-      const user = await this.userService.findUserByMezonId(mezonUserId);
+      const user = await this.userService.getUser(mezonUserId);
       if (!user) return;
 
       const userAnswers = await this.userAnswerService.getUserAnswersByTest(user.id, testId);

@@ -5,6 +5,7 @@ import { Question } from "../../../entities/question.entity";
 import { User } from "../../../entities/user.entity";
 import { OptionEnum } from "../../../enum/option.enum";
 import { Repository } from "typeorm";
+import { CachedUser } from "../../../types/caches/user.cache";
 
 @Injectable()
 export class DailyAnswerService {
@@ -19,7 +20,7 @@ export class DailyAnswerService {
     chosenOption,
     isCorrect,
   }: {
-    user: User;
+    user: User | CachedUser;
     question: Question;
     chosenOption: OptionEnum;
     isCorrect: boolean;

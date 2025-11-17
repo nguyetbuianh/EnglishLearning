@@ -93,7 +93,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     const questionIdNumber = Number(questionId);
     const chosenOption = parseOption(answerOption);
     const question = await this.questionService.findQuestionById(questionIdNumber);
-    const user = await this.userService.findUserByMezonId(mezonId);
+    const user = await this.userService.getUser(mezonId);
 
     if (!question || !user || !chosenOption) {
       await this.mezonMessage.reply({ t: "⚠️ Missing question or user data." });
@@ -126,7 +126,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     const questionIdNumber = Number(questionId);
     const chosenOption = parseOption(answerOption);
     const question = await this.questionService.findQuestionById(questionIdNumber);
-    const existingUser = await this.userService.getUserInCache(mezonId);
+    const existingUser = await this.userService.getUser(mezonId);
     if (!chosenOption || !question || !existingUser) {
       await this.mezonMessage.reply({ t: "⚠️ Missing data." });
       return;
@@ -189,15 +189,16 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
           user=${!!existingUser}, part=${!!existingPart}, test=${!!existingTest}, question=${!!existingQuestion}`
         );
       }
-      const newUserAnswer = new UserAnswer();
-      newUserAnswer.user = existingUser!;
-      newUserAnswer.chosenOption = chosenOption;
-      newUserAnswer.isCorrect = isCorrect;
-      newUserAnswer.toeicPart = existingPart!;
-      newUserAnswer.toeicTest = existingTest!;
-      newUserAnswer.question = existingQuestion!;
 
-      await this.userAnswerService.recordAnswer(newUserAnswer);
+      await this.userAnswerService.recordAnswer({
+        user: existingUser!,
+        chosenOption: chosenOption,
+        isCorrect: isCorrect,
+        toeicPart: existingPart!,
+        toeicTest: existingTest!,
+        question: existingQuestion!
+      });
+
     } catch (error) {
       console.error("❌ Failed to save user answer:", error);
       await this.mezonMessage.reply({

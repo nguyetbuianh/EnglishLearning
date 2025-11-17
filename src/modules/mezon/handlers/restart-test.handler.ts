@@ -39,7 +39,7 @@ export class RestartTestHandler extends BaseHandler<MMessageButtonClicked> {
         return;
       }
 
-      const user = await this.userService.findUserByMezonId(mezonUserId);
+      const user = await this.userService.getUser(mezonUserId);
       if (!user) {
         return;
       }

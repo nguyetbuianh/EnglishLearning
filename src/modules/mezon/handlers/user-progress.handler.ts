@@ -41,7 +41,7 @@ export class UserProgressHandler extends BaseHandler<MChannelMessage> {
   async handle(): Promise<void> {
     try {
       const mezonUserId = this.mezonMessage.sender_id;
-      const user = await this.userService.findUserByMezonId(mezonUserId);
+      const user = await this.userService.getUser(mezonUserId);
       if (!mezonUserId && !user) return;
 
       const userProgress = await this.userProgressService.getProgressByUserId(mezonUserId);

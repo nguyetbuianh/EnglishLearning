@@ -53,7 +53,7 @@ export class VocabularyOfUserHandler extends BaseHandler<
       }
 
       if (!mezonUserId) return;
-      const user = await this.userService.findUserByMezonId(mezonUserId);
+      const user = await this.userService.getUser(mezonUserId);
       if (!user) {
         await this.mezonMessage.reply({
           t: "⚠️ User not found",

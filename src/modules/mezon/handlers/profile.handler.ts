@@ -7,6 +7,7 @@ import { MessageBuilder } from "../builders/message.builder";
 import { UserService } from "../../user/user.service";
 import { User } from "../../../entities/user.entity";
 import { UserStatService } from "../../daily/services/user-stat.service";
+import { CachedUser } from "../../../types/caches/user.cache";
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_PROFILE)
@@ -25,7 +26,7 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
       const username = this.event.display_name || this.event.username;
       const avatarUrl = this.event.avatar;
 
-      const user = await this.userService.findUserByMezonId(mezonUserId);
+      const user = await this.userService.getUser(mezonUserId);
       if (!user) {
         return;
       }
@@ -66,7 +67,7 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
     }
   }
 
-  private getJoinAt(user: User): string {
+  private getJoinAt(user: User | CachedUser): string {
     const joinAt = user.joinedAt;
     const formattedJoinDate = joinAt.toISOString().split('T')[0];
 

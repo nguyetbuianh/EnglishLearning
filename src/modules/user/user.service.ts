@@ -4,13 +4,7 @@ import { Repository } from "typeorm";
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { User } from "../../entities/user.entity";
-
-export interface CachedUser {
-  id: number;
-  mezonUserId: string;
-  username: string;
-  joinedAt: Date;
-}
+import { CachedUser } from "../../types/caches/user.cache";
 
 @Injectable()
 export class UserService {
@@ -19,10 +13,6 @@ export class UserService {
     private readonly userRepo: Repository<User>,
     @Inject(CACHE_MANAGER) private cache: Cache
   ) { }
-
-  async findUserByMezonId(mezonUserId: string): Promise<User | null> {
-    return this.userRepo.findOne({ where: { mezonUserId: mezonUserId } });
-  }
 
   async createUserByMezonId(mezonUserId: string, displayName: string): Promise<User> {
     const newUser = this.userRepo.create({ mezonUserId: mezonUserId, username: displayName });
@@ -42,15 +32,15 @@ export class UserService {
     });
   }
 
-  async getUserInCache(mezonUserId: string): Promise<CachedUser | null> {
+  async getUser(mezonUserId: string, useCache: boolean = true): Promise<CachedUser | null> {
     const key = `user:${mezonUserId}`;
-    const cached = await this.cache.get<CachedUser>(key);
 
-    if (cached) {
-      return cached;
+    if (useCache) {
+      const cached = await this.cache.get<CachedUser>(key);
+      if (cached) return cached;
     }
 
-    const user = await this.findUserByMezonId(mezonUserId);
+    const user = await this.userRepo.findOne({ where: { mezonUserId } });
     if (!user) return null;
 
     const cachedUser: CachedUser = {
@@ -60,7 +50,8 @@ export class UserService {
       joinedAt: user.joinedAt,
     };
 
-    await this.cache.set(key, cachedUser, 86_400_000);
+    if (useCache) await this.cache.set(key, cachedUser, 86_400_000);
+
     return cachedUser;
   }
 }
