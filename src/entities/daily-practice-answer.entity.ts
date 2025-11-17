@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId, Unique } from "typeorm";
 import { User } from "./user.entity";
 import { Question } from "./question.entity";
 import { OptionEnum } from "../enum/option.enum";
@@ -13,9 +13,15 @@ export class DailyPracticeAnswer {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
+  @RelationId((user: User) => user.dailyPracticeAnswers)
+  userId: number;
+
   @ManyToOne(() => Question, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'question_id' })
   question: Question;
+
+  @RelationId((question: Question) => question.dailyPracticeAnswers)
+  questionId: number;
 
   @Column({ type: 'enum', enum: OptionEnum })
   chosenOption: OptionEnum;

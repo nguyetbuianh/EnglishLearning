@@ -5,6 +5,7 @@ import {
   JoinColumn,
   Unique,
   Column,
+  RelationId,
 } from 'typeorm';
 import { ToeicTest } from './toeic-test.entity';
 import { ToeicPart } from './toeic-part.entity';
@@ -21,9 +22,15 @@ export class UserProgress {
   @JoinColumn({ name: 'test_id' })
   test: ToeicTest;
 
+  @RelationId((test: ToeicTest) => test.userProgresses)
+  testId: number;
+
   @ManyToOne(() => ToeicPart, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'part_id' })
   part: ToeicPart;
+
+  @RelationId((part: ToeicPart) => part.userProgresses)
+  partId: number;
 
   @Column({ name: 'current_question_number', nullable: true })
   currentQuestionNumber: number;
