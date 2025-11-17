@@ -24,15 +24,15 @@ export class UserAnswer {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  // @RelationId((userAnswer: UserAnswer) => userAnswer.user)
-  // userId: number;
+  @RelationId((userAnswer: UserAnswer) => userAnswer.user)
+  userId: number;
 
   @ManyToOne(() => Question, (q) => q.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'question_id' })
   question: Question;
 
-  // @RelationId((userAnswer: UserAnswer) => userAnswer.question)
-  // questionId: number;
+  @RelationId((userAnswer: UserAnswer) => userAnswer.question)
+  questionId: number;
 
   @Column({ type: 'enum', enum: OptionEnum, nullable: false })
   chosenOption: OptionEnum;
