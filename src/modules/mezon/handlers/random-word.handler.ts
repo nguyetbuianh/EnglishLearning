@@ -19,9 +19,6 @@ export class RandomWordHandler {
   //@Cron('30 8-22/2 * * *', { timeZone: 'Asia/Ho_Chi_Minh' })
   async handler() {
     try {
-      const { word, imageUrl } = await this.getRandomWordImage();
-      const maskedWord = this.maskWord(word);
-
       const batchSize = 100;
       let offset = 0;
 
@@ -34,6 +31,8 @@ export class RandomWordHandler {
         await Promise.all(
           channels.map(async (channel) => {
             try {
+              const { word, imageUrl } = await this.getRandomWordImage();
+              const maskedWord = this.maskWord(word);
               const messagePayload = this.guessWordMessage(word, imageUrl, maskedWord);
               await this.sendMessage(channel.channelId, messagePayload);
             } catch (err) {

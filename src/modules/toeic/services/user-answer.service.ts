@@ -11,7 +11,7 @@ export class UserAnswerService {
   ) { }
 
   async recordAnswer(userAnswer: Partial<UserAnswer>): Promise<void> {
-    await this.userAnswerRepo.upsert(userAnswer, ['question', 'user', 'toeicTest', 'toeicPart']);
+    await this.userAnswerRepo.upsert(userAnswer, ['question', 'user', 'part', 'test']);
   }
 
   async getUserAnswersByPartAndTest(
@@ -25,7 +25,7 @@ export class UserAnswerService {
         test: { id: testId },
         part: { id: partId },
       },
-      relations: ['question', 'toeicPart', 'toeicTest'],
+      relations: ['question', 'part', 'test'],
       order: {
         question: { id: 'ASC' },
       },
@@ -60,7 +60,7 @@ export class UserAnswerService {
         user: { id: userId },
         test: { id: testId },
       },
-      relations: ["toeicPart", "toeicTest", "question"],
+      relations: ["part", "test", "question"],
       order: {
         part: { partNumber: "ASC" },
         question: { questionNumber: "ASC" },

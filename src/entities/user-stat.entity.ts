@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, RelationId } from "typeorm";
 import { User } from "./user.entity";
 
 @Entity({ name: 'user_stats' })
@@ -9,6 +9,9 @@ export class UserStats {
   @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @RelationId((userStats: UserStats) => userStats.user)
+  userId: number;
 
   @Column({ name: 'total_answers', type: 'int', default: 0 })
   totalAnswers: number;
