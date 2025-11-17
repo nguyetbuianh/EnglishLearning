@@ -16,7 +16,7 @@ export class RandomWordHandler {
     private readonly channelService: ChannelService
   ) { }
 
-  @Cron('30 8-22/2 * * *', { timeZone: 'Asia/Ho_Chi_Minh' })
+  //@Cron('30 8-22/2 * * *', { timeZone: 'Asia/Ho_Chi_Minh' })
   async handler() {
     try {
       const { word, imageUrl } = await this.getRandomWordImage();

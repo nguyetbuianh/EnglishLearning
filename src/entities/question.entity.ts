@@ -42,7 +42,7 @@ export class Question {
   @JoinColumn({ name: 'passage_id' })
   passage: Passage;
 
-  @RelationId((passage: Passage) => passage.questions)
+  @RelationId((question: Question) => question.passage)
   passageId: number;
 
   @Column({ name: 'question_number', type: 'int', nullable: true })

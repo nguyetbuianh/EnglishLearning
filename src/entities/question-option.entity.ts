@@ -18,7 +18,7 @@ export class QuestionOption {
   @JoinColumn({ name: 'question_id' })
   question: Question;
 
-  @RelationId((question: Question) => question.options)
+  @RelationId((questionOption: QuestionOption) => questionOption.question)
   questionId: number;
 
   @Column({ name: "option_label", type: 'char', length: 1, nullable: false })

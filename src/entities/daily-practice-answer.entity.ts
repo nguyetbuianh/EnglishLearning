@@ -13,14 +13,14 @@ export class DailyPracticeAnswer {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @RelationId((user: User) => user.dailyPracticeAnswers)
+  @RelationId((dailyPracticeAnswer: DailyPracticeAnswer) => dailyPracticeAnswer.user)
   userId: number;
 
   @ManyToOne(() => Question, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'question_id' })
   question: Question;
 
-  @RelationId((question: Question) => question.dailyPracticeAnswers)
+  @RelationId((dailyPracticeAnswer: DailyPracticeAnswer) => dailyPracticeAnswer.question)
   questionId: number;
 
   @Column({ type: 'enum', enum: OptionEnum })

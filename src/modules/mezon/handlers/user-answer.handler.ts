@@ -194,8 +194,8 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
         user: existingUser!,
         chosenOption: chosenOption,
         isCorrect: isCorrect,
-        toeicPart: existingPart!,
-        toeicTest: existingTest!,
+        part: existingPart!,
+        test: existingTest!,
         question: existingQuestion!
       });
 

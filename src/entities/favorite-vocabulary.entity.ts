@@ -22,14 +22,14 @@ export class FavoriteVocabulary {
   @JoinColumn({ name: "user_id" })
   user: User;
 
-  @RelationId((user: User) => user.favorites)
+  @RelationId((favoriteVocabulary: FavoriteVocabulary) => favoriteVocabulary.user)
   userId: number;
 
   @ManyToOne(() => Vocabulary, { eager: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "vocabulary_id" })
   vocabulary: Vocabulary;
 
-  @RelationId((user: Vocabulary) => user.favorites)
+  @RelationId((favoriteVocabulary: FavoriteVocabulary) => favoriteVocabulary.vocabulary)
   vocabularyId: number;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })

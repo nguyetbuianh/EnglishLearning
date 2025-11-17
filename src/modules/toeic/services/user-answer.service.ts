@@ -22,8 +22,8 @@ export class UserAnswerService {
     return this.userAnswerRepo.find({
       where: {
         user: { id: userId },
-        toeicTest: { id: testId },
-        toeicPart: { id: partId },
+        test: { id: testId },
+        part: { id: partId },
       },
       relations: ['question', 'toeicPart', 'toeicTest'],
       order: {
@@ -39,8 +39,8 @@ export class UserAnswerService {
   ): Promise<void> {
     await this.userAnswerRepo.delete({
       user: { id: userId },
-      toeicTest: { id: testId },
-      toeicPart: { id: partId },
+      test: { id: testId },
+      part: { id: partId },
     });
   }
 
@@ -58,11 +58,11 @@ export class UserAnswerService {
     return await this.userAnswerRepo.find({
       where: {
         user: { id: userId },
-        toeicTest: { id: testId },
+        test: { id: testId },
       },
       relations: ["toeicPart", "toeicTest", "question"],
       order: {
-        toeicPart: { partNumber: "ASC" },
+        part: { partNumber: "ASC" },
         question: { questionNumber: "ASC" },
       },
     });
