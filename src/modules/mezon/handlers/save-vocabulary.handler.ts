@@ -7,6 +7,7 @@ import { Interaction } from "../decorators/interaction.decorator";
 import { UserService } from "../../user/user.service";
 import { VocabularyService } from "../../vocabulary/vocabulary.service";
 import { FavoriteVocabulary } from "../../../entities/favorite-vocabulary.entity";
+import { User } from "../../../entities/user.entity";
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_SAVE_VOCABULARY)
@@ -52,7 +53,7 @@ export class SaveVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
         return;
       }
 
-      const user = await this.userService.findUserByMezonId(mezonUserId);
+      const user = await this.userService.getUser(mezonUserId);
       if (!user) {
         await this.mezonMessage.reply({ t: "🚫 User not found." });
         return;
@@ -79,10 +80,10 @@ export class SaveVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
           continue;
         }
 
-        const fav = new FavoriteVocabulary();
-        fav.user = user;
-        fav.vocabulary = vocabulary;
-        await this.favoriteService.saveVocabulary(fav);
+        await this.favoriteService.saveVocabulary({
+          user: user as User,
+          vocabulary: vocabulary
+        });
         savedCount++;
       }
 

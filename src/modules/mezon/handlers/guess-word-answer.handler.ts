@@ -38,6 +38,12 @@ export class GuessWordAnswerHandler extends BaseHandler<MMessageButtonClicked> {
   async handle(): Promise<void> {
     try {
       const extra_data = this.event.extra_data;
+      if (!extra_data) {
+        this.mezonMessage.reply({
+          t: "❗ Please enter your answer."
+        })
+        return;
+      }
       const mezonUserId = this.event.user_id;
       const parsed = JSON.parse(extra_data);
       const answerValue = parsed["form-user-guess"];
@@ -51,8 +57,13 @@ export class GuessWordAnswerHandler extends BaseHandler<MMessageButtonClicked> {
         answerValue: answerValue
       });
 
-      const user = await this.userService.findUserByMezonId(mezonUserId);
-      if (!user) return;
+      const user = await this.userService.getUser(mezonUserId);
+      if (!user) {
+        this.mezonMessage.reply({
+          t: "⚠️ You are not registered. Use *e-init to start."
+        })
+        return;
+      }
       const isCorrect = answerValue.trim().toLowerCase() === word.trim().toLowerCase();
       const newBadges = await this.userStatService.updateUserStats(user.id, isCorrect);
       if (newBadges && newBadges.length > 0) {

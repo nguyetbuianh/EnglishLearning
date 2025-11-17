@@ -75,7 +75,7 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
 
           await this.mezonMessage.update(messagePayload);
 
-          const user = await this.userService.findUserByMezonId(mezonUserId);
+          const user = await this.userService.getUser(mezonUserId);
           if (user) {
             const newBadges = await this.userStatService.addTestScore(testId, user.id);
             if (newBadges && newBadges.length > 0) {

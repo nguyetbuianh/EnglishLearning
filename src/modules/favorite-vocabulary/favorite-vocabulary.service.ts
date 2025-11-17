@@ -10,8 +10,8 @@ export class FavoriteVocabularyService {
     private readonly favoriteVocabularyRepo: Repository<FavoriteVocabulary>
   ) { }
 
-  async saveVocabulary(favoriteVocabulary: FavoriteVocabulary): Promise<FavoriteVocabulary> {
-    return await this.favoriteVocabularyRepo.save(favoriteVocabulary);
+  async saveVocabulary(favoriteVocabulary: Partial<FavoriteVocabulary>): Promise<void> {
+    await this.favoriteVocabularyRepo.save(favoriteVocabulary);
   }
 
   async existingVocabularyAndUserId(

@@ -39,7 +39,7 @@ export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
 
       if (vocabIds.length === 0) return;
 
-      const user = await this.userService.findUserByMezonId(mezonUserId);
+      const user = await this.userService.getUser(mezonUserId);
       if (!user) return;
 
       await this.favoriteVocabularyService.deleteVocabularyOfUser(

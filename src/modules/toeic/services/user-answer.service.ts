@@ -10,7 +10,7 @@ export class UserAnswerService {
     private readonly userAnswerRepo: Repository<UserAnswer>
   ) { }
 
-  async recordAnswer(userAnswer: UserAnswer): Promise<void> {
+  async recordAnswer(userAnswer: Partial<UserAnswer>): Promise<void> {
     await this.userAnswerRepo.upsert(userAnswer, ['question', 'user', 'toeicTest', 'toeicPart']);
   }
 
