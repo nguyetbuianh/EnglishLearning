@@ -47,7 +47,7 @@ export class ReviewTestHandler extends BaseHandler<MMessageButtonClicked> {
     const partStats = new Map<number, PartStat>();
 
     for (const ua of userAnswers) {
-      const partNumber = ua.toeicPart.partNumber;
+      const partNumber = ua.part.partNumber;
       if (!partStats.has(partNumber)) {
         partStats.set(partNumber, { correct: 0, total: 0, details: [] });
       }

@@ -33,7 +33,7 @@ export class Vocabulary {
   @JoinColumn({ name: "topic_id" })
   topic: Topic;
 
-  @RelationId((topic: Topic) => topic.vocabularies)
+  @RelationId((vocabulary: Vocabulary) => vocabulary.topic)
   topicId: number;
 
   @OneToMany(() => FavoriteVocabulary, (fav) => fav.vocabulary)

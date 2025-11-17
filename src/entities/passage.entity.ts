@@ -21,14 +21,14 @@ export class Passage {
   @JoinColumn({ name: 'test_id' })
   test: ToeicTest;
 
-  @RelationId((test: ToeicTest) => test.passages)
+  @RelationId((passage: Passage) => passage.test)
   testId: number;
 
   @ManyToOne(() => ToeicPart, (part) => part.passages, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'part_id' })
   part: ToeicPart;
 
-  @RelationId((part: ToeicPart) => part.passages)
+  @RelationId((passage: Passage) => passage.part)
   partId: number;
 
   @Column({ name: 'passage_number', type: 'int', nullable: false })

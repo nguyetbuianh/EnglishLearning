@@ -22,14 +22,14 @@ export class UserProgress {
   @JoinColumn({ name: 'test_id' })
   test: ToeicTest;
 
-  @RelationId((test: ToeicTest) => test.userProgresses)
+  @RelationId((userProgress: UserProgress) => userProgress.test)
   testId: number;
 
   @ManyToOne(() => ToeicPart, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'part_id' })
   part: ToeicPart;
 
-  @RelationId((part: ToeicPart) => part.userProgresses)
+  @RelationId((userProgress: UserProgress) => userProgress.part)
   partId: number;
 
   @Column({ name: 'current_question_number', nullable: true })

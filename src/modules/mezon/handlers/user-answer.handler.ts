@@ -193,8 +193,8 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       newUserAnswer.user = existingUser!;
       newUserAnswer.chosenOption = chosenOption;
       newUserAnswer.isCorrect = isCorrect;
-      newUserAnswer.toeicPart = existingPart!;
-      newUserAnswer.toeicTest = existingTest!;
+      newUserAnswer.part = existingPart!;
+      newUserAnswer.test = existingTest!;
       newUserAnswer.question = existingQuestion!;
 
       await this.userAnswerService.recordAnswer(newUserAnswer);

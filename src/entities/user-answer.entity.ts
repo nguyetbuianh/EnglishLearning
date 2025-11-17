@@ -15,7 +15,7 @@ import { OptionEnum } from '../enum/option.enum';
 import { Question } from './question.entity';
 
 @Entity({ name: 'user_answer' })
-@Unique(['question', 'user', 'toeicTest', 'toeicPart'])
+@Unique(['question', 'user', 'test', 'part'])
 export class UserAnswer {
   @PrimaryGeneratedColumn()
   id: number;
@@ -24,15 +24,15 @@ export class UserAnswer {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @RelationId((user: User) => user.userAnswer)
-  userId: number;
+  // @RelationId((userAnswer: UserAnswer) => userAnswer.user)
+  // userId: number;
 
   @ManyToOne(() => Question, (q) => q.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'question_id' })
   question: Question;
 
-  @RelationId((question: Question) => question.userAnswers)
-  questionId: number;
+  // @RelationId((userAnswer: UserAnswer) => userAnswer.question)
+  // questionId: number;
 
   @Column({ type: 'enum', enum: OptionEnum, nullable: false })
   chosenOption: OptionEnum;
@@ -47,13 +47,13 @@ export class UserAnswer {
   @JoinColumn({ name: 'toeic_part_id' })
   part: ToeicPart;
 
-  @RelationId((part: ToeicPart) => part.userAnswers)
+  @RelationId((userAnswer: UserAnswer) => userAnswer.part)
   partId: number;
 
   @ManyToOne(() => ToeicTest, (t) => t.userAnswers, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'toeic_test_id' })
   test: ToeicTest;
 
-  @RelationId((test: ToeicTest) => test.userAnswers)
+  @RelationId((userAnswer: UserAnswer) => userAnswer.test)
   testId: number;
 }
