@@ -27,7 +27,7 @@ export class InitializationHandler extends BaseHandler<MChannelMessage> {
         return;
       }
 
-      const existingUser = await this.userService.findUserByMezonId(mezonUserId);
+      const existingUser = await this.userService.getUser(mezonUserId);
       if (existingUser) {
         await this.mezonMessage.reply({
           t: "👋 Welcome back! You already have an account."

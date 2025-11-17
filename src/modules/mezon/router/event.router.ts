@@ -76,13 +76,12 @@ export class EventRouter {
           CommandType.COMMAND_ALL_VOCABULARY_OF_USER,
           CommandType.COMMAND_MY_PROGRESS,
           CommandType.COMMAND_ELAKOTHE,
-          CommandType.COMMAND_DUYNEN
         ];
         if (!VALID_COMMANDS.includes(command)) {
           return;
         }
 
-        const existingUser = await this.userService.getUserInCache(userId);
+        const existingUser = await this.userService.getUser(userId);
 
         const PUBLIC_COMMANDS = [
           CommandType.COMMAND_INIT,
