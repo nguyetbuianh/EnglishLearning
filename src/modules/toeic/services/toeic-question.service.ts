@@ -1,17 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Question } from '../../../entities/question.entity';
-
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 @Injectable()
 export class ToeicQuestionService {
   constructor(
     @InjectRepository(Question)
     private readonly questionRepo: Repository<Question>,
+    @Inject(CACHE_MANAGER) private cache: Cache
   ) { }
 
-  async getFirstQuestion(testId: number, partId: number): Promise<Question | null> {
-    return this.questionRepo.findOne({
+  private getCacheKey(testId: number, partId: number): string {
+    return `test:${testId}:part:${partId}:questions`;
+  }
+
+  private sortOptions(question: Question) {
+    if (question.options) {
+      question.options.sort((a, b) => a.optionLabel.localeCompare(b.optionLabel));
+    }
+  }
+
+  private async getCachedQuestions(testId: number, partId: number): Promise<Question[] | null> {
+    const cacheKey = this.getCacheKey(testId, partId);
+    const cachedQuestions = await this.cache.get<Question[]>(cacheKey);
+
+    return cachedQuestions || null;
+  }
+
+  private async setCachedQuestions(testId: number, partId: number, questions: Question[]): Promise<void> {
+    const cacheKey = this.getCacheKey(testId, partId);
+
+    questions.forEach(q => this.sortOptions(q));
+
+    await this.cache.set(cacheKey, questions, 86_400_000);
+  }
+
+  async getFirstQuestion(testId: number, partId: number, useCache: boolean = true): Promise<Question | null> {
+    if (useCache) {
+      const cachedQuestions = await this.getCachedQuestions(testId, partId);
+      if (cachedQuestions && cachedQuestions.length > 0) {
+        this.sortOptions(cachedQuestions[0]);
+        return cachedQuestions[0];
+      }
+    }
+
+    const questions = await this.questionRepo.find({
       where: {
         test: { id: testId },
         part: { id: partId },
@@ -19,40 +54,62 @@ export class ToeicQuestionService {
       relations: ['options', 'test', 'part', 'passage'],
       order: { id: 'ASC' },
     });
+
+    if (!questions || questions.length === 0) return null;
+
+    if (useCache) {
+      await this.setCachedQuestions(testId, partId, questions);
+    }
+
+    return questions[0];
   }
 
-  async getQuestion(
-    testId: number,
-    partId: number,
-    questionNumber: number
-  ): Promise<Question | null> {
-    return this.questionRepo.findOne({
-      where: {
-        test: { id: testId },
-        part: { id: partId },
-        questionNumber: questionNumber,
-      },
+  async getQuestion(testId: number, partId: number, questionNumber: number, useCache: boolean = true): Promise<Question | null> {
+    if (useCache) {
+      const cachedQuestions = await this.getCachedQuestions(testId, partId);
+      const question = cachedQuestions?.find(q => q.questionNumber === questionNumber) || null;
+      if (question) this.sortOptions(question);
+      return question;
+    }
+
+    const question = await this.questionRepo.findOne({
+      where: { test: { id: testId }, part: { id: partId }, questionNumber },
       relations: ["options", "test", "part", "passage"],
     });
+
+    if (question) this.sortOptions(question);
+    return question;
   }
 
   async getQuestionWithPassage(
     testId: number,
     partId: number,
     questionNumber: number,
-    passageId?: number
+    passageId?: number,
+    useCache: boolean = true
   ): Promise<Question | null> {
-    return this.questionRepo.findOne({
+    if (useCache) {
+      const cachedQuestions = await this.getCachedQuestions(testId, partId);
+      if (cachedQuestions) {
+        const question = cachedQuestions?.find(q => q.questionNumber === questionNumber && q.passage?.id === passageId) || null;
+        if (question) this.sortOptions(question);
+        return question;
+      }
+    }
+
+    const question = await this.questionRepo.findOne({
       where: {
         test: { id: testId },
         part: { id: partId },
-        passage: { id: passageId },
         questionNumber: questionNumber,
+        passage: { id: passageId }
       },
       relations: ["options", "passage", "test", "part"],
     });
-  }
 
+    if (question) this.sortOptions(question);
+    return question;
+  }
 
   async getFirstQuestionByPassage(passageId: number): Promise<Question | null> {
     return this.questionRepo.findOne({
@@ -113,5 +170,4 @@ export class ToeicQuestionService {
       },
     );
   }
-
 }
