@@ -10,16 +10,15 @@ export class PassageService {
     private readonly passageRepo: Repository<Passage>,
   ) { }
 
-  async getPassageDetail(testId: number, partId: number, passageNumber: number) {
+  async getPassageDetail(passageId: number) {
     const passage = await this.passageRepo.findOne({
       where: {
-        test: { id: testId },
-        part: { id: partId },
-        passageNumber: passageNumber,
+        id: passageId,
       },
     });
     return passage;
   }
+  
   async savePassage(passage: Passage): Promise<Passage> {
     return this.passageRepo.save(passage)
   }
