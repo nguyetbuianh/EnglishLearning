@@ -146,7 +146,7 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
         testId: testId,
         partId: nextPartId,
         currentQuestionNumber: question.questionNumber,
-        currentPassageNumber: question.passage ? question.passage.passageNumber : undefined,
+        currentPassageNumber: question.passage ? question.passage.id : undefined,
       });
 
       await replyQuestionMessage({

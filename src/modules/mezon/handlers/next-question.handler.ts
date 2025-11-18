@@ -133,8 +133,6 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
     if (!question) {
       const nextPassageNumber = currentPassageNumber! + 1;
       const nextPassage = await this.passageService.getPassageDetail(
-        testId,
-        partId,
         nextPassageNumber
       );
       if (!nextPassage) {
@@ -236,7 +234,7 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
       testId,
       partId,
       currentQuestionNumber: question.questionNumber,
-      currentPassageNumber: question.passage?.passageNumber,
+      currentPassageNumber: question.passage?.id,
     });
     await updateSession(mezonUserId, question, this.mezonMessage.id);
     await replyQuestionMessage({ question, partId, testId, passage, mezonUserId, mezonMessage });

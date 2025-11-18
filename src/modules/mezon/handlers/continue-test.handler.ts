@@ -58,8 +58,6 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
       const question = await this.toeicQuestionService.getQuestion(testId, partId, existingProgress.currentQuestionNumber);
       if (!question) {
         const passage = await this.passageService.getPassageDetail(
-          testId,
-          partId,
           existingProgress.currentPassageNumber
         );
         if (!passage) return this.finishPart(mezonUserId, testId, partId);

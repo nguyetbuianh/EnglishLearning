@@ -68,8 +68,10 @@ export class ToeicQuestionService {
     if (useCache) {
       const cachedQuestions = await this.getCachedQuestions(testId, partId);
       const question = cachedQuestions?.find(q => q.questionNumber === questionNumber) || null;
-      if (question) this.sortOptions(question);
-      return question;
+      if (question) {
+        this.sortOptions(question);
+        return question;
+      }
     }
 
     const question = await this.questionRepo.findOne({
@@ -92,8 +94,10 @@ export class ToeicQuestionService {
       const cachedQuestions = await this.getCachedQuestions(testId, partId);
       if (cachedQuestions) {
         const question = cachedQuestions?.find(q => q.questionNumber === questionNumber && q.passage?.id === passageId) || null;
-        if (question) this.sortOptions(question);
-        return question;
+        if (question) {
+          this.sortOptions(question);
+          return question;
+        }
       }
     }
 

@@ -200,7 +200,7 @@ export class ToeicImportService {
           if (!existingQuestion) {
             throw new Error('Question not found');
           }
-          console.log(questionUpdate);
+
           await this.questionService.updateQuestion(
             part.id,
             test.id,
