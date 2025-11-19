@@ -21,7 +21,7 @@ export class TranslateHandler extends BaseHandler<MChannelMessage> {
   async handle(): Promise<void> {
     try {
       const content = this.event.content.t || "";
-      const textToTranslate = content.replace("*e-translate ", "").trim();
+      const textToTranslate = content.replace("*e-translate ", "").trim().toLowerCase();
 
       if (!textToTranslate) {
         await this.mezonMessage.reply({
