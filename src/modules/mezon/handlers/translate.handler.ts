@@ -5,6 +5,7 @@ import { CommandType } from "../enums/commands.enum";
 import { MezonClient } from "mezon-sdk";
 import { VocabularyService } from "../../vocabulary/vocabulary.service";
 import { ImportWordService } from "../../translaste/import-word.service";
+import { MessageBuilder } from "../builders/message.builder";
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_TRANSLATE)
@@ -33,29 +34,75 @@ export class TranslateHandler extends BaseHandler<MChannelMessage> {
       if (!existingWord) {
         const translaste = await this.importWordService.importWord(textToTranslate);
 
-        const msg =
-          `📚 Word: ${translaste.word}
-          🔊 Pronunciation: ${translaste.pronounce}  
-          🧩 Part of Speech: ${translaste.part_of_speech}
-          📖 Meaning:  
-          > ${translaste.meaning}
-          ✏️ Example:  
-          > ${translaste.example_sentence || "—"}`;
+        const messagePayload = new MessageBuilder()
+          .createEmbed({
+            color: "#4A90E2",
+            title: `📚 ${translaste.word}`,
+            fields: [
+              {
+                name: "🔊 Pronunciation",
+                value: translaste.pronounce,
+                inline: true
+              },
+              {
+                name: "🧩 Part of Speech",
+                value: translaste.part_of_speech,
+                inline: true
+              },
+              {
+                name: "📖 Meaning",
+                value: "\n" + translaste.meaning + "\n" // highlight block
+              },
+              {
+                name: "✏️ Example",
+                value:
+                  "\n" +
+                  (translaste.example_sentence || "—") +
+                  "\n"
+              }
+            ],
+            footer: "Vocabulary Helper • Keep learning! 🌟",
+            timestamp: true
+          })
+          .build();
 
-        await this.mezonMessage.reply({ t: msg });
+        await this.mezonMessage.reply(messagePayload);
         return;
       }
 
-      const msg =
-        `📚 Word: ${existingWord.word}
-        🔊 Pronunciation: ${existingWord.pronounce || "—"}  
-        🧩 Part of Speech: ${existingWord.partOfSpeech || "N/A"}
-        📖 Meaning:  
-        > ${existingWord.meaning}
-        ✏️ Example:
-        > ${existingWord.exampleSentence || "—"}`;
+      const messagePayload = new MessageBuilder()
+        .createEmbed({
+          color: "#4A90E2",
+          title: `📚 ${existingWord.word}`,
+          fields: [
+            {
+              name: "🔊 Pronunciation",
+              value: existingWord.pronounce,
+              inline: true
+            },
+            {
+              name: "🧩 Part of Speech",
+              value: existingWord.partOfSpeech,
+              inline: true
+            },
+            {
+              name: "📖 Meaning",
+              value: "\n" + existingWord.meaning + "\n" // highlight block
+            },
+            {
+              name: "✏️ Example",
+              value:
+                "\n" +
+                (existingWord.exampleSentence || "—") +
+                "\n"
+            }
+          ],
+          footer: "Vocabulary Helper • Keep learning! 🌟",
+          timestamp: true
+        })
+        .build();
 
-      await this.mezonMessage.reply({ t: msg });
+      await this.mezonMessage.reply(messagePayload);
 
     } catch (error) {
       console.error("TranslateHandler Error:", error);
