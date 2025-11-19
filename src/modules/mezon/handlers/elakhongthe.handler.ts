@@ -16,7 +16,7 @@ export class ELaKoTheHandler extends BaseHandler<MChannelMessage> {
   async handle(): Promise<void> {
     try {
       await this.mezonMessage.reply({
-        t: 'https://www.tiktok.com/@anhquanidol.official/video/7439632126149938440',
+        t: 'https://www.youtube.com/watch?v=stvWuowo1dU',
         mk: [{ s: 0, e: 70, type: EMarkdownType.LINK }]
       });
     } catch (error) {
