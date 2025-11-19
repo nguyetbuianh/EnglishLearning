@@ -15,4 +15,8 @@ export class TopicService {
       order: { id: 'ASC' }
     })
   }
+
+  async save(topic: Topic): Promise<Topic | null> {
+    return this.topicVocabularyRepo.save(topic);
+  }
 }

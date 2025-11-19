@@ -41,7 +41,7 @@ export class GoogleAIService {
       if (!result) throw new Error('Empty response from AI');
 
       return result;
-    } catch (error: any) {
+    } catch (error) {
       this.logger.error('PDF extraction or AI request failed:', error.message);
       throw new BadRequestException('Could not extract text or get AI response');
     }

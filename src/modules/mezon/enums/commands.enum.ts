@@ -10,6 +10,7 @@ export enum CommandType {
   COMMAND_MY_PROGRESS = 'e-my-progress',
   COMMAND_GENERATE_TEXT = 'gen-text',
   COMMAND_ELAKOTHE = 'e-lakhongthe',
+  COMMAND_TRANSLATE = 'e-translate',
 
   SELECT_PART = 'toeic-part',
   SELECT_TEST = 'toeic-test',
