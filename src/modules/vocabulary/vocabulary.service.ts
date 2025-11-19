@@ -50,4 +50,8 @@ export class VocabularyService {
       where: { word: word }
     })
   }
+
+  async save(vocabulary: Vocabulary): Promise<Vocabulary | null> {
+    return this.vocabularyRepo.save(vocabulary);
+  }
 }

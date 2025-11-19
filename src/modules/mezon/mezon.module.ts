@@ -42,6 +42,8 @@ import { PexelsService } from './services/pexels.service';
 import { GuessWordAnswerHandler } from './handlers/guess-word-answer.handler';
 import { ChannelModule } from '../channel/channel.module';
 import { ELaKoTheHandler } from './handlers/elakhongthe.handler';
+import { TranslateHandler } from './handlers/translate.handler';
+import { TrasnlateModule } from '../translaste/translate.module';
 
 const commandHandlers = [
   StartTestHandler,
@@ -76,6 +78,7 @@ const commandHandlers = [
   RandomWordHandler,
   GuessWordAnswerHandler,
   ELaKoTheHandler,
+  TranslateHandler
 ];
 
 @Module({
@@ -88,7 +91,8 @@ const commandHandlers = [
     DailyModule,
     ToeicImportModule,
     GoogleAIModule,
-    ChannelModule
+    ChannelModule,
+    TrasnlateModule
   ],
   providers: [
     MezonService,
