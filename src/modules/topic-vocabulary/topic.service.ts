@@ -19,4 +19,12 @@ export class TopicService {
   async save(topic: Topic): Promise<Topic | null> {
     return this.topicVocabularyRepo.save(topic);
   }
+
+  async getTopicById(topicId: number): Promise<Topic | null> {
+    return this.topicVocabularyRepo.findOne({
+      where: {
+        id: topicId
+      }
+    });
+  }
 }

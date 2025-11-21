@@ -76,7 +76,10 @@ export class EventRouter {
           CommandType.COMMAND_ALL_VOCABULARY_OF_USER,
           CommandType.COMMAND_MY_PROGRESS,
           CommandType.COMMAND_ELAKOTHE,
-          CommandType.COMMAND_TRANSLATE
+          CommandType.COMMAND_TRANSLATE,
+          CommandType.COMMAND_ADD_WORD,
+          CommandType.COMMAND_MY_FLASHCARD,
+          CommandType.COMMAND_USER_DICTIONARY
         ];
         if (!VALID_COMMANDS.includes(command)) {
           return;

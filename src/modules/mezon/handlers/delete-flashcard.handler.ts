@@ -2,19 +2,19 @@ import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { MezonClient } from "mezon-sdk";
-import { FavoriteVocabularyService } from "../../favorite-vocabulary/favorite-vocabulary.service";
 import { UserService } from "../../user/user.service";
 import { CommandType } from "../enums/commands.enum";
-import { VocabularyOfUserHandler } from "./vocabulary-of-user.handler";
 import { ModuleRef } from "@nestjs/core";
+import { VocabularyService } from "../../vocabulary/vocabulary.service";
+import { MyFlashCardHandler } from "./my-flashcard.handler";
 import { parseVocabId } from "../utils/vocab.util";
 
 @Injectable({ scope: Scope.TRANSIENT })
-@Interaction(CommandType.BUTTON_DELETE_MY_VOCABULARY)
-export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
+@Interaction(CommandType.BUTTON_DELETE_MY_FLASHCARD)
+export class DeleteMyFlashcardHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,
-    private readonly favoriteVocabularyService: FavoriteVocabularyService,
+    private readonly vocabularyService: VocabularyService,
     private readonly userService: UserService,
     private readonly moduleRef: ModuleRef
   ) {
@@ -26,9 +26,6 @@ export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
       const mezonUserId = this.event.user_id;
       if (!mezonUserId) return;
 
-      const extra = this.event.extra_data;
-      if (!extra) return;
-
       const vocabIds = await parseVocabId(this.event);
       if (!vocabIds || vocabIds.length === 0) {
         return;
@@ -37,12 +34,14 @@ export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
       const user = await this.userService.getUser(mezonUserId);
       if (!user) return;
 
-      await this.favoriteVocabularyService.deleteVocabularyOfUser(
+      await this.vocabularyService.deleteVocabularyOfUser(
         vocabIds,
         user.id
       );
 
-      const remaining = await this.favoriteVocabularyService.getVocabulary(user.id);
+      const page = 1;
+      const limit = 3;
+      const remaining = await this.vocabularyService.getVocabularyOfUser(user.id, page, limit);
 
       if (!remaining || remaining.data.length === 0) {
         await this.mezonMessage.update({
@@ -51,9 +50,9 @@ export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
         return;
       }
 
-      const vocabHandler = await this.moduleRef.create(VocabularyOfUserHandler);
-      vocabHandler.setContext(this.event, this.mezonMessage, this.mezonChanel);
-      await vocabHandler.handle();
+      const myFlashCardHandler = await this.moduleRef.create(MyFlashCardHandler);
+      myFlashCardHandler.setContext(this.event, this.mezonMessage, this.mezonChanel);
+      await myFlashCardHandler.handle();
     } catch (error) {
       console.error("❌ Error in DeleteMyVocabulary:", error);
       await this.mezonMessage.reply({

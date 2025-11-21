@@ -11,6 +11,9 @@ export enum CommandType {
   COMMAND_GENERATE_TEXT = 'gen-text',
   COMMAND_ELAKOTHE = 'e-lakhongthe',
   COMMAND_TRANSLATE = 'e-translate',
+  COMMAND_ADD_WORD = 'e-add-word',
+  COMMAND_MY_FLASHCARD = 'e-my-flashcard',
+  COMMAND_USER_DICTIONARY = 'e-user-dictionary',
 
   SELECT_PART = 'toeic-part',
   SELECT_TEST = 'toeic-test',
@@ -28,5 +31,9 @@ export enum CommandType {
   BUTTON_SHOW_VOCABULARY_PREV = 'show-vocabulary-prev',
   BUTTON_SHOW_VOCABULARY_NEXT = 'show-vocabulary-next',
   BUTTON_DELETE_MY_VOCABULARY = 'delete-my-vocabulary',
-  BUTTON_GUESS_WORD_ANSWER = 'word-answer'
+  BUTTON_GUESS_WORD_ANSWER = 'word-answer',
+  BUTTON_SAVE_WORD = 'save-word',
+  BUTTON_DELETE_MY_FLASHCARD = 'delete-my-flashcard',
+  BUTTON_DELETE_USER_DICTIONARY = 'delete-user-dictionary',
+  BUTTON_ACTIVE_USER_DICTIONARY = 'active-user-dictionary',
 }

@@ -12,6 +12,16 @@ import { Interaction } from "../decorators/interaction.decorator";
 import { MessageBuilder } from "../builders/message.builder";
 import { ButtonBuilder } from "../builders/button.builder";
 import { CommandType } from "../enums/commands.enum";
+import { Vocabulary } from "../../../entities/vocabulary.entity";
+import { int } from "zod";
+import { buildRadioOptions } from "../utils/vocab.util";
+
+interface BuildPaginationButtonsParams {
+  topicId: number;
+  page: number;
+  total: number;
+  mezonUserId: string;
+}
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_SHOW_VOCABULARY)
@@ -28,74 +38,39 @@ export class ShowVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
       const mezonUserId = this.event.user_id;
       if (!mezonUserId) return;
 
-      const source = (!this.event.extra_data || this.event.extra_data.includes("vocab-select"))
-        ? this.event.button_id
-        : this.event.extra_data;
-
-      const match = source.match(/show-vocabulary_topic:(\d+)_page:(\d+)/);
-      if (!match) {
-        await this.mezonMessage.reply({
-          t: "⚠️ Invalid button data. Please try again.",
-        });
+      const parsed = await this.parseButtonId(this.event);
+      if (!parsed) {
+        console.warn("❗ Cannot parse topicId/page from button_id:", this.event.button_id);
         return;
       }
+      const { topicId, page } = parsed;
 
-      const topicId = Number(match[1]);
-      const page = Number(match[2]);
-
-      const limit = 10;
-      const { data: vocabularies, total } =
-        await this.vocabularyService.getVocabulariesByTopic(topicId, page, limit);
-
+      const limit = 3;
+      const { data: vocabularies, total } = await this.vocabularyService.getVocabulariesByTopic(topicId, page, limit);
       if (!vocabularies?.length) {
-        await this.mezonMessage.reply({ t: "🚫 No more vocabularies found." });
         return;
       }
 
-      const radioOptions: RadioFieldOption[] = vocabularies.map((vocab, index) => {
-        const number = (page - 1) * limit + index + 1;
-        const details = [
-          `🔊 ${vocab.pronounce || "—"} | 🧩 *${vocab.partOfSpeech || "N/A"}*`,
-          `Mean: ${vocab.meaning}`,
-          vocab.exampleSentence ? `💬 _${vocab.exampleSentence}_` : null,
-        ]
-          .filter(Boolean)
-          .join("\n");
-
-        return {
-          name: `${index}`,
-          label: `${number}. ${vocab.word}`,
-          value: vocab.id.toString(),
-          description: details,
-          style: EButtonMessageStyle.SUCCESS,
-        };
-      });
+      const radioOptions: RadioFieldOption[] = await buildRadioOptions(vocabularies, page, limit);
 
       const saveButton = new ButtonBuilder()
         .setId(`save-vocabulary_topic:${topicId}_page:${page}_id:${mezonUserId}`)
-        .setLabel("❤️ Save selected")
+        .setLabel("❤️ Save")
         .setStyle(EButtonMessageStyle.SUCCESS)
         .build();
 
-      const paginationButtons: ButtonComponent[] = [];
-      if (page > 1) {
-        paginationButtons.push(
-          new ButtonBuilder()
-            .setId(`show-vocabulary_topic:${topicId}_page:${page - 1}_id:${mezonUserId}`)
-            .setLabel("⬅ Prev")
-            .setStyle(EButtonMessageStyle.SECONDARY)
-            .build()
-        );
-      }
-      if (page * limit < total) {
-        paginationButtons.push(
-          new ButtonBuilder()
-            .setId(`show-vocabulary_topic:${topicId}_page:${page + 1}_id:${mezonUserId}`)
-            .setLabel("Next ➡")
-            .setStyle(EButtonMessageStyle.PRIMARY)
-            .build()
-        );
-      }
+      const cancelButton = new ButtonBuilder()
+        .setId(`cancel-test_id:${mezonUserId}`)
+        .setLabel("❌ Cancel")
+        .setStyle(EButtonMessageStyle.DANGER)
+        .build();
+
+      const paginationButtons: ButtonComponent[] = await this.buildPaginationButtons({
+        topicId: topicId,
+        page: page,
+        total: total,
+        mezonUserId: mezonUserId
+      });
 
       const messagePayload = new MessageBuilder()
         .createEmbed({
@@ -116,7 +91,7 @@ export class ShowVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
             },
           ],
         })
-        .addButtonsRow([saveButton])
+        .addButtonsRow([saveButton, cancelButton])
         .addButtonsRow(paginationButtons)
         .build();
 
@@ -127,5 +102,46 @@ export class ShowVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
         t: "⚠️ An error occurred while loading vocabularies.",
       });
     }
+  }
+
+  private async parseButtonId(event: MMessageButtonClicked): Promise<{ topicId: number; page: number } | void> {
+    const source = (!event.extra_data || event.extra_data.includes("vocab-select"))
+      ? event.button_id
+      : event.extra_data;
+
+    const match = source.match(/show-vocabulary_topic:(\d+)_page:(\d+)/);
+    if (!match) {
+      return;
+    }
+
+    const topicId = Number(match[1]);
+    const page = Number(match[2]);
+
+    return { topicId, page };
+  }
+
+  private async buildPaginationButtons(buildPaginationButtonsParams: BuildPaginationButtonsParams): Promise<ButtonComponent[]> {
+    const { topicId, page, total, mezonUserId } = buildPaginationButtonsParams;
+    const limit = 3;
+    const paginationButtons: ButtonComponent[] = [];
+    if (page > 1) {
+      paginationButtons.push(
+        new ButtonBuilder()
+          .setId(`show-vocabulary_topic:${topicId}_page:${page - 1}_id:${mezonUserId}`)
+          .setLabel("⬅ Prev")
+          .setStyle(EButtonMessageStyle.SECONDARY)
+          .build()
+      );
+    }
+    if (page * limit < total) {
+      paginationButtons.push(
+        new ButtonBuilder()
+          .setId(`show-vocabulary_topic:${topicId}_page:${page + 1}_id:${mezonUserId}`)
+          .setLabel("Next ➡")
+          .setStyle(EButtonMessageStyle.PRIMARY)
+          .build()
+      );
+    }
+    return paginationButtons;
   }
 }

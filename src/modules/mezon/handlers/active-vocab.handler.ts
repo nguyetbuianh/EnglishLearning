@@ -2,19 +2,20 @@ import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MMessageButtonClicked } from "./base";
 import { MezonClient } from "mezon-sdk";
-import { FavoriteVocabularyService } from "../../favorite-vocabulary/favorite-vocabulary.service";
 import { UserService } from "../../user/user.service";
 import { CommandType } from "../enums/commands.enum";
-import { VocabularyOfUserHandler } from "./vocabulary-of-user.handler";
 import { ModuleRef } from "@nestjs/core";
+import { VocabularyService } from "../../vocabulary/vocabulary.service";
+import { UserDictionaryHandler } from "./user-dictionary.handler";
 import { parseVocabId } from "../utils/vocab.util";
+import { Role } from "../../../enum/role.enum";
 
 @Injectable({ scope: Scope.TRANSIENT })
-@Interaction(CommandType.BUTTON_DELETE_MY_VOCABULARY)
-export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
+@Interaction(CommandType.BUTTON_ACTIVE_USER_DICTIONARY)
+export class ActiveUserDictionaryHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,
-    private readonly favoriteVocabularyService: FavoriteVocabularyService,
+    private readonly vocabularyService: VocabularyService,
     private readonly userService: UserService,
     private readonly moduleRef: ModuleRef
   ) {
@@ -26,23 +27,24 @@ export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
       const mezonUserId = this.event.user_id;
       if (!mezonUserId) return;
 
-      const extra = this.event.extra_data;
-      if (!extra) return;
-
       const vocabIds = await parseVocabId(this.event);
       if (!vocabIds || vocabIds.length === 0) {
         return;
       }
 
       const user = await this.userService.getUser(mezonUserId);
-      if (!user) return;
+      if (!user || user.role !== Role.ADMIN) {
+        await this.mezonMessage.reply({
+          t: "⚠️ You do not have permission to perform this action.",
+        });
+        return;
+      }
 
-      await this.favoriteVocabularyService.deleteVocabularyOfUser(
-        vocabIds,
-        user.id
-      );
+      await this.vocabularyService.updateActiveVocab(vocabIds);
 
-      const remaining = await this.favoriteVocabularyService.getVocabulary(user.id);
+      const page = 1;
+      const limit = 3;
+      const remaining = await this.vocabularyService.getUserDictionary(page, limit);
 
       if (!remaining || remaining.data.length === 0) {
         await this.mezonMessage.update({
@@ -51,11 +53,11 @@ export class DeleteMyVocabulary extends BaseHandler<MMessageButtonClicked> {
         return;
       }
 
-      const vocabHandler = await this.moduleRef.create(VocabularyOfUserHandler);
-      vocabHandler.setContext(this.event, this.mezonMessage, this.mezonChanel);
-      await vocabHandler.handle();
+      const userDictionaryHandler = await this.moduleRef.create(UserDictionaryHandler);
+      userDictionaryHandler.setContext(this.event, this.mezonMessage, this.mezonChanel);
+      await userDictionaryHandler.handle();
     } catch (error) {
-      console.error("❌ Error in DeleteMyVocabulary:", error);
+      console.error("❌ Error in Delete vocabulary:", error);
       await this.mezonMessage.reply({
         t: "⚠️ Error deleting vocabulary. Please try again later.",
       });

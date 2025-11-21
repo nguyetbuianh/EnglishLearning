@@ -1,12 +1,13 @@
 import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MChannelMessage } from "./base";
-import { MezonClient } from "mezon-sdk";
+import { EButtonMessageStyle, MezonClient } from "mezon-sdk";
 import { TopicService } from "../../topic-vocabulary/topic.service";
 import { MessageBuilder } from "../builders/message.builder";
 import { SelectionBuilder } from "../builders/selection.builder";
 import { CommandType } from "../enums/commands.enum";
 import { updateSession } from "../utils/update-session.util";
+import { ButtonBuilder } from "../builders/button.builder";
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_ALL_TOPIC)
@@ -44,6 +45,12 @@ export class AllTopicHandler extends BaseHandler<MChannelMessage> {
         )
         .build();
 
+      const cancelButton = new ButtonBuilder()
+        .setId(`cancel-test_id:${mezonUserId}`)
+        .setLabel("❌ Cancel")
+        .setStyle(EButtonMessageStyle.DANGER)
+        .build();
+
       const messagePayload = new MessageBuilder()
         .createEmbed({
           color: "#3498db",
@@ -51,6 +58,7 @@ export class AllTopicHandler extends BaseHandler<MChannelMessage> {
           description: "Select the topic you want to learn from the list below:",
         })
         .addSelectRow([selectionTopic])
+        .addButtonsRow([cancelButton])
         .build();
 
       const replyMessage = await this.mezonMessage.reply(messagePayload);

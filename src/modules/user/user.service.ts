@@ -48,6 +48,7 @@ export class UserService {
       mezonUserId: user.mezonUserId,
       username: user.username,
       joinedAt: user.joinedAt,
+      role: user.role
     };
 
     if (useCache) await this.cache.set(key, cachedUser, 86_400_000);
