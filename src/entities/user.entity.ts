@@ -2,6 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } f
 import { UserAnswer } from './user-answer.entity';
 import { FavoriteVocabulary } from './favorite-vocabulary.entity';
 import { DailyPracticeAnswer } from './daily-practice-answer.entity';
+import { Role } from '../enum/role.enum';
+import { Vocabulary } from './vocabulary.entity';
 
 @Entity('users')
 export class User {
@@ -25,4 +27,10 @@ export class User {
 
   @OneToMany(() => DailyPracticeAnswer, (dpa) => dpa.user)
   dailyPracticeAnswers: DailyPracticeAnswer[];
+
+  @Column({ type: "varchar", length: 25, default: Role.USER })
+  role: Role;
+
+  @OneToMany(() => Vocabulary, (vc) => vc.user)
+  vocab: Vocabulary[];
 }

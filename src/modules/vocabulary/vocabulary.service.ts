@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Vocabulary } from "../../entities/vocabulary.entity";
-import { Repository } from "typeorm";
+import { In, IsNull, Not, Repository } from "typeorm";
 
 @Injectable()
 export class VocabularyService {
@@ -15,8 +15,12 @@ export class VocabularyService {
     page: number,
     limit: number
   ): Promise<{ data: Vocabulary[]; total: number }> {
+
     const [data, total] = await this.vocabularyRepo.findAndCount({
-      where: { topic: { id: topicId } },
+      where: {
+        topic: { id: topicId },
+        isActive: true
+      },
       order: { createdAt: "ASC" },
       skip: (page - 1) * limit,
       take: limit,
@@ -32,17 +36,14 @@ export class VocabularyService {
   }
 
   async getRandomVocabulary(): Promise<Vocabulary | null> {
-    const count = await this.vocabularyRepo.count();
-    if (count === 0) return null;
+    const vocabularies = await this.vocabularyRepo.find({
+      where: { isActive: true },
+    });
 
-    const randomIndex = Math.floor(Math.random() * count);
-    const randomWord = await this.vocabularyRepo
-      .createQueryBuilder('v')
-      .skip(randomIndex)
-      .take(1)
-      .getOne();
+    if (vocabularies.length === 0) return null;
 
-    return randomWord;
+    const randomIndex = Math.floor(Math.random() * vocabularies.length);
+    return vocabularies[randomIndex];
   }
 
   async getVocabByWord(word: string): Promise<Vocabulary | null> {
@@ -51,7 +52,72 @@ export class VocabularyService {
     })
   }
 
-  async save(vocabulary: Vocabulary): Promise<Vocabulary | null> {
-    return this.vocabularyRepo.save(vocabulary);
+  async createVocab(vocab: Partial<Vocabulary>): Promise<Vocabulary | null> {
+    return this.vocabularyRepo.save(vocab)
+  }
+
+  async getVocabularyOfUser(
+    userId: number,
+    page: number,
+    limit: number
+  ): Promise<{ data: Vocabulary[]; total: number }> {
+    const [data, total] = await this.vocabularyRepo.findAndCount({
+      where: {
+        user: { id: userId },
+      },
+      order: {
+        createdAt: 'ASC',
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return { data, total };
+  }
+
+  async deleteVocabularyOfUser(vocabIds: number[], userId: number): Promise<void> {
+    await this.vocabularyRepo.delete({
+      id: In(vocabIds),
+      user: { id: userId }
+    });
+  }
+
+  async getUserDictionary(
+    page: number,
+    limit: number
+  ): Promise<{ data: Vocabulary[]; total: number }> {
+    const [data, total] = await this.vocabularyRepo.findAndCount({
+      where: {
+        user: Not(IsNull()),
+        isActive: false
+      },
+      order: {
+        createdAt: 'ASC',
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return { data, total };
+  }
+
+  async updateActiveVocab(vocabIds: number[]) {
+    const vocabs = await this.vocabularyRepo.find({
+      where: { id: In(vocabIds) },
+    });
+
+    if (vocabs.length === 0) {
+      throw new Error(`No vocabulary found for ids: ${vocabIds}`);
+    }
+
+    vocabs.forEach(v => v.isActive = true);
+
+    return this.vocabularyRepo.save(vocabs);
+  }
+
+  async deleteVocab(vocabIds: number[]): Promise<void> {
+    await this.vocabularyRepo.delete({
+      id: In(vocabIds)
+    });
   }
 }

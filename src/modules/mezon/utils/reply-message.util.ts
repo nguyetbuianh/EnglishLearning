@@ -1,9 +1,11 @@
 import { Passage } from "../../../entities/passage.entity";
 import { Question } from "../../../entities/question.entity";
 import { ButtonBuilder } from "../builders/button.builder";
-import { EButtonMessageStyle } from "mezon-sdk";
+import { ChannelMessageContent, EButtonMessageStyle } from "mezon-sdk";
 import { MessageBuilder } from "../builders/message.builder";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
+import { updateSession } from "./update-session.util";
+import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 
 interface QuestionMessageParams {
   question: Question;
@@ -30,6 +32,13 @@ interface ToeiMessageParams {
   questionNumber?: number,
   mezonId: string,
   mezonMessage: Message
+}
+
+interface MessageVocabParams {
+  mezonUserId: string,
+  mezonMessage: Message,
+  mezonChannel: TextChannel,
+  messagePayload: ChannelMessageContent
 }
 
 export async function replyQuestionMessage(questionMessageParams: QuestionMessageParams) {
@@ -171,9 +180,6 @@ export async function sendCompletionMessage(
     await mezonMessage.update(messagePayload);
   } catch (error) {
     console.error("❌ Error sending answer response:", error);
-    await this.mezonMessage.reply({
-      t: ("😢 Oops! Something went wrong. Please try again later!")
-    });
   }
 }
 
@@ -220,4 +226,19 @@ export async function sendCancelMessage(mezonMessage: Message) {
     })
     .build();
   await mezonMessage.update(messagePayload);
+}
+
+export async function sendMessageVocab(
+  messageVocabParams: MessageVocabParams): Promise<void> {
+  let { mezonUserId, mezonMessage, mezonChannel, messagePayload } = messageVocabParams;
+  const resetMessage = await mezonMessage.update({
+    components: [],
+  });
+
+  await mezonMessage.delete();
+
+  mezonMessage = await mezonChannel.messages.fetch(resetMessage.message_id);
+  const updateMessage = await mezonChannel.send(messagePayload);
+
+  await updateSession(mezonUserId, undefined, updateMessage.message_id);
 }

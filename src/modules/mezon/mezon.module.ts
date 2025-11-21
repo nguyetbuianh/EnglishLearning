@@ -44,6 +44,13 @@ import { ChannelModule } from '../channel/channel.module';
 import { ELaKoTheHandler } from './handlers/elakhongthe.handler';
 import { TranslateHandler } from './handlers/translate.handler';
 import { TrasnlateModule } from '../translaste/translate.module';
+import { AddWordHandler } from './handlers/add-word.handler';
+import { SaveWordHandler } from './handlers/save-word.handler';
+import { MyFlashCardHandler } from './handlers/my-flashcard.handler';
+import { UserDictionaryHandler } from './handlers/user-dictionary.handler';
+import { ActiveUserDictionaryHandler } from './handlers/active-vocab.handler';
+import { DeleteUserDictionaryHandler } from './handlers/delete-user-dictionary.handler';
+import { DeleteMyFlashcardHandler } from './handlers/delete-flashcard.handler';
 
 const commandHandlers = [
   StartTestHandler,
@@ -78,7 +85,14 @@ const commandHandlers = [
   RandomWordHandler,
   GuessWordAnswerHandler,
   ELaKoTheHandler,
-  TranslateHandler
+  TranslateHandler,
+  AddWordHandler,
+  SaveWordHandler,
+  MyFlashCardHandler,
+  DeleteMyFlashcardHandler,
+  DeleteUserDictionaryHandler,
+  UserDictionaryHandler,
+  ActiveUserDictionaryHandler
 ];
 
 @Module({
