@@ -53,62 +53,6 @@ export class AddWordHandler extends BaseHandler<MChannelMessage> {
                 },
               },
             },
-            {
-              name: "Pronounce",
-              value: "",
-              inputs: {
-                id: "form-pronounce",
-                type: EMessageComponentType.INPUT,
-                component: {
-                  id: "form-pronounce",
-                  placeholder: "Type pronounce here...",
-                  defaultValue: "",
-                  required: true,
-                },
-              },
-            },
-            {
-              name: "Part Of Speech",
-              value: "",
-              inputs: {
-                id: "form-part-of-speech",
-                type: EMessageComponentType.INPUT,
-                component: {
-                  id: "form-part-of-speech",
-                  placeholder: "Type part of peech here...",
-                  defaultValue: "",
-                  required: true,
-                },
-              },
-            },
-            {
-              name: "Meaning",
-              value: "",
-              inputs: {
-                id: "form-meaning",
-                type: EMessageComponentType.INPUT,
-                component: {
-                  id: "form-meaning",
-                  placeholder: "Type meaning here...",
-                  defaultValue: "",
-                  required: true,
-                },
-              },
-            },
-            {
-              name: "Example Sentence",
-              value: "",
-              inputs: {
-                id: "form-example-sentence",
-                type: EMessageComponentType.INPUT,
-                component: {
-                  id: "form-example-sentence",
-                  placeholder: "Type example sentence here...",
-                  defaultValue: "",
-                  required: true,
-                },
-              },
-            },
           ],
         })
         .addButtonsRow([submitButton, cancelButton])
