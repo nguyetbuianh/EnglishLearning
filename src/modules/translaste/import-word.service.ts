@@ -4,7 +4,6 @@ import { Vocabulary } from "../../entities/vocabulary.entity";
 import { Topic } from "../../entities/topic.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { is } from "zod/v4/locales";
 
 interface VocabularyResponse {
   word: string;
