@@ -28,9 +28,10 @@ export class StartTestHandler extends BaseHandler<MChannelMessage> {
       const parts = await this.toeicPartService.getAllParts();
 
       if (!tests.length || !parts.length) {
-        await this.mezonMessage.reply({
-          t: ("❌ There is no test or part data.")
-        });
+        await this.mezonChannel.sendEphemeral(
+          this.mezonMessage.sender_id,
+          { t: ("❌ There is no test or part data.") }
+        );
         return;
       }
 
@@ -85,9 +86,10 @@ export class StartTestHandler extends BaseHandler<MChannelMessage> {
       await updateSession(this.mezonMessage.sender_id, undefined, replyMessage.message_id);
     } catch (error) {
       console.error("StartTestCommandHandler Error:", error);
-      await this.mezonMessage.reply({
-        t: ("😢 Oops! Something went wrong. Please try again later!")
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: ("😢 Oops! Something went wrong. Please try again later!") }
+      );
     }
   }
 }

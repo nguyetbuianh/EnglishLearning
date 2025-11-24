@@ -25,7 +25,7 @@ export type InteractionEvent =
   | MDropdownBoxSelected;
 
 export abstract class BaseHandler<T extends InteractionEvent> {
-  protected mezonChanel!: TextChannel;
+  protected mezonChannel!: TextChannel;
   protected mezonMessage!: Message;
   protected event!: T;
 
@@ -33,8 +33,8 @@ export abstract class BaseHandler<T extends InteractionEvent> {
 
   private async init(event: T) {
     this.event = event;
-    this.mezonChanel = await this.client.channels.fetch(event.channel_id);
-    this.mezonMessage = await this.mezonChanel.messages.fetch(String(event.message_id));
+    this.mezonChannel = await this.client.channels.fetch(event.channel_id);
+    this.mezonMessage = await this.mezonChannel.messages.fetch(String(event.message_id));
   }
 
   public async process(event: T) {

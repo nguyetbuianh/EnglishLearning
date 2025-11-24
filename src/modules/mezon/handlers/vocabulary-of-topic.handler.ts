@@ -12,9 +12,10 @@ import { Interaction } from "../decorators/interaction.decorator";
 import { MessageBuilder } from "../builders/message.builder";
 import { ButtonBuilder } from "../builders/button.builder";
 import { CommandType } from "../enums/commands.enum";
-import { Vocabulary } from "../../../entities/vocabulary.entity";
-import { int } from "zod";
 import { buildRadioOptions } from "../utils/vocab.util";
+import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
+import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
+import { sendMessageVocab } from "../utils/reply-message.util";
 
 interface BuildPaginationButtonsParams {
   topicId: number;
@@ -31,6 +32,12 @@ export class ShowVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
     private readonly vocabularyService: VocabularyService
   ) {
     super(client);
+  }
+
+  setContext(event: MMessageButtonClicked, mezonMessage: Message, mezonChannel: TextChannel) {
+    this.event = event;
+    this.mezonMessage = mezonMessage;
+    this.mezonChannel = mezonChannel;
   }
 
   async handle(): Promise<void> {
@@ -95,12 +102,22 @@ export class ShowVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
         .addButtonsRow(paginationButtons)
         .build();
 
-      await this.mezonMessage.update(messagePayload);
+      const isButtonClicked = "button_id" in this.event;
+      if (isButtonClicked) {
+        await sendMessageVocab({
+          mezonUserId: mezonUserId,
+          mezonMessage: this.mezonMessage,
+          mezonChannel: this.mezonChannel,
+          messagePayload: messagePayload
+        });
+      }
+
     } catch (error) {
       console.error("❌ Error in ShowVocabularyHandler:", error);
-      await this.mezonMessage.reply({
-        t: "⚠️ An error occurred while loading vocabularies.",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: "⚠️ An error occurred while loading vocabularies." }
+      );
     }
   }
 

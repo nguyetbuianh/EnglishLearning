@@ -175,9 +175,10 @@ export class ReviewTestHandler extends BaseHandler<MMessageButtonClicked> {
 
       const session = ToeicSessionStore.get(mezonUserId);
       if (!session?.testId) {
-        await this.mezonMessage.reply({
-          t: "⚠️ You don’t have an active TOEIC test session.",
-        });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "⚠️ You don’t have an active TOEIC test session." }
+        );
         return;
       }
 
@@ -187,9 +188,10 @@ export class ReviewTestHandler extends BaseHandler<MMessageButtonClicked> {
 
       const userAnswers = await this.userAnswerService.getUserAnswersByTest(user.id, testId);
       if (!userAnswers || userAnswers.length === 0) {
-        await this.mezonMessage.reply({
-          t: "❌ No answers found for this test.",
-        });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "❌ No answers found for this test." }
+        );
         return;
       }
       const partStats = this.buildPartStats(userAnswers);
@@ -202,9 +204,10 @@ export class ReviewTestHandler extends BaseHandler<MMessageButtonClicked> {
       await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       console.error("❗Error in ReviewTestHandler:", error);
-      await this.mezonMessage.reply({
-        t: "😢 Oops! Something went wrong. Please try again later!",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: "😢 Oops! Something went wrong. Please try again later!" }
+      );
     }
   }
 }

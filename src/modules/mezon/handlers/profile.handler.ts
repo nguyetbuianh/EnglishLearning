@@ -61,9 +61,10 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
       await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       console.error("❗Error in ProfileHandler:", error);
-      await this.mezonMessage.reply({
-        t: "😢 Oops! Could not generate your profile. Try again later!",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: "😢 Oops! Could not generate your profile. Try again later!" }
+      );
     }
   }
 

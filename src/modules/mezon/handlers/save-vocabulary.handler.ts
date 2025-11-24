@@ -23,16 +23,14 @@ export class SaveVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
   async handle(): Promise<void> {
     try {
       const mezonUserId = this.event.user_id;
-      if (!mezonUserId) {
-        await this.mezonMessage.reply({ t: "⚠️ Missing user info." });
-        return;
-      }
+      if (!mezonUserId) return;
 
       const extra = this.event.extra_data;
       if (!extra) {
-        await this.mezonMessage.reply({
-          t: "⚠️ Please select at least one vocabulary before saving.",
-        });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "⚠️ Please select at least one vocabulary before saving." }
+        );
         return;
       }
 
@@ -46,15 +44,19 @@ export class SaveVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
       }
 
       if (vocabIds.length === 0) {
-        await this.mezonMessage.reply({
-          t: "⚠️ Please select at least one vocabulary before saving.",
-        });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "⚠️ Please select at least one vocabulary before saving." }
+        );
         return;
       }
 
       const user = await this.userService.getUser(mezonUserId);
       if (!user) {
-        await this.mezonMessage.reply({ t: "🚫 User not found." });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "🚫 User not found." }
+        );
         return;
       }
 
@@ -95,9 +97,10 @@ export class SaveVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
       await this.mezonMessage.reply({ t: replyMsg });
     } catch (error) {
       console.error("❌ Error in SaveVocabularyHandler:", error);
-      await this.mezonMessage.reply({
-        t: "⚠️ Error saving vocabulary. Please try again later.",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: "⚠️ Error saving vocabulary. Please try again later." }
+      );
     }
   }
 }

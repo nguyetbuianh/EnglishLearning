@@ -24,9 +24,10 @@ export class TranslateHandler extends BaseHandler<MChannelMessage> {
       const textToTranslate = content.replace("*e-translate ", "").trim().toLowerCase();
 
       if (!textToTranslate) {
-        await this.mezonMessage.reply({
-          t: "⚠️ Please type a word to translate!"
-        });
+        await this.mezonChannel.sendEphemeral(
+          this.event.sender_id,
+          { t: "⚠️ Please type a word to translate!" }
+        );
         return;
       }
       const existingWord = await this.vocabularyService.getVocabByWord(textToTranslate);
@@ -106,9 +107,10 @@ export class TranslateHandler extends BaseHandler<MChannelMessage> {
 
     } catch (error) {
       console.error("TranslateHandler Error:", error);
-      await this.mezonMessage.reply({
-        t: "😢 Oops! Something went wrong. Please try again later!"
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: "😢 Oops! Something went wrong. Please try again later!" }
+      );
     }
   }
 }

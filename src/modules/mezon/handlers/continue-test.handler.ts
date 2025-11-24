@@ -46,14 +46,10 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
 
       const { testId, partId } = session;
       const existingProgress = await this.userProgressService.getProgress(testId, partId, mezonUserId);
-      if (!existingProgress) {
-        return;
-      }
+      if (!existingProgress) return;
 
       const user = await this.userService.getUser(mezonUserId);
-      if (!user) {
-        return;
-      }
+      if (!user) return;
 
       const question = await this.toeicQuestionService.getQuestion(testId, partId, existingProgress.currentQuestionNumber);
       if (!question) {
@@ -64,7 +60,10 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
 
         const firstQuestion = await this.toeicQuestionService.getFirstQuestionByPassage(passage.id);
         if (!firstQuestion) {
-          await this.mezonMessage.update(ContinueTestHandler.COMPLETED_MESSAGE);
+          await this.mezonChannel.sendEphemeral(
+            mezonUserId,
+            ContinueTestHandler.COMPLETED_MESSAGE
+          );
           return;
         }
 
@@ -89,9 +88,10 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
       });
     } catch (error) {
       console.error("❗Error handling the continue test:", error);
-      await this.mezonMessage.reply({
-        t: ("😢 Oops! Something went wrong. Please try again later!")
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: ("😢 Oops! Something went wrong. Please try again later!") }
+      );
     }
   }
 
@@ -102,7 +102,9 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
       partId: partId,
       isCompleted: true,
     });
-    await this.mezonMessage.update(ContinueTestHandler.COMPLETED_MESSAGE);
+    await this.mezonChannel.sendEphemeral(
+      mezonUserId,
+      ContinueTestHandler.COMPLETED_MESSAGE);
   }
 
   private async loadQuestion(loadQuestionParams: LoadQuestionParams) {

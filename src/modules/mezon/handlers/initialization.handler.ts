@@ -21,25 +21,28 @@ export class InitializationHandler extends BaseHandler<MChannelMessage> {
       const mezonUserId = this.mezonMessage.sender_id;
       const displayName = this.event.display_name;
       if (!mezonUserId) {
-        await this.mezonMessage.reply({
-          t: "⚠️ I couldn’t identify your account. Please try again!"
-        });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "⚠️ I couldn’t identify your account. Please try again!" }
+        );
         return;
       }
 
       const existingUser = await this.userService.getUser(mezonUserId);
       if (existingUser) {
-        await this.mezonMessage.reply({
-          t: "👋 Welcome back! You already have an account."
-        });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "👋 Welcome back! You already have an account." }
+        );
         return;
       }
 
       const user = await this.userService.createUserByMezonId(mezonUserId, displayName!);
       if (!user) {
-        await this.mezonMessage.reply({
-          t: "💥 Something went wrong! Please try again later."
-        });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "💥 Something went wrong! Please try again later." }
+        );
         return;
       }
 
@@ -59,9 +62,10 @@ export class InitializationHandler extends BaseHandler<MChannelMessage> {
 
       await this.mezonMessage.reply(messagePayload);
     } catch (error) {
-      await this.mezonMessage.reply({
-        t: '😢 Oops! Something went wrong. Please try again later!'
-      })
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: '😢 Oops! Something went wrong. Please try again later!' }
+      );
     }
   }
 }

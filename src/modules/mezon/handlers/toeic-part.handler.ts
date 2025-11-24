@@ -1,7 +1,7 @@
 import { Injectable, Scope } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler } from "./base";
-import { ChannelMessageContent, IInteractiveMessageProps, MezonClient } from "mezon-sdk";
+import { MezonClient } from "mezon-sdk";
 import { ToeicPartService } from "../../toeic/services/toeic-part.service";
 import { MChannelMessage } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
@@ -22,9 +22,10 @@ export class ToeicPartHandler extends BaseHandler<MChannelMessage> {
       const parts = await this.toeicPartService.getAllParts();
 
       if (!parts.length) {
-        await this.mezonMessage.reply({
-          t: "❌ No TOEIC parts found. Please check your data source.",
-        });
+        await this.mezonChannel.sendEphemeral(
+          this.mezonMessage.sender_id,
+          { t: "❌ No TOEIC parts found. Please check your data source." }
+        );
         return;
       }
 
@@ -49,9 +50,10 @@ export class ToeicPartHandler extends BaseHandler<MChannelMessage> {
       await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       console.error("ToeicPartHandler Error:", error);
-      await this.mezonMessage.reply({
-        t: "😢 Oops! Something went wrong. Please try again later!",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: "😢 Oops! Something went wrong. Please try again later!" }
+      );
     }
   }
 }

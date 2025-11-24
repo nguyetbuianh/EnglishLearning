@@ -34,9 +34,10 @@ export class ActiveUserDictionaryHandler extends BaseHandler<MMessageButtonClick
 
       const user = await this.userService.getUser(mezonUserId);
       if (!user || user.role !== Role.ADMIN) {
-        await this.mezonMessage.reply({
-          t: "⚠️ You do not have permission to perform this action.",
-        });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "⚠️ You do not have permission to perform this action." }
+        );
         return;
       }
 
@@ -47,20 +48,22 @@ export class ActiveUserDictionaryHandler extends BaseHandler<MMessageButtonClick
       const remaining = await this.vocabularyService.getUserDictionary(page, limit);
 
       if (!remaining || remaining.data.length === 0) {
-        await this.mezonMessage.update({
-          t: "🫠 You have no more words in your favorites list.",
-        });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "🫠 You have no more words in your favorites list." }
+        );
         return;
       }
 
       const userDictionaryHandler = await this.moduleRef.create(UserDictionaryHandler);
-      userDictionaryHandler.setContext(this.event, this.mezonMessage, this.mezonChanel);
+      userDictionaryHandler.setContext(this.event, this.mezonMessage, this.mezonChannel);
       await userDictionaryHandler.handle();
     } catch (error) {
       console.error("❌ Error in Delete vocabulary:", error);
-      await this.mezonMessage.reply({
-        t: "⚠️ Error deleting vocabulary. Please try again later.",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: "⚠️ Error deleting vocabulary. Please try again later." }
+      );
     }
   }
 }

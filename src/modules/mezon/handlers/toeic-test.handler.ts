@@ -19,9 +19,10 @@ export class ToeicTestHandler extends BaseHandler<MChannelMessage> {
     try {
       const tests = await this.toeicTestService.getAllTests();
       if (!tests.length) {
-        await this.mezonMessage.reply({
-          t: "❌ No TOEIC tests found. Please take the test to get the data."
-        });
+        await this.mezonChannel.sendEphemeral(
+          this.mezonMessage.sender_id,
+          { t: "❌ No TOEIC tests found. Please take the test to get the data." }
+        );
       }
       const testList = tests.map((test) => ({
         name: `📘 ${test.title}`,
@@ -47,9 +48,10 @@ export class ToeicTestHandler extends BaseHandler<MChannelMessage> {
       await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       console.error("ToeicTestHandler Error:", error);
-      await this.mezonMessage.reply({
-        t: "😢 Oops! Something went wrong. Please try again later!",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: "😢 Oops! Something went wrong. Please try again later!" }
+      );
     }
   }
 }

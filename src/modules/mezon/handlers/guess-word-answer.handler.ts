@@ -39,9 +39,10 @@ export class GuessWordAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     try {
       const extra_data = this.event.extra_data;
       if (!extra_data) {
-        this.mezonMessage.reply({
-          t: "❗ Please enter your answer."
-        })
+        this.mezonChannel.sendEphemeral(
+          this.event.user_id,
+          { t: "❗ Please enter your answer." }
+        );
         return;
       }
       const mezonUserId = this.event.user_id;
@@ -59,9 +60,10 @@ export class GuessWordAnswerHandler extends BaseHandler<MMessageButtonClicked> {
 
       const user = await this.userService.getUser(mezonUserId);
       if (!user) {
-        this.mezonMessage.reply({
-          t: "⚠️ You are not registered. Use *e-init to start."
-        })
+        this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "⚠️ You are not registered. Use *e-init to start." }
+        )
         return;
       }
       const isCorrect = answerValue.trim().toLowerCase() === word.trim().toLowerCase();
@@ -73,9 +75,10 @@ export class GuessWordAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       await this.mezonMessage.update(messageAnswer);
     } catch (error) {
       console.error("❗Error in Guess Word Answer Handler:", error);
-      await this.mezonMessage.reply({
-        t: "😢 Oops! Something went wrong. Please try again later!",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: "😢 Oops! Something went wrong. Please try again later!" }
+      );
     }
   }
 
@@ -112,7 +115,6 @@ export class GuessWordAnswerHandler extends BaseHandler<MMessageButtonClicked> {
 
     return messagePayload;
   }
-
 
   private parseButtonId(): ParsedButtonId {
     const buttonId = this.event.button_id;
