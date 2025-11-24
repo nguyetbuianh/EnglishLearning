@@ -191,8 +191,8 @@ export class EventRouter {
         const messagePayload = new MessageBuilder()
           .createEmbed({
             color: "#db3f34ff",
-            title: "❌ TOEIC Test Cancelled",
-            description: "You have successfully cancelled your TOEIC test selection. Feel free to start a new test whenever you're ready!",
+            title: "❌ Selection Cancelled",
+            description: "Your selection was cancelled. Feel free to make a new choice anytime!",
             footer: "English Learning Bot",
             timestamp: true,
           })

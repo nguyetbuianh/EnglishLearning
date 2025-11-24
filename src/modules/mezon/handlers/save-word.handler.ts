@@ -7,14 +7,64 @@ import { updateSession } from "../utils/update-session.util";
 import { VocabularyService } from "../../vocabulary/vocabulary.service";
 import { TopicService } from "../../topic-vocabulary/topic.service";
 import { UserService } from "../../user/user.service";
-import { User } from "mezon-sdk/dist/cjs/api/api";
 
-interface Word {
+interface WordAPI {
   word: string,
-  pronounce: string,
-  partOfSpeech: string,
-  meaning: string,
-  exampleSentence: string
+  phonetic: string,
+  phonetics: [
+    {
+      text: string,
+      audio: string,
+      sourceUrl: string,
+      license: {
+        name: string,
+        url: string
+      }
+    },
+    {
+      text: string,
+      audio: string,
+      sourceUrl: string,
+      license: {
+        name: string,
+        url: string
+      }
+    },
+    {
+      text: string,
+      audio: string,
+      sourceUrl: string,
+      license: {
+        name: string,
+        url: string
+      }
+    }
+  ],
+  meanings: [
+    {
+      partOfSpeech: string,
+      definitions: [
+        {
+          definition: string,
+          synonyms: string[],
+          antonyms: string[]
+        }
+      ]
+    },
+    {
+      partOfSpeech: string,
+      definitions: [
+        {
+          definition: string,
+          synonyms: string[],
+          antonyms: string[],
+          example: string
+        }
+      ],
+      synonyms: [],
+      antonyms: []
+    }
+  ]
 }
 
 @Injectable({ scope: Scope.TRANSIENT })
@@ -36,71 +86,83 @@ export class SaveWordHandler extends BaseHandler<MMessageButtonClicked> {
       if (!user) return;
 
       const vocab = await this.getVocab();
-
-      if (!vocab) return;
-      const { word, pronounce, partOfSpeech, meaning, exampleSentence } = vocab;
-      if (!word || !meaning || !partOfSpeech || !meaning || !exampleSentence) {
-        await this.mezonMessage.reply({ t: "❗ Please fill in all fields." });
+      if (!vocab) {
+        await this.mezonChanel.sendEphemeral(
+          mezonUserId,
+          { t: "❗ Please fill in all fields." }
+        );
         return;
       }
 
-      const vocabInDB = await this.vocabService.getVocabByWord(word);
+      const vocabInDB = await this.vocabService.getVocabByWord(vocab);
       if (vocabInDB) {
-        await this.mezonMessage.reply({ t: "❗ This word already exists." });
+        await this.mezonChanel.sendEphemeral(
+          mezonUserId,
+          { t: "❗ This word already exists." }
+        );
         return;
+      }
+
+      const dictionaryUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(vocab)}`;
+      const response = await fetch(dictionaryUrl);
+      if (!response.ok) return;
+      const data: WordAPI[] = await response.json();
+      if (!data || data.length === 0) return;
+
+      const translateUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(vocab)}&langpair=en|vi`;
+      const translateResponse = await fetch(translateUrl);
+      let translatedText = "";
+      if (translateResponse.ok) {
+        const translateData = await translateResponse.json();
+        translatedText = translateData.responseData.translatedText || "";
       }
 
       const defaultTopic = await this.topicService.getTopicById(11);
       if (!defaultTopic) return;
 
       const customWord = await this.vocabService.createVocab({
-        word: word,
-        pronounce: pronounce,
-        partOfSpeech: partOfSpeech,
-        meaning: meaning,
-        exampleSentence: exampleSentence,
+        word: vocab,
+        pronounce:
+          data[0]?.phonetic ||
+          data[0]?.phonetics?.find(p => p.text)?.text ||
+          "",
+        partOfSpeech: data[0]?.meanings?.[0]?.partOfSpeech || "",
+        meaning: translatedText || "",
+        exampleSentence:
+          data[0]?.meanings?.[1]?.definitions?.[0]?.example ||
+          data[0]?.meanings?.[0]?.definitions?.[0]?.definition ||
+          "",
         topic: defaultTopic,
         user: user
-      })
-      if (!customWord) {
-        await this.mezonMessage.update({
-          t: "⚠️ An error occurred while saving the vocab. Please try again later."
-        });
-        return;
-      }
-
-      const replyMessage = await this.mezonMessage.update({
-        t: "The word has been saved and is being reviewed by the admin. ✅"
       });
+      if (!customWord) return;
+
+      await this.mezonMessage.delete();
+
+      const replyMessage = await this.mezonChanel.sendEphemeral(
+        mezonUserId,
+        {
+          t: `✅ The word "${customWord.word}" has been saved and is being reviewed by the admin.`
+        }
+      );
+
       await updateSession(this.mezonMessage.sender_id, undefined, replyMessage.message_id);
     } catch (error) {
-      await this.mezonMessage.reply({
-        t: "⚠️ An error occurred while saving the vocab. Please try again later.",
-      });
+      await this.mezonChanel.sendEphemeral(
+        this.event.user_id,
+        { t: "⚠️ An error occurred while saving the vocab. Please try again later." }
+      );
     }
   }
 
-  private async getVocab(): Promise<Word | null> {
+  private async getVocab(): Promise<string | null> {
     const extra_data = this.event.extra_data;
     if (!extra_data) {
-      await this.mezonMessage.reply({
-        t: "❗ Please enter your vocab."
-      })
       return null;
     }
     const parsed = JSON.parse(extra_data);
     const word: string = parsed["form-word"];
-    const pronounce: string = parsed["form-pronounce"];
-    const partOfSpeech: string = parsed["form-part-of-speech"];
-    const meaning: string = parsed["form-meaning"];
-    const exampleSentence: string = parsed["form-example-sentence"];
 
-    return {
-      word: word,
-      pronounce: pronounce,
-      partOfSpeech: partOfSpeech,
-      meaning: meaning,
-      exampleSentence: exampleSentence
-    }
+    return word;
   }
 }

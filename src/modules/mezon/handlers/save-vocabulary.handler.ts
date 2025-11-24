@@ -6,7 +6,6 @@ import { CommandType } from "../enums/commands.enum";
 import { Interaction } from "../decorators/interaction.decorator";
 import { UserService } from "../../user/user.service";
 import { VocabularyService } from "../../vocabulary/vocabulary.service";
-import { FavoriteVocabulary } from "../../../entities/favorite-vocabulary.entity";
 import { User } from "../../../entities/user.entity";
 
 @Injectable({ scope: Scope.TRANSIENT })
