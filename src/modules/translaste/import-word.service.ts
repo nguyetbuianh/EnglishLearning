@@ -101,7 +101,6 @@ export class ImportWordService {
     const extractedText = await this.translateService.translateWord(word);
 
     const item = this.parseJson<VocabularyResponse>(extractedText);
-    console.log("item" + item);
 
     const vocab = await this.buildTopicAndVocabulary(item);
 

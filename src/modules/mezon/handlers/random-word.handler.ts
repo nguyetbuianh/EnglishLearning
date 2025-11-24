@@ -16,7 +16,7 @@ export class RandomWordHandler {
     private readonly channelService: ChannelService
   ) { }
 
-  @Cron('0 8-22/4 * * *', { timeZone: 'Asia/Ho_Chi_Minh' })
+  //@Cron('0 8-22/4 * * *', { timeZone: 'Asia/Ho_Chi_Minh' })
   async handler() {
     try {
       const batchSize = 100;
