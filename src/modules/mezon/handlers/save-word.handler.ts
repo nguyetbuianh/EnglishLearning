@@ -87,7 +87,7 @@ export class SaveWordHandler extends BaseHandler<MMessageButtonClicked> {
 
       const vocab = await this.getVocab();
       if (!vocab) {
-        await this.mezonChanel.sendEphemeral(
+        await this.mezonChannel.sendEphemeral(
           mezonUserId,
           { t: "❗ Please fill in all fields." }
         );
@@ -96,7 +96,7 @@ export class SaveWordHandler extends BaseHandler<MMessageButtonClicked> {
 
       const vocabInDB = await this.vocabService.getVocabByWord(vocab);
       if (vocabInDB) {
-        await this.mezonChanel.sendEphemeral(
+        await this.mezonChannel.sendEphemeral(
           mezonUserId,
           { t: "❗ This word already exists." }
         );
@@ -139,7 +139,7 @@ export class SaveWordHandler extends BaseHandler<MMessageButtonClicked> {
 
       await this.mezonMessage.delete();
 
-      const replyMessage = await this.mezonChanel.sendEphemeral(
+      const replyMessage = await this.mezonChannel.sendEphemeral(
         mezonUserId,
         {
           t: `✅ The word "${customWord.word}" has been saved and is being reviewed by the admin.`
@@ -148,7 +148,7 @@ export class SaveWordHandler extends BaseHandler<MMessageButtonClicked> {
 
       await updateSession(this.mezonMessage.sender_id, undefined, replyMessage.message_id);
     } catch (error) {
-      await this.mezonChanel.sendEphemeral(
+      await this.mezonChannel.sendEphemeral(
         this.event.user_id,
         { t: "⚠️ An error occurred while saving the vocab. Please try again later." }
       );

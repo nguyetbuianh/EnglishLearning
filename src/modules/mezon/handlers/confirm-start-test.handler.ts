@@ -29,9 +29,10 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
 
       const session = ToeicSessionStore.get(mezonUserId);
       if (!session?.testId || !session?.partId) {
-        await this.mezonMessage.reply({
-          t: "⚠️ You have not selected a Test or Part. Please select one before starting."
-        });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "⚠️ You have not selected a Test or Part. Please select one before starting." }
+        );
         return;
       }
 
@@ -74,7 +75,7 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
         currentQuestionNumber: firstQuestion.questionNumber,
         currentPassageNumber: partId === 6 || partId === 7 ? firstQuestion.passage.id : undefined,
       });
-      
+
       await updateSession(mezonUserId, firstQuestion, this.mezonMessage.id);
 
       replyQuestionMessage({
@@ -87,9 +88,10 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
       });
     } catch (error) {
       console.error("❌ Error in ConfirmStartTestHandler:", error);
-      await this.mezonMessage.reply({
-        t: '😢 Oops! Something went wrong. Please try again later!'
-      })
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: '😢 Oops! Something went wrong. Please try again later!' }
+      );
     }
   }
 }

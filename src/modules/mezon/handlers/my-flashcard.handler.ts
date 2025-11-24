@@ -41,7 +41,7 @@ export class MyFlashCardHandler extends BaseHandler<
   setContext(event: MChannelMessage | MMessageButtonClicked, mezonMessage: Message, mezonChannel: TextChannel) {
     this.event = event;
     this.mezonMessage = mezonMessage;
-    this.mezonChanel = mezonChannel;
+    this.mezonChannel = mezonChannel;
   }
 
   async handle(): Promise<void> {
@@ -52,9 +52,10 @@ export class MyFlashCardHandler extends BaseHandler<
       if (!mezonUserId) return;
       const user = await this.userService.getUser(mezonUserId);
       if (!user) {
-        await this.mezonMessage.reply({
-          t: "⚠️ User not found",
-        });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "⚠️ User not found" }
+        );
         return;
       }
 
@@ -67,9 +68,10 @@ export class MyFlashCardHandler extends BaseHandler<
         );
 
       if (!vocabularies?.length) {
-        await this.mezonMessage.reply({
-          t: "⚠️ You haven't saved any vocabularies yet.",
-        });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "⚠️ You haven't saved any vocabularies yet." }
+        );
         return;
       }
 
@@ -121,7 +123,7 @@ export class MyFlashCardHandler extends BaseHandler<
         await sendMessageVocab({
           mezonUserId: mezonUserId,
           mezonMessage: this.mezonMessage,
-          mezonChannel: this.mezonChanel,
+          mezonChannel: this.mezonChannel,
           messagePayload: messagePayload
         });
       } else {
@@ -130,9 +132,10 @@ export class MyFlashCardHandler extends BaseHandler<
       }
     } catch (error) {
       console.error("❌ Error in VocabularyOfUserHandler:", error);
-      await this.mezonMessage.reply({
-        t: "⚠️ An error occurred while loading vocabularies.",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: "⚠️ An error occurred while loading vocabularies." }
+      );
     }
   }
 

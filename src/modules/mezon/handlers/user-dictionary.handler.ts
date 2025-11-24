@@ -16,7 +16,6 @@ import { updateSession } from "../utils/update-session.util";
 import { VocabularyService } from "../../vocabulary/vocabulary.service";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
-import { Vocabulary } from "../../../entities/vocabulary.entity";
 import { sendMessageVocab } from "../utils/reply-message.util";
 import { buildRadioOptions, parseButtonId } from "../utils/vocab.util";
 import { Role } from "../../../enum/role.enum";
@@ -43,7 +42,7 @@ export class UserDictionaryHandler extends BaseHandler<
   setContext(event: MChannelMessage | MMessageButtonClicked, mezonMessage: Message, mezonChannel: TextChannel) {
     this.event = event;
     this.mezonMessage = mezonMessage;
-    this.mezonChanel = mezonChannel;
+    this.mezonChannel = mezonChannel;
   }
 
   async handle(): Promise<void> {
@@ -54,9 +53,10 @@ export class UserDictionaryHandler extends BaseHandler<
       if (!mezonUserId) return;
       const user = await this.userService.getUser(mezonUserId);
       if (!user || user.role !== Role.ADMIN) {
-        await this.mezonMessage.reply({
-          t: "⚠️ You do not have permission to perform this action.",
-        });
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          { t: "⚠️ You do not have permission to perform this action." }
+        );
         return;
       }
 
@@ -125,7 +125,7 @@ export class UserDictionaryHandler extends BaseHandler<
         await sendMessageVocab({
           mezonUserId: mezonUserId,
           mezonMessage: this.mezonMessage,
-          mezonChannel: this.mezonChanel,
+          mezonChannel: this.mezonChannel,
           messagePayload: messagePayload
         });
       } else {
@@ -134,9 +134,10 @@ export class UserDictionaryHandler extends BaseHandler<
       }
     } catch (error) {
       console.error("❌ Error in VocabularyOfUserHandler:", error);
-      await this.mezonMessage.reply({
-        t: "⚠️ An error occurred while loading vocabularies.",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: "⚠️ An error occurred while loading vocabularies." }
+      );
     }
   }
 

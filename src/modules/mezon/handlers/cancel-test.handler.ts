@@ -20,9 +20,10 @@ export class CancelTestHandler extends BaseHandler<MMessageButtonClicked> {
       await sendCancelMessage(this.mezonMessage);
     } catch (error) {
       console.error("❗Error handling the cancel test button:", error);
-      await this.mezonMessage.reply({
-        t: ("😢 Oops! Something went wrong. Please try again later!")
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: ("😢 Oops! Something went wrong. Please try again later!") }
+      );
     }
   }
 }

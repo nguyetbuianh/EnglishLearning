@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { MezonClient, UserChannelAddedEvent } from "mezon-sdk";
 import { InteractionFactory } from "./interaction-factory";
-import { InteractionEvent } from "../handlers/base";
+import { InteractionEvent, MChannelMessage } from "../handlers/base";
 import { UserService } from "../../user/user.service";
 import { ToeicSessionStore } from "../session/toeic-session.store";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
@@ -94,7 +94,7 @@ export class EventRouter {
         const isPublic = PUBLIC_COMMANDS.includes(command);
 
         if (!existingUser && !isPublic) {
-          await this.sendWarning(channel, "⚠️ You are not registered. Use *e-init to start.");
+          await this.sendWarning(channel, "⚠️ You are not registered. Use *e-init to start.", event);
           return;
         }
 
@@ -115,7 +115,7 @@ export class EventRouter {
 
         const userId = event.user_id;
         if (ownerId && userId !== ownerId) {
-          // await this.sendWarning(channel, "❌ You are not allowed to interact with this form.");
+          await this.sendWarning(channel, "❌ You are not allowed to interact with this form.", event);
           return;
         }
       }
@@ -177,8 +177,28 @@ export class EventRouter {
     return undefined;
   }
 
-  private async sendWarning(channel: TextChannel, message: string) {
-    await channel.send({ t: message });
+  private async sendWarning(
+    channel: TextChannel,
+    message: string,
+    event: InteractionEvent | null = null
+  ) {
+    if (!event) {
+      throw new Error("sendWarning: event is required to send ephemeral message");
+    }
+
+    let mezonUserId: string | undefined;
+
+    if (event.type === "ChannelMessage") {
+      mezonUserId = event.sender_id;
+    } else if (event.type === "MessageButtonClicked") {
+      mezonUserId = event.user_id;
+    }
+
+    if (!mezonUserId) {
+      throw new Error("sendWarning: Unable to resolve mezonUserId");
+    }
+
+    return channel.sendEphemeral(mezonUserId, { t: message });
   }
 
   private async endUserSession(userId: string, channel: TextChannel, logger?: Logger) {

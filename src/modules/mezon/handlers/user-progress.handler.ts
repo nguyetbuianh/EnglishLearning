@@ -56,7 +56,10 @@ export class UserProgressHandler extends BaseHandler<MChannelMessage> {
           })
           .build();
 
-        await this.mezonMessage.reply(noProgressMessage);
+        await this.mezonChannel.sendEphemeral(
+          mezonUserId,
+          noProgressMessage
+        );
         return;
       }
 
@@ -131,9 +134,10 @@ export class UserProgressHandler extends BaseHandler<MChannelMessage> {
       await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       console.error("❗Error handling the user progress handler:", error);
-      await this.mezonMessage.reply({
-        t: ("😢 Oops! Something went wrong. Please try again later!")
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: ("😢 Oops! Something went wrong. Please try again later!") }
+      );
     }
   }
 }

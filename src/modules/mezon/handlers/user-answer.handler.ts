@@ -19,6 +19,7 @@ import { sendAchievementBadgeReply } from "../utils/reply-message.util";
 import { QuestionOption } from "../../../entities/question-option.entity";
 import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
+import { th } from "zod/v4/locales";
 
 interface ParsedButtonId {
   type?: string;
@@ -71,13 +72,17 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
           await this.handleDailyAnswer();
           break;
         default:
-          await this.mezonMessage.reply({ t: "⚠️ Unknown answer type." });
+          await this.mezonChannel.sendEphemeral(
+            this.event.user_id,
+            { t: "⚠️ Unknown answer type." }
+          );
       }
     } catch (error) {
       console.error("UserAnswerHandler Error:", error);
-      await this.mezonMessage.reply({
-        t: "⚠️ An error occurred while fetching User Answer. Please try again later.",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: "⚠️ An error occurred while fetching User Answer. Please try again later." }
+      );
     }
   }
 
@@ -85,7 +90,10 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     const { questionId, answerOption } = this.parseButtonId();
 
     if (!questionId || !answerOption) {
-      await this.mezonMessage.reply({ t: "⚠️ Invalid daily answer format." });
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: "⚠️ Invalid daily answer format." }
+      );
       return;
     }
 
@@ -96,7 +104,10 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     const user = await this.userService.getUser(mezonId);
 
     if (!question || !user || !chosenOption) {
-      await this.mezonMessage.reply({ t: "⚠️ Missing question or user data." });
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: "⚠️ Missing question or user data." }
+      );
       return;
     }
 
@@ -119,7 +130,10 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
   private async handleTestAnswer(): Promise<void> {
     const { questionId, answerOption, mezonId } = this.parseButtonId();
     if (!questionId || !answerOption || !mezonId) {
-      await this.mezonMessage.reply({ t: "⚠️ Invalid button ID format." });
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: "⚠️ Invalid button ID format." }
+      );
       return;
     }
 
@@ -128,7 +142,10 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     const question = await this.questionService.findQuestionById(questionIdNumber);
     const existingUser = await this.userService.getUser(mezonId);
     if (!chosenOption || !question || !existingUser) {
-      await this.mezonMessage.reply({ t: "⚠️ Missing data." });
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: "⚠️ Missing data." }
+      );
       return;
     }
     const isCorrect = question.correctOption === chosenOption;
@@ -201,9 +218,10 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
 
     } catch (error) {
       console.error("❌ Failed to save user answer:", error);
-      await this.mezonMessage.reply({
-        t: "😢 Oops! Something went wrong. Please try again later!",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: "😢 Oops! Something went wrong. Please try again later!" }
+      );
     }
   }
 

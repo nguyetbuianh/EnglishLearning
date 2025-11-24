@@ -24,9 +24,10 @@ export class AllTopicHandler extends BaseHandler<MChannelMessage> {
       const topicVocabularies = await this.topicService.getAllTopics();
 
       if (!topicVocabularies || topicVocabularies.length === 0) {
-        await this.mezonMessage.reply({
-          t: "❌ No Topic Vocabulary found. Please add some topics first to display them here.",
-        });
+        await this.mezonChannel.sendEphemeral(
+          this.event.sender_id,
+          { t: "❌ No Topic Vocabulary found. Please add some topics first to display them here." }
+        );
         return;
       }
 
@@ -64,9 +65,10 @@ export class AllTopicHandler extends BaseHandler<MChannelMessage> {
       const replyMessage = await this.mezonMessage.reply(messagePayload);
       await updateSession(this.mezonMessage.sender_id, undefined, replyMessage.message_id);
     } catch (error) {
-      await this.mezonMessage.reply({
-        t: "⚠️ An error occurred while loading the topic vocabularies. Please try again later.",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: "⚠️ An error occurred while loading the topic vocabularies. Please try again later." }
+      );
     }
   }
 }

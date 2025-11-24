@@ -159,9 +159,10 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
       });
     } catch (error) {
       console.error("❗Error in NextPartHandler:", error);
-      await this.mezonMessage.reply({
-        t: "😢 Oops! Something went wrong. Please try again later!",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.user_id,
+        { t: "😢 Oops! Something went wrong. Please try again later!" }
+      );
     }
   }
 

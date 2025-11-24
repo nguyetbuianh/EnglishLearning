@@ -67,9 +67,10 @@ export class HelpHandler extends BaseHandler<MChannelMessage> {
       await this.mezonMessage.reply(messagePayload);
     } catch (error) {
       console.error("❗Error in HelpHandler:", error);
-      await this.mezonMessage.reply({
-        t: "😢 Oops! Something went wrong. Please try again later!",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: "😢 Oops! Something went wrong. Please try again later!" }
+      );
     }
   }
 }

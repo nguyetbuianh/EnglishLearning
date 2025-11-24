@@ -2,7 +2,7 @@ import { Injectable, Logger, BadRequestException } from "@nestjs/common";
 import { Interaction } from "../decorators/interaction.decorator";
 import { BaseHandler, MChannelMessage } from "./base";
 import { MezonClient } from "mezon-sdk";
-import { ToeicImportService } from "../../toeic-import/toeic-import.service"; 
+import { ToeicImportService } from "../../toeic-import/toeic-import.service";
 import axios from "axios";
 
 @Injectable()
@@ -24,7 +24,8 @@ export class GenerateTextHandler extends BaseHandler<MChannelMessage> {
       mezonUserId !== process.env.MEZON_BOT_ID_2 ||
       mezonUserId !== process.env.MEZON_BOT_ID_3
     ) {
-      await this.mezonMessage.reply({
+      await this.mezonChannel.sendEphemeral(
+        mezonUserId, {
         t: "❌ You have no rights !!"
       });
     }
@@ -59,10 +60,15 @@ export class GenerateTextHandler extends BaseHandler<MChannelMessage> {
 
       const textResult = await this.toeicImportService.uploadPDF(testNumber, partNumber, qaItem, pdfBuffer);
       this.logger.log(textResult);
-      this.mezonMessage.reply({
-        t: `✅ Successfully created the question list from the PDF file!`,
-      });
+      this.mezonChannel.sendEphemeral(
+        mezonUserId,
+        { t: `✅ Successfully created the question list from the PDF file!` }
+      );
     } catch (error) {
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: "😢 Oops! Something went wrong. Please try again later!" }
+      );
     }
   }
 }

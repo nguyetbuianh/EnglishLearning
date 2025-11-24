@@ -21,9 +21,10 @@ export class ELaKoTheHandler extends BaseHandler<MChannelMessage> {
       });
     } catch (error) {
       console.error("❗Error in ELAKOTHEHandler:", error);
-      await this.mezonMessage.reply({
-        t: "😢 Oops! Something went wrong. Please try again later!",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: "😢 Oops! Something went wrong. Please try again later!" }
+      );
     }
   }
 }

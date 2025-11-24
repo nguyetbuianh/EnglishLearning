@@ -61,9 +61,10 @@ export class AddWordHandler extends BaseHandler<MChannelMessage> {
       const replyMessage = await this.mezonMessage.reply(messagePayload);
       await updateSession(mezonUserId, undefined, replyMessage.message_id);
     } catch (error) {
-      await this.mezonMessage.reply({
-        t: "⚠️ An error occurred while loading the topic vocabularies. Please try again later.",
-      });
+      await this.mezonChannel.sendEphemeral(
+        this.event.sender_id,
+        { t: "⚠️ An error occurred while loading the topic vocabularies. Please try again later." }
+      );
     }
   }
 }
