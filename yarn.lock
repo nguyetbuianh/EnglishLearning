@@ -4305,7 +4305,7 @@ __metadata:
     dotenv: ^17.2.3
     express: ^5.1.0
     ioredis: ^5.8.2
-    mezon-sdk: 2.8.20
+    mezon-sdk: ^2.8.26
     node-fetch: ^3.3.2
     pdf-parse: ^2.4.5
     pg: ^8.16.3
@@ -7236,9 +7236,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mezon-sdk@npm:2.8.20":
-  version: 2.8.20
-  resolution: "mezon-sdk@npm:2.8.20"
+"mezon-sdk@npm:^2.8.26":
+  version: 2.8.26
+  resolution: "mezon-sdk@npm:2.8.26"
   dependencies:
     "@types/ws": ^8.5.12
     base64-arraybuffer: ^1.0.2
@@ -7248,7 +7248,7 @@ __metadata:
     mmn-client-js: ^1.0.10
     npm-run-all: ^4.1.5
     ws: ^8.18.0
-  checksum: 5bcb17ec49a4dbf37eedfa13d2589b96858892f78b02f9cd963cb82a0b67da6f4adcef9fb0a5b881ffe2ed10fadcc726a80a669ebf502445cdcd62b021d8d520
+  checksum: e770c8b4673674db9a03d1414c5643bfadb79d7aaf21b4a5b4b98376e3bc08ecf6311bb25c84d455f8ea3781e32885872e50e19c98a52d8eaa5b0e7cc7443177
   languageName: node
   linkType: hard
 
