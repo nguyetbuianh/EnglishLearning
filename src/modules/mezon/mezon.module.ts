@@ -51,6 +51,8 @@ import { UserDictionaryHandler } from './handlers/user-dictionary.handler';
 import { ActiveUserDictionaryHandler } from './handlers/active-vocab.handler';
 import { DeleteUserDictionaryHandler } from './handlers/delete-user-dictionary.handler';
 import { DeleteMyFlashcardHandler } from './handlers/delete-flashcard.handler';
+import { TextToSpeechHandler } from './handlers/textToSpeechHandler';
+import { ConvertTTSHandler } from './handlers/form-convert-tts.handler';
 
 const commandHandlers = [
   StartTestHandler,
@@ -92,7 +94,9 @@ const commandHandlers = [
   DeleteMyFlashcardHandler,
   DeleteUserDictionaryHandler,
   UserDictionaryHandler,
-  ActiveUserDictionaryHandler
+  ActiveUserDictionaryHandler,
+  TextToSpeechHandler,
+  ConvertTTSHandler
 ];
 
 @Module({

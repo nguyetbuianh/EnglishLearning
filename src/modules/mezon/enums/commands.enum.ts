@@ -14,6 +14,7 @@ export enum CommandType {
   COMMAND_ADD_WORD = 'e-add-word',
   COMMAND_MY_FLASHCARD = 'e-my-flashcard',
   COMMAND_USER_DICTIONARY = 'e-user-dictionary',
+  COMMAND_CONVERT_TEXT_TO_SPEECH = 'e-convert-tts',
 
   SELECT_PART = 'toeic-part',
   SELECT_TEST = 'toeic-test',
@@ -36,4 +37,5 @@ export enum CommandType {
   BUTTON_DELETE_MY_FLASHCARD = 'delete-my-flashcard',
   BUTTON_DELETE_USER_DICTIONARY = 'delete-user-dictionary',
   BUTTON_ACTIVE_USER_DICTIONARY = 'active-user-dictionary',
+  BUTTON_CONVERT_TEXT_TO_SPEECH = 'convert-text',
 }

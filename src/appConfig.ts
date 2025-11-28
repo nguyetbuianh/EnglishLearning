@@ -24,6 +24,8 @@ const EnvSchema = z.object({
   REDIS_HOST: z.string().min(1, "DB_HOST is required"),
   REDIS_PORT: z.coerce.number().default(14576),
   REDIS_PASSWORD: z.string().min(1, "DB_PASSWORD is required"),
+
+  TTSForFree_API_KEY: z.string().min(1, "TTSForFree_API_KEY is required"),
 });
 
 
@@ -56,5 +58,8 @@ export const appConfig = {
     host: env.REDIS_HOST,
     port: env.REDIS_PORT,
     password: env.REDIS_PASSWORD
+  },
+  TTSForFree: {
+    API_KEY: env.TTSForFree_API_KEY
   }
 };
