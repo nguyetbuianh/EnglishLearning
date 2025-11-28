@@ -79,7 +79,8 @@ export class EventRouter {
           CommandType.COMMAND_TRANSLATE,
           CommandType.COMMAND_ADD_WORD,
           CommandType.COMMAND_MY_FLASHCARD,
-          CommandType.COMMAND_USER_DICTIONARY
+          CommandType.COMMAND_USER_DICTIONARY,
+          CommandType.COMMAND_CHAIN_WORD
         ];
         if (!VALID_COMMANDS.includes(command)) {
           return;

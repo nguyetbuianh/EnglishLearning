@@ -51,6 +51,8 @@ import { UserDictionaryHandler } from './handlers/user-dictionary.handler';
 import { ActiveUserDictionaryHandler } from './handlers/active-vocab.handler';
 import { DeleteUserDictionaryHandler } from './handlers/delete-user-dictionary.handler';
 import { DeleteMyFlashcardHandler } from './handlers/delete-flashcard.handler';
+import { ChainWordHandler } from './handlers/chain-word.handler';
+import { ChainWordModule } from '../chain-word/chain-word.module';
 
 const commandHandlers = [
   StartTestHandler,
@@ -92,7 +94,8 @@ const commandHandlers = [
   DeleteMyFlashcardHandler,
   DeleteUserDictionaryHandler,
   UserDictionaryHandler,
-  ActiveUserDictionaryHandler
+  ActiveUserDictionaryHandler,
+  ChainWordHandler
 ];
 
 @Module({
@@ -106,7 +109,8 @@ const commandHandlers = [
     ToeicImportModule,
     GoogleAIModule,
     ChannelModule,
-    TrasnlateModule
+    TrasnlateModule,
+    ChainWordModule
   ],
   providers: [
     MezonService,
