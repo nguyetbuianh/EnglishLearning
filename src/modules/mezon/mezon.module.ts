@@ -53,6 +53,8 @@ import { DeleteUserDictionaryHandler } from './handlers/delete-user-dictionary.h
 import { DeleteMyFlashcardHandler } from './handlers/delete-flashcard.handler';
 import { ChainWordHandler } from './handlers/chain-word.handler';
 import { ChainWordModule } from '../chain-word/chain-word.module';
+import { TextToSpeechHandler } from './handlers/textToSpeechHandler';
+import { ConvertTTSHandler } from './handlers/form-convert-tts.handler';
 
 const commandHandlers = [
   StartTestHandler,
@@ -95,7 +97,9 @@ const commandHandlers = [
   DeleteUserDictionaryHandler,
   UserDictionaryHandler,
   ActiveUserDictionaryHandler,
-  ChainWordHandler
+  ChainWordHandler,
+  TextToSpeechHandler,
+  ConvertTTSHandler
 ];
 
 @Module({
