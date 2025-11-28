@@ -51,6 +51,8 @@ import { UserDictionaryHandler } from './handlers/user-dictionary.handler';
 import { ActiveUserDictionaryHandler } from './handlers/active-vocab.handler';
 import { DeleteUserDictionaryHandler } from './handlers/delete-user-dictionary.handler';
 import { DeleteMyFlashcardHandler } from './handlers/delete-flashcard.handler';
+import { ChainWordHandler } from './handlers/chain-word.handler';
+import { ChainWordModule } from '../chain-word/chain-word.module';
 import { TextToSpeechHandler } from './handlers/textToSpeechHandler';
 import { ConvertTTSHandler } from './handlers/form-convert-tts.handler';
 
@@ -95,6 +97,7 @@ const commandHandlers = [
   DeleteUserDictionaryHandler,
   UserDictionaryHandler,
   ActiveUserDictionaryHandler,
+  ChainWordHandler,
   TextToSpeechHandler,
   ConvertTTSHandler
 ];
@@ -110,7 +113,8 @@ const commandHandlers = [
     ToeicImportModule,
     GoogleAIModule,
     ChannelModule,
-    TrasnlateModule
+    TrasnlateModule,
+    ChainWordModule
   ],
   providers: [
     MezonService,

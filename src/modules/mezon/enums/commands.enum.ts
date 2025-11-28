@@ -14,6 +14,7 @@ export enum CommandType {
   COMMAND_ADD_WORD = 'e-add-word',
   COMMAND_MY_FLASHCARD = 'e-my-flashcard',
   COMMAND_USER_DICTIONARY = 'e-user-dictionary',
+  COMMAND_CHAIN_WORD = 'e-chain',
   COMMAND_CONVERT_TEXT_TO_SPEECH = 'e-convert-tts',
 
   SELECT_PART = 'toeic-part',
