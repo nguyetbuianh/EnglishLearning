@@ -39,4 +39,5 @@ export enum CommandType {
   BUTTON_DELETE_USER_DICTIONARY = 'delete-user-dictionary',
   BUTTON_ACTIVE_USER_DICTIONARY = 'active-user-dictionary',
   BUTTON_CONVERT_TEXT_TO_SPEECH = 'convert-text',
+  BUTTON_GET_WORD = 'get-word'
 }
