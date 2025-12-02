@@ -39,7 +39,7 @@ export class TextToSpeechHandler extends BaseHandler<MMessageButtonClicked> {
         })
         .build();
 
-      await this.mezonMessage.reply(
+      await this.mezonMessage.update(
         messagePayload,
         undefined,
         messagePayload.attachments
@@ -62,26 +62,43 @@ export class TextToSpeechHandler extends BaseHandler<MMessageButtonClicked> {
       CallbackUrl: ""
     };
 
-    const createRes = await axios.post(
-      `${this.BASE_URL}/createby`,
-      createBody,
-      {
-        headers: {
-          "X-API-Key": appConfig.TTSForFree.API_KEY,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    let createRes = await axios.post(`${this.BASE_URL}/createby`, createBody, {
+      headers: {
+        "X-API-Key": appConfig.TTSForFree.API_KEY,
+        "Content-Type": "application/json",
+      },
+    });
 
-    if (createRes.data.Status === "SUCCESS" && createRes.data.Data) {
-      await new Promise(r => setTimeout(r, 2000));
+    let { Status, Data } = createRes.data;
 
-      return `${this.BASE_URL}/StreamFile?filename=${createRes.data.Data}`;
+    if (Status === "SUCCESS" && Data) {
+      return `${this.BASE_URL}/StreamFile?filename=${Data}`;
     }
 
-    throw new Error("TTS create job failed: " + JSON.stringify(createRes.data));
-  }
+    if (Status === "PENDING") {
+      for (let i = 0; i < 15; i++) {
+        await new Promise(r => setTimeout(r, 2000)); 
 
+        createRes = await axios.post(`${this.BASE_URL}/createby`, createBody, {
+          headers: {
+            "X-API-Key": appConfig.TTSForFree.API_KEY,
+            "Content-Type": "application/json",
+          },
+        });
+
+        Status = createRes.data.Status;
+        Data = createRes.data.Data;
+
+        if (Status === "SUCCESS" && Data) {
+          return `${this.BASE_URL}/StreamFile?filename=${Data}`;
+        }
+      }
+
+      throw new Error("TTS job timed out after polling");
+    }
+
+    throw new Error("TTS job failed: " + JSON.stringify(createRes.data));
+  }
 
   private async getText(): Promise<string | null> {
     const extra_data = this.event.extra_data;
