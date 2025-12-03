@@ -51,6 +51,8 @@ import { UserDictionaryHandler } from './handlers/user-dictionary.handler';
 import { ActiveUserDictionaryHandler } from './handlers/active-vocab.handler';
 import { DeleteUserDictionaryHandler } from './handlers/delete-user-dictionary.handler';
 import { DeleteMyFlashcardHandler } from './handlers/delete-flashcard.handler';
+import { ChainWordHandler } from './handlers/chain-word.handler';
+import { GetWordHandler } from './handlers/get-word.handler';
 import { TextToSpeechHandler } from './handlers/text-to-speech.handler';
 import { ConvertTTSHandler } from './handlers/form-convert-tts.handler';
 import { SpeechToTextHandler } from './handlers/audio-to-text.handler';
@@ -96,8 +98,10 @@ const commandHandlers = [
   DeleteUserDictionaryHandler,
   UserDictionaryHandler,
   ActiveUserDictionaryHandler,
+  ChainWordHandler,
   TextToSpeechHandler,
   ConvertTTSHandler,
+  GetWordHandler
   SpeechToTextHandler
 ];
 
