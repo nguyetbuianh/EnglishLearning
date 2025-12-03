@@ -81,6 +81,7 @@ export class EventRouter {
           CommandType.COMMAND_MY_FLASHCARD,
           CommandType.COMMAND_USER_DICTIONARY,
           CommandType.COMMAND_CONVERT_TEXT_TO_SPEECH,
+          CommandType.COMMAND_CONVERT_SPEECH_TO_TEXT,
         ];
         if (!VALID_COMMANDS.includes(command)) {
           return;
