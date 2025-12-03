@@ -16,6 +16,7 @@ export enum CommandType {
   COMMAND_USER_DICTIONARY = 'e-user-dictionary',
   COMMAND_CHAIN_WORD = 'e-chain',
   COMMAND_CONVERT_TEXT_TO_SPEECH = 'e-convert-tts',
+  COMMAND_CONVERT_SPEECH_TO_TEXT = 'e-convert-stt',
 
   SELECT_PART = 'toeic-part',
   SELECT_TEST = 'toeic-test',
