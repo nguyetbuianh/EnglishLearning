@@ -32,7 +32,10 @@ export class UserService {
     });
   }
 
-  async getUser(mezonUserId: string, useCache: boolean = true): Promise<CachedUser | null> {
+  async getUser(
+    mezonUserId: string,
+    useCache: boolean = true
+  ): Promise<CachedUser | User | null> {
     const key = `user:${mezonUserId}`;
 
     if (useCache) {
@@ -43,16 +46,18 @@ export class UserService {
     const user = await this.userRepo.findOne({ where: { mezonUserId } });
     if (!user) return null;
 
-    const cachedUser: CachedUser = {
-      id: user.id,
-      mezonUserId: user.mezonUserId,
-      username: user.username,
-      joinedAt: user.joinedAt,
-      role: user.role
-    };
+    if (useCache) {
+      const cachedUser: CachedUser = {
+        id: user.id,
+        mezonUserId: user.mezonUserId,
+        username: user.username,
+        joinedAt: user.joinedAt,
+        role: user.role,
+      };
 
-    if (useCache) await this.cache.set(key, cachedUser, 86_400_000);
+      await this.cache.set(key, cachedUser, 86_400_000);
+    }
 
-    return cachedUser;
+    return user;
   }
 }
