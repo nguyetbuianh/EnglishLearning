@@ -68,7 +68,7 @@ export class ConfirmStartTestHandler extends BaseHandler<MMessageButtonClicked> 
         passageContent = `📖 *Passage ${firstQuestion.passage.passageNumber}*\n${firstQuestion.passage.title ? `**${firstQuestion.passage.title}**\n` : ""}${firstQuestion.passage.content}`;
       }
 
-      await this.userProgressService.createProgress({
+      await this.userProgressService.saveProgress({
         userMezonId: mezonUserId,
         testId: testId,
         partId: partId,

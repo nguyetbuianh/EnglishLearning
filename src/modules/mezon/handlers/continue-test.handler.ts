@@ -96,7 +96,7 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
   }
 
   private async finishPart(mezonUserId: string, testId: number, partId: number) {
-    await this.userProgressService.updateProgress({
+    await this.userProgressService.saveProgress({
       userMezonId: mezonUserId,
       testId: testId,
       partId: partId,
@@ -110,7 +110,7 @@ export class ContinueTestHandler extends BaseHandler<MMessageButtonClicked> {
   private async loadQuestion(loadQuestionParams: LoadQuestionParams) {
     const { userId, mezonUserId, testId, partId, question, passage } = loadQuestionParams;
 
-    await this.userProgressService.updateProgress({
+    await this.userProgressService.saveProgress({
       userMezonId: mezonUserId,
       testId: testId,
       partId: partId,

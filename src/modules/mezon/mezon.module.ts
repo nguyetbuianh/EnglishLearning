@@ -101,7 +101,7 @@ const commandHandlers = [
   ChainWordHandler,
   TextToSpeechHandler,
   ConvertTTSHandler,
-  GetWordHandler
+  GetWordHandler,
   SpeechToTextHandler
 ];
 

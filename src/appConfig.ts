@@ -26,6 +26,10 @@ const EnvSchema = z.object({
   REDIS_PASSWORD: z.string().min(1, "DB_PASSWORD is required"),
 
   TTSForFree_API_KEY: z.string().min(1, "TTSForFree_API_KEY is required"),
+
+  CORS_ORIGIN: z.string().optional(),
+
+  JWT_SECRET: z.string().min(1, "JWT_SECRET is required")
 });
 
 
@@ -61,5 +65,11 @@ export const appConfig = {
   },
   TTSForFree: {
     API_KEY: env.TTSForFree_API_KEY
+  },
+  cors: {
+    origin: env.CORS_ORIGIN
+  },
+  jwt: {
+    secret: env.JWT_SECRET
   }
 };

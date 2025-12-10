@@ -25,26 +25,7 @@ export class UserProgressService {
     });
   }
 
-  async createProgress(data: {
-    userMezonId: string;
-    testId: number;
-    partId: number;
-    currentQuestionNumber: number;
-    currentPassageNumber?: number;
-  }) {
-    const progress = this.userProgressRepo.create({
-      userMezonId: data.userMezonId,
-      test: { id: data.testId },
-      part: { id: data.partId },
-      currentQuestionNumber: data.currentQuestionNumber,
-      currentPassageNumber: data.currentPassageNumber,
-      isCompleted: false,
-    });
-
-    return this.userProgressRepo.save(progress);
-  }
-
-  async updateProgress(data: {
+  async saveProgress(data: {
     userMezonId: string;
     testId: number;
     partId: number;
@@ -52,7 +33,7 @@ export class UserProgressService {
     currentPassageNumber?: number;
     isCompleted?: boolean;
   }) {
-    const progress = await this.userProgressRepo.findOne({
+    const existing = await this.userProgressRepo.findOne({
       where: {
         userMezonId: data.userMezonId,
         test: { id: data.testId },
@@ -60,23 +41,32 @@ export class UserProgressService {
       },
     });
 
-    if (!progress) {
-      throw new Error('User progress not found.');
+    if (existing) {
+      let updateData: Partial<UserProgress> = {};
+
+      if (data.currentQuestionNumber !== undefined) {
+        updateData.currentQuestionNumber = data.currentQuestionNumber;
+      }
+      if (data.currentPassageNumber !== undefined) {
+        updateData.currentPassageNumber = data.currentPassageNumber;
+      }
+      if (data.isCompleted !== undefined) {
+        updateData.isCompleted = data.isCompleted;
+      }
+
+      return await this.userProgressRepo.update(existing.id, updateData);
     }
 
-    if (data.currentQuestionNumber !== undefined) {
-      progress.currentQuestionNumber = data.currentQuestionNumber;
-    }
+    const newProgress = this.userProgressRepo.create({
+      userMezonId: data.userMezonId,
+      test: { id: data.testId },
+      part: { id: data.partId },
+      currentQuestionNumber: data.currentQuestionNumber,
+      currentPassageNumber: data.currentPassageNumber,
+      isCompleted: data.isCompleted,
+    });
 
-    if (data.currentPassageNumber !== undefined) {
-      progress.currentPassageNumber = data.currentPassageNumber;
-    }
-
-    if (data.isCompleted !== undefined) {
-      progress.isCompleted = data.isCompleted;
-    }
-
-    return this.userProgressRepo.save(progress);
+    return await this.userProgressRepo.save(newProgress);
   }
 
   async hasCompletedAllParts(userMezonId: string, testId: number): Promise<boolean> {
@@ -98,5 +88,32 @@ export class UserProgressService {
       },
       relations: ['test', 'part']
     })
+  }
+
+  async getProgressByUser(
+    testId: number,
+    partId: number,
+    userMezonId: string
+  ): Promise<UserProgress | null> {
+    return this.userProgressRepo.findOne({
+      where: {
+        userMezonId,
+        test: { id: testId },
+        part: { id: partId },
+      },
+      relations: ['test', 'part'],
+    });
+  }
+
+  async deleteProgress(testId: number, partId: number, userMezonId: string) {
+    return this.userProgressRepo
+      .createQueryBuilder()
+      .delete()
+      .from(UserProgress)
+      .where(
+        'user_mezon_id = :userMezonId AND test_id = :testId AND part_id = :partId',
+        { userMezonId, testId, partId },
+      )
+      .execute();
   }
 }

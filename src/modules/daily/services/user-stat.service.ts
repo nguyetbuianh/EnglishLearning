@@ -60,8 +60,8 @@ export class UserStatService {
 
   private async createNewUserStats(
     userId: number,
-    isCorrect: boolean,
-    today: Date
+    isCorrect?: boolean,
+    today?: Date
   ): Promise<UserStats> {
     const newStats = this.userStatsRepo.create({
       user: { id: userId } as User,
@@ -78,8 +78,8 @@ export class UserStatService {
 
   private async getOrCreateUserStats(
     userId: number,
-    isCorrect: boolean,
-    today: Date
+    isCorrect?: boolean,
+    today?: Date
   ): Promise<UserStats> {
     let stats = await this.findUserStats(userId);
     if (!stats) {
@@ -108,6 +108,38 @@ export class UserStatService {
     return newBadges;
   }
 
+  async updateUserStatsInApi(
+    userId: number,
+    {
+      totalQuestions,
+      correctCount,
+      scoreChange,
+    }: {
+      totalQuestions: number;
+      correctCount: number;
+      scoreChange: number;
+    }
+  ): Promise<string[]> {
+    const today = new Date();
+    const stats = await this.getOrCreateUserStats(userId, undefined, today);
+
+    const oldBadges = new Set(stats.badges || []);
+
+    if (totalQuestions > 0) {
+      this.updateStreak(stats, today);
+    }
+
+    stats.totalAnswers = (stats.totalAnswers || 0) + totalQuestions;
+    stats.correctAnswers = (stats.correctAnswers || 0) + correctCount;
+    stats.points = (stats.points || 0) + scoreChange;
+    stats.lastAnswerDate = today;
+    stats.badges = this.calculateBadges(stats);
+
+    await this.userStatsRepo.save(stats);
+
+    const newBadges = stats.badges.filter((b) => !oldBadges.has(b));
+    return newBadges;
+  }
 
   private calculateBadges(stats: UserStats): string[] {
     const badges = new Set(stats.badges || []);
