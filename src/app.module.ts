@@ -8,6 +8,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { DailyModule } from './modules/daily/daily.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { RedisCacheConfigService } from './config/redis-cache.config';
+import { TestsController } from './controllers/tests.controller';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig as TypeOrmModuleOptions),
@@ -19,7 +21,11 @@ import { RedisCacheConfigService } from './config/redis-cache.config';
     MezonModule,
     UserModule,
     ToeicModule,
-    DailyModule
+    DailyModule,
+    AuthModule
+  ],
+  controllers: [
+    TestsController
   ],
 })
 export class AppModule { }

@@ -137,7 +137,7 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
         nextPassageNumber
       );
       if (!nextPassage) {
-        await this.userProgressService.updateProgress({
+        await this.userProgressService.saveProgress({
           userMezonId: mezonUserId,
           testId,
           partId,
@@ -201,7 +201,7 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
     const nextQuestionNumber = currentQuestionNumber + 1;
     const question = await this.toeicQuestionService.getQuestion(testId, partId, nextQuestionNumber);
     if (!question) {
-      await this.userProgressService.updateProgress({
+      await this.userProgressService.saveProgress({
         userMezonId: mezonUserId,
         testId,
         partId,
@@ -230,7 +230,7 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
 
   private async goToNextQuestion(nextQuestionParams: NextQuestionParams) {
     const { mezonUserId, testId, partId, question, passage, mezonMessage } = nextQuestionParams;
-    await this.userProgressService.updateProgress({
+    await this.userProgressService.saveProgress({
       userMezonId: mezonUserId,
       testId,
       partId,

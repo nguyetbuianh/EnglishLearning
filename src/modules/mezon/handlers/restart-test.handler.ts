@@ -44,7 +44,7 @@ export class RestartTestHandler extends BaseHandler<MMessageButtonClicked> {
         return;
       }
 
-      await this.userProgressService.updateProgress({
+      await this.userProgressService.saveProgress({
         userMezonId: mezonUserId,
         testId,
         partId,

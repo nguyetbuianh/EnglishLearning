@@ -1,10 +1,37 @@
 import { appConfig } from './appConfig';
-
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import helmet from 'helmet';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import formatValidatorErrors from './utils/format-validator-error.util';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.enableCors({
+    origin: appConfig.cors.origin || '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true,
+  });
+
+  app.use(helmet());
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      skipMissingProperties: false,
+      exceptionFactory: (validationErrors = []) => {
+        const errors = formatValidatorErrors(validationErrors);
+        return new BadRequestException({
+          message: 'Validation failed',
+          errors,
+        });
+      },
+    }),
+  );
 
   await app.listen(appConfig.server.port);
   console.log(`🚀 Application is running on: ${await app.getUrl()}`);

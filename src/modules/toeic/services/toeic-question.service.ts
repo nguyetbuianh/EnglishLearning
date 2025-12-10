@@ -4,6 +4,7 @@ import { In, Repository } from 'typeorm';
 import { Question } from '../../../entities/question.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
+import { TestPartParamsDto } from '../../../dtos/test-part.dto';
 @Injectable()
 export class ToeicQuestionService {
   constructor(
@@ -128,7 +129,7 @@ export class ToeicQuestionService {
   async findQuestionById(questionId: number): Promise<Question | null> {
     return await this.questionRepo.findOne({
       where: { id: questionId },
-      relations: ['passage'],
+      relations: ['passage', 'part', 'test'],
     });
   }
 
@@ -173,5 +174,17 @@ export class ToeicQuestionService {
         explanation: updateData.explanation,
       },
     );
+  }
+
+  async getQuestionTestPart(params: TestPartParamsDto): Promise<Question[]> {
+    const { testId, partId } = params;
+    return this.questionRepo.find({
+      where: {
+        test: { id: testId },
+        part: { id: partId },
+      },
+      order: { id: 'ASC' },
+      relations: ["options", "passage"]
+    });
   }
 }

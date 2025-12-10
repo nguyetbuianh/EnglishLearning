@@ -141,7 +141,7 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
 
       await updateSession(mezonUserId, question, this.mezonMessage.id);
 
-      await this.userProgressService.createProgress({
+      await this.userProgressService.saveProgress({
         userMezonId: mezonUserId,
         testId: testId,
         partId: nextPartId,
