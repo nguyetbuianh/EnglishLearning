@@ -7,24 +7,8 @@ import { UserProgressService } from "../../toeic/services/user-progress.service"
 import { UserAnswerService } from "../../toeic/services/user-answer.service";
 import { UserService } from "../../user/user.service";
 import { MessageBuilder } from "../builders/message.builder";
-
-interface Parts {
-  partNumber: number,
-  correctCount: number,
-  attemptedCount: number,
-  totalInPart: number,
-  percent: number,
-}
-
-const TOTAL_QUESTIONS_BY_PART: Record<number, number> = {
-  1: 6,
-  2: 25,
-  3: 39,
-  4: 30,
-  5: 30,
-  6: 16,
-  7: 54,
-};
+import { Parts } from "../../../interfaces/parts.interface";
+import { TOEIC_PART } from "../../../contants/toeic-part.contant";
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_MY_PROGRESS)
@@ -76,7 +60,8 @@ export class UserProgressHandler extends BaseHandler<MChannelMessage> {
             if (attemptedCount === 0) attemptedCount = 0;
 
             const correctCount = userAnswers.filter((a) => a.isCorrect).length;
-            const totalInPart = TOTAL_QUESTIONS_BY_PART[progress.part.partNumber];
+            const partInfo = TOEIC_PART[progress.part.partNumber];
+            const totalInPart = partInfo.total;
             const percent = Math.round((correctCount / totalInPart) * 100);
 
             let testProgress = 0;

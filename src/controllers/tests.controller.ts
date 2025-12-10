@@ -89,7 +89,7 @@ export class TestsController {
   @Post(':testId/parts/:partId/submit')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard)
-  async createTestAnswers(
+  async submitTestAnswers(
     @Req() req,
     @Param() query: TestPartParamsDto,
     @Body() submitAnswers: UserAnswersDto[]

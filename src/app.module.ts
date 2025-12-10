@@ -10,6 +10,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { RedisCacheConfigService } from './config/redis-cache.config';
 import { TestsController } from './controllers/tests.controller';
 import { AuthModule } from './auth/auth.module';
+import { UsersController } from './controllers/users.controller';
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig as TypeOrmModuleOptions),
@@ -25,7 +26,8 @@ import { AuthModule } from './auth/auth.module';
     AuthModule
   ],
   controllers: [
-    TestsController
+    TestsController,
+    UsersController
   ],
 })
 export class AppModule { }

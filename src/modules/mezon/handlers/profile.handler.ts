@@ -5,9 +5,8 @@ import { CommandType } from "../enums/commands.enum";
 import { BaseHandler, MChannelMessage } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
 import { UserService } from "../../user/user.service";
-import { User } from "../../../entities/user.entity";
 import { UserStatService } from "../../daily/services/user-stat.service";
-import { CachedUser } from "../../../types/caches/user.cache";
+import { getJoinAt } from "../utils/date.util";
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_PROFILE)
@@ -31,7 +30,7 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
         return;
       }
 
-      const formattedJoinDate = await this.getJoinAt(user);
+      const formattedJoinDate = await getJoinAt(user);
       const userStat = await this.userStatService.findUserStats(user.id);
 
       const badges = userStat ? userStat.badges.slice(-3) : [];
@@ -66,12 +65,5 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
         { t: "😢 Oops! Could not generate your profile. Try again later!" }
       );
     }
-  }
-
-  private getJoinAt(user: User | CachedUser): string {
-    const joinAt = user.joinedAt;
-    const formattedJoinDate = joinAt.toISOString().split('T')[0];
-
-    return formattedJoinDate;
   }
 }
