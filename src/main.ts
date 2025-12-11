@@ -10,12 +10,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: appConfig.cors.origin || '*',
+    origin: appConfig.cors.origin,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
+    allowedHeaders: ['Authorization', 'Content-Type'],
   });
 
-  app.use(helmet());
+  // app.use(helmet());
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -37,7 +38,15 @@ async function bootstrap() {
     .setTitle('API Documentation')
     .setDescription('English Learning API')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        in: 'header',
+      },
+      'access-token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
