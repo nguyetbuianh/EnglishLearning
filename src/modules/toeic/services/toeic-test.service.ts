@@ -37,8 +37,8 @@ export class ToeicTestService {
     const totalPages = Math.ceil(total / limit);
 
     return {
-      data,
-      meta: {
+      items: data,
+      pagination: {
         total,
         page,
         limit,

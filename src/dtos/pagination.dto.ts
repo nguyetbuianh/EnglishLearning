@@ -30,8 +30,8 @@ export class PaginationMetaDto {
 
 export class PaginationResponseDto<T> {
   @ApiProperty({ isArray: true, type: () => Object })
-  data: T[];
+  items: T[];
 
   @ApiProperty({ type: () => PaginationMetaDto })
-  meta: PaginationMetaDto;
+  pagination: PaginationMetaDto;
 }

@@ -21,6 +21,9 @@ import { ApiPaginatedResponse } from '../decorators/api-paginated-response.decor
 import { ToeicTestDto } from '../dtos/toeic-test.dto';
 import { ToeicTestPracticeService } from '../services/toeic-test-practice.service';
 import { UserResultDto } from '../dtos/user-result.dto';
+import { ResponseDto } from '../dtos/response.dto';
+import { ApiResponseData } from '../decorators/api-data-response.decorator';
+import { ApiResponseEmpty } from '../decorators/api-empty-response.decorator';
 
 @ApiBearerAuth('access-token')
 @Controller('tests')
@@ -33,37 +36,39 @@ export class TestsController {
   // GET /tests
   @Get()
   @ApiPaginatedResponse(ToeicTestDto)
-  async findAllTests(@Query() query: PaginationDto): Promise<PaginationResponseDto<ToeicTest>> {
+  async findAllTests(@Query() query: PaginationDto): Promise<ResponseDto<PaginationResponseDto<ToeicTestDto>>> {
     const tests = await this.testsService.getAllTestsPagination(query);
-    return tests;
+    return {
+      success: true,
+      message: 'Fetched tests successfully',
+      data: tests,
+    };
   }
 
   // GET /:testId/parts/:partId
   @Get(':testId/parts/:partId')
-  @ApiResponse({
-    status: 200,
-    description: 'Successfully fetched questions.',
-    type: QuestionWithUserAnswerDto,
-    isArray: true
-  })
+  @ApiResponseData(QuestionWithUserAnswerDto, true)
   async findQuestionTestPart(
     @Request() req,
     @Param() params: TestPartParamsDto,
     @Query() query: ContinueProgressDto
-  ): Promise<QuestionWithUserAnswerDto[]> {
+  ): Promise<ResponseDto<QuestionWithUserAnswerDto[]>> {
     const questions = await this.toeicTestPracticeService.getQuestionsForTestPart(req.user, params, query);
-    return questions;
+    return {
+      success: true,
+      message: 'Fetched questions successfully',
+      data: questions
+    };
   }
 
   // POST /tests/:testId/parts/:partId/submit
   @Post(':testId/parts/:partId/submit')
-  @ApiCreatedResponse({ description: 'Submit answers successfully.' })
-  @HttpCode(HttpStatus.CREATED)
+  @ApiResponseEmpty()
   async submitTestAnswers(
     @Request() req,
     @Param() params: TestPartParamsDto,
     @Body() submitAnswers: UserAnswersDto[]
-  ): Promise<void> {
+  ): Promise<ResponseDto<null>> {
     const { testId, partId } = params;
     const { userId, userMezonId } = req.user;
 
@@ -78,25 +83,33 @@ export class TestsController {
       userMezonId,
       submitAnswers,
     });
+
+    return {
+      success: true,
+      message: 'Created record successfully',
+      data: null
+    };
   }
 
   // GET /tests/:testId/results
   @Get(':testId/results')
-  @ApiResponse({
-    status: 200,
-    description: 'Successfully fetched user answers.',
-    type: UserResultDto
-  })
+  @ApiResponseData(UserResultDto)
   async getUserTestResult(
     @Request() req,
     @Param() param: TestPartParamsDto,
-  ): Promise<UserResultDto> {
+  ): Promise<ResponseDto<UserResultDto>> {
     const { userId } = req.user;
     const testId = param.testId;
 
-    return await this.toeicTestPracticeService.getUserTestResult(
+    const result = await this.toeicTestPracticeService.getUserTestResult(
       userId,
       testId,
     );
+
+    return {
+      success: true,
+      message: 'Fetched result successfully',
+      data: result
+    }
   }
 }
