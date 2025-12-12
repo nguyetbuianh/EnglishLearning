@@ -14,7 +14,7 @@ export class PaginationDto {
   limit: number = 10;
 }
 
-export class PaginationMetaDto {
+export class PaginationResponseDto {
   @ApiProperty()
   total: number;
 
@@ -26,12 +26,4 @@ export class PaginationMetaDto {
 
   @ApiProperty()
   totalPages: number;
-}
-
-export class PaginationResponseDto<T> {
-  @ApiProperty({ isArray: true, type: () => Object })
-  items: T[];
-
-  @ApiProperty({ type: () => PaginationMetaDto })
-  pagination: PaginationMetaDto;
 }
