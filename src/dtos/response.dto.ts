@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { PaginationResponseDto } from './pagination.dto';
 
 export class ResponseDto<T> {
   @ApiProperty()
@@ -9,5 +10,8 @@ export class ResponseDto<T> {
 
   @ApiProperty({ required: false })
   data: T | null;
+
+  @ApiProperty()
+  pagination?: PaginationResponseDto;
 }
 
