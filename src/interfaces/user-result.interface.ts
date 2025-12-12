@@ -1,8 +1,7 @@
 import { OptionEnum } from "../enum/option.enum";
 
 export interface UserResultInterface {
-  testId: number,
-  userId: string,
+  testTitle: string,
   score: {
     listeningScore: number,
     readingScore: number,
@@ -21,10 +20,15 @@ export interface UserResultInterface {
   }[];
 }
 
-
 export interface QuestionResultInterface {
   questionNumber: number,
   chosenOption: OptionEnum,
   correctOption: OptionEnum,
   isCorrect: boolean,
+}
+
+export interface PartStatInterface {
+  correct: number;
+  total: number;
+  questions: QuestionResultInterface[];
 }

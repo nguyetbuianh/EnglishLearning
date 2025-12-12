@@ -11,6 +11,11 @@ import { RedisCacheConfigService } from './config/redis-cache.config';
 import { TestsController } from './controllers/tests.controller';
 import { AuthModule } from './auth/auth.module';
 import { UsersController } from './controllers/users.controller';
+import { VocabsController } from './controllers/vocabs.controller';
+import { TopicModule } from './modules/topic-vocabulary/topic.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwt.guard';
+import { ToeicTestPracticeService } from './services/toeic-test-practice.service';
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig as TypeOrmModuleOptions),
@@ -23,11 +28,20 @@ import { UsersController } from './controllers/users.controller';
     UserModule,
     ToeicModule,
     DailyModule,
-    AuthModule
+    AuthModule,
+    TopicModule
   ],
   controllers: [
     TestsController,
-    UsersController
+    UsersController,
+    VocabsController
   ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard
+    },
+    ToeicTestPracticeService
+  ]
 })
 export class AppModule { }

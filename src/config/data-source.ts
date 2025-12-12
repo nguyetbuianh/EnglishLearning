@@ -13,9 +13,7 @@ export const typeOrmConfig: DataSourceOptions = {
   migrations: [__dirname + '/../migrations/*{.ts,.js}'],
   synchronize: false,
   logging: false,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl: false,
 };
 
 export const AppDataSource = new DataSource(typeOrmConfig);
