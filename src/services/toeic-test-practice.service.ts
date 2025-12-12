@@ -9,8 +9,7 @@ import { CheckCompletionInterface, SaveProgressInterface, SubmitTestInterface } 
 import { UserService } from '../modules/user/user.service';
 import { UserStatService } from '../modules/daily/services/user-stat.service';
 import { TOEIC_LISTENING_PART, TOEIC_PART, TOEIC_READING_PART } from '../contants/toeic-part.contant';
-import { UserProgress } from '../entities/progress.entity';
-import { PartStatInterface, QuestionResultInterface, UserResultInterface } from '../interfaces/user-result.interface';
+import { PartStatInterface, UserResultInterface } from '../interfaces/user-result.interface';
 import { calculateToeicScore } from '../utils/calculateScore.util';
 import { ToeicTestService } from '../modules/toeic/services/toeic-test.service';
 import { UserAnswer } from '../entities/user-answer.entity';
