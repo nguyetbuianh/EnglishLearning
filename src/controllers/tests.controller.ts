@@ -23,6 +23,8 @@ import { ResponseDto } from '../dtos/response.dto';
 import { ApiResponseData } from '../decorators/api-data-response.decorator';
 import { ApiResponseEmpty } from '../decorators/api-empty-response.decorator';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { UserProgressService } from '../modules/toeic/services/user-progress.service';
+import { PartProgressDetailDto } from '../dtos/part-progress-detail.dto';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -30,7 +32,8 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 export class TestsController {
   constructor(
     private readonly testsService: ToeicTestService,
-    private readonly toeicTestPracticeService: ToeicTestPracticeService
+    private readonly toeicTestPracticeService: ToeicTestPracticeService,
+    private readonly progressService: UserProgressService
   ) { }
 
   // GET /tests
@@ -48,7 +51,7 @@ export class TestsController {
 
     const itemsWithProgress = items.map(test => ({
       ...test,
-      userProgress: progressMap.get(test.id) ?? null,
+      partsProcess: progressMap.get(test.id) ?? null,
     }));
 
     return {
@@ -57,6 +60,37 @@ export class TestsController {
       data: itemsWithProgress,
       pagination,
     };
+  }
+
+  //GET /tests/:testId
+  @Get(':testId/detail')
+  @ApiResponseData(PartProgressDetailDto, true)
+  async findTestDetail(
+    @Request() req,
+    @Param() params: TestPartParamsDto
+  ): Promise<ResponseDto<PartProgressDetailDto[]>> {
+    const { testId } = params;
+    const { userMezonId } = req.user;
+
+    if (!testId || !userMezonId) {
+      throw new BadRequestException("Missing required parameters");
+    }
+    const testProgress = await this.progressService.getProgressTest(testId, userMezonId);
+
+    const result: PartProgressDetailDto[] = testProgress!.map(p => ({
+      partId: p.partId,
+      partNumber: p.part.partNumber,
+      partTitle: p.part.title,
+      currentQuestionNumber: p.currentQuestionNumber,
+      currentPassageNumber: p.currentPassageNumber,
+      isCompleted: p.isCompleted,
+    }));
+
+    return {
+      success: true,
+      message: 'Fetched tests successfully',
+      data: result
+    }
   }
 
   // GET /:testId/parts/:partId

@@ -14,7 +14,6 @@ import { calculateToeicScore } from '../utils/calculateScore.util';
 import { ToeicTestService } from '../modules/toeic/services/toeic-test.service';
 import { UserAnswer } from '../entities/user-answer.entity';
 import { User } from '../entities/user.entity';
-import { UserProgressPartDto } from '../dtos/user-test-progress.dto';
 
 @Injectable()
 export class ToeicTestPracticeService {
@@ -30,26 +29,40 @@ export class ToeicTestPracticeService {
 
   async getTestWithProgress(
     user: UserInterface
-  ): Promise<Map<number, UserProgressPartDto[]>> {
-    const { userMezonId } = user;
-    const userProgress = await this.userProgressService.getProgressByUserId(userMezonId);
+  ): Promise<Map<number, number | null>> {
 
-    const progressMap = new Map<number, UserProgressPartDto[]>();
+    const { userMezonId } = user;
+
+    const userProgress =
+      await this.userProgressService.getProgressByUserId(userMezonId);
+
+    const progressMap = new Map<number, number | null>();
+
+    const grouped = new Map<number, { total: number; completed: number }>();
 
     for (const progress of userProgress) {
       const testId = progress.testId;
 
-      if (!progressMap.has(testId)) {
-        progressMap.set(testId, []);
+      if (!grouped.has(testId)) {
+        grouped.set(testId, { total: 0, completed: 0 });
       }
 
-      progressMap.get(testId)!.push({
-        partId: progress.partId,
-        partNumber: progress.part.partNumber,
-        currentQuestionNumber: progress.currentQuestionNumber,
-        currentPassageNumber: progress.currentPassageNumber,
-        isCompleted: progress.isCompleted,
-      });
+      const stat = grouped.get(testId)!;
+      stat.total += 1;
+
+      if (progress.isCompleted) {
+        stat.completed += 1;
+      }
+    }
+
+    for (const [testId, stat] of grouped.entries()) {
+      if (stat.total === 0) {
+        progressMap.set(testId, null);
+      } else if (stat.completed === 0) {
+        progressMap.set(testId, 0);
+      } else {
+        progressMap.set(testId, stat.completed);
+      }
     }
 
     return progressMap;
