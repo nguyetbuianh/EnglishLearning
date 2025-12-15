@@ -39,10 +39,6 @@ import { UserProcessService } from './services/user-process.service';
     VocabsController
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard
-    },
     ToeicTestPracticeService,
     UserProcessService
   ]

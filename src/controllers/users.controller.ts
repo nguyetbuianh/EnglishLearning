@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { UserProcessService } from '../services/user-process.service';
@@ -9,8 +10,10 @@ import { ApiResponseData } from '../decorators/api-data-response.decorator';
 import { ResponseDto } from '../dtos/response.dto';
 import { UserProgressByTestDto } from '../dtos/user-progress.dto';
 import { UserProfileDto } from '../dtos/user-profile.dto';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 
 @ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(

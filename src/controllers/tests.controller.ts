@@ -7,6 +7,7 @@ import {
   Query,
   BadRequestException,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { ToeicTestService } from '../modules/toeic/services/toeic-test.service';
 import { PaginationDto } from '../dtos/pagination.dto';
@@ -21,8 +22,10 @@ import { UserResultDto } from '../dtos/user-result.dto';
 import { ResponseDto } from '../dtos/response.dto';
 import { ApiResponseData } from '../decorators/api-data-response.decorator';
 import { ApiResponseEmpty } from '../decorators/api-empty-response.decorator';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 
 @ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard)
 @Controller('tests')
 export class TestsController {
   constructor(
