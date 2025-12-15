@@ -25,6 +25,19 @@ export class UserProgressService {
     });
   }
 
+  async getProgressTest(
+    testId: number,
+    userMezonId: string
+  ): Promise<UserProgress[] | null> {
+    return this.userProgressRepo.find({
+      where: {
+        userMezonId,
+        test: { id: testId },
+      },
+      relations: ['test', 'part'],
+    });
+  }
+
   async saveProgress(data: {
     userMezonId: string;
     testId: number;
@@ -88,21 +101,6 @@ export class UserProgressService {
       },
       relations: ['test', 'part']
     })
-  }
-
-  async getProgressByUser(
-    testId: number,
-    partId: number,
-    userMezonId: string
-  ): Promise<UserProgress | null> {
-    return this.userProgressRepo.findOne({
-      where: {
-        userMezonId,
-        test: { id: testId },
-        part: { id: partId },
-      },
-      relations: ['test', 'part'],
-    });
   }
 
   async deleteProgress(testId: number, partId: number, userMezonId: string) {
