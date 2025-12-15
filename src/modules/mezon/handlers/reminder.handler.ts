@@ -60,8 +60,7 @@ export class DailyReminderTask {
 
   private async sendDM(userMezonId: string, content: ChannelMessageContent) {
     try {
-      const dmClan = await this.client.clans.fetch('0');
-      const user = await dmClan.users.fetch(userMezonId);
+      const user = await this.client.users.fetch(userMezonId);
       if (!user) {
         this.logger.warn(`⚠️ User with Mezon ID ${userMezonId} not found.`);
         return;
