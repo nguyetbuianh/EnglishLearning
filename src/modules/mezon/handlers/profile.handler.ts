@@ -30,7 +30,7 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
         return;
       }
 
-      const formattedJoinDate = await getJoinAt(user);
+      const formattedJoinDate = await getJoinAt(user.joinedAt);
       const userStat = await this.userStatService.findUserStats(user.id);
 
       const badges = userStat ? userStat.badges.slice(-3) : [];

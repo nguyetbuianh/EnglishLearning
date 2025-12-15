@@ -16,6 +16,8 @@ import { TopicModule } from './modules/topic-vocabulary/topic.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt.guard';
 import { ToeicTestPracticeService } from './services/toeic-test-practice.service';
+import { UserProcessService } from './services/user-process.service';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig as TypeOrmModuleOptions),
@@ -37,11 +39,8 @@ import { ToeicTestPracticeService } from './services/toeic-test-practice.service
     VocabsController
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard
-    },
-    ToeicTestPracticeService
+    ToeicTestPracticeService,
+    UserProcessService
   ]
 })
 export class AppModule { }

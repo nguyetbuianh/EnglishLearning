@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiExtraModels, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
-import { PaginationResponseDto } from '../dtos/pagination.dto'; 
+import { PaginationResponseDto } from '../dtos/pagination.dto';
 
 export type Constructor<T = object> = abstract new (...args: any[]) => T;
 
@@ -11,18 +11,17 @@ export const ApiPaginatedResponse = <TModel extends Constructor>(
     ApiExtraModels(PaginationResponseDto, model),
     ApiOkResponse({
       schema: {
-        allOf: [
-          { $ref: getSchemaPath(PaginationResponseDto) },
-          {
-            properties: {
-              data: {
-                type: 'array',
-                items: { $ref: getSchemaPath(model) },
-              },
-            },
+        properties: {
+          success: { type: 'boolean' },
+          message: { type: 'string' },
+          data: {
+            type: 'array',
+            items: { $ref: getSchemaPath(model) },
           },
-        ],
+          pagination: { $ref: getSchemaPath(PaginationResponseDto) },
+        },
       },
     }),
   );
 };
+

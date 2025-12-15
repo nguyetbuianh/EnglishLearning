@@ -5,17 +5,15 @@ import {
   Param,
   Body,
   Query,
-  HttpCode,
-  HttpStatus,
   BadRequestException,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { ToeicTestService } from '../modules/toeic/services/toeic-test.service';
-import { PaginationDto, PaginationResponseDto } from '../dtos/pagination.dto';
+import { PaginationDto } from '../dtos/pagination.dto';
 import { ContinueProgressDto, TestPartParamsDto } from '../dtos/test-part.dto';
 import { UserAnswersDto } from '../dtos/user-answer.dto';
-import { ApiBearerAuth, ApiCreatedResponse, ApiResponse } from '@nestjs/swagger';
-import { ToeicTest } from '../entities/toeic-test.entity';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { QuestionWithUserAnswerDto } from '../dtos/question-answer.dto';
 import { ApiPaginatedResponse } from '../decorators/api-paginated-response.decorator';
 import { ToeicTestDto } from '../dtos/toeic-test.dto';
@@ -24,8 +22,10 @@ import { UserResultDto } from '../dtos/user-result.dto';
 import { ResponseDto } from '../dtos/response.dto';
 import { ApiResponseData } from '../decorators/api-data-response.decorator';
 import { ApiResponseEmpty } from '../decorators/api-empty-response.decorator';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 
 @ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard)
 @Controller('tests')
 export class TestsController {
   constructor(
@@ -36,12 +36,15 @@ export class TestsController {
   // GET /tests
   @Get()
   @ApiPaginatedResponse(ToeicTestDto)
-  async findAllTests(@Query() query: PaginationDto): Promise<ResponseDto<PaginationResponseDto<ToeicTestDto>>> {
-    const tests = await this.testsService.getAllTestsPagination(query);
+  async findAllTests(@Query() query: PaginationDto): Promise<ResponseDto<ToeicTestDto[]>> {
+    const { items, pagination } =
+      await this.testsService.getAllTestsPagination(query);
+
     return {
       success: true,
       message: 'Fetched tests successfully',
-      data: tests,
+      data: items,
+      pagination,
     };
   }
 
