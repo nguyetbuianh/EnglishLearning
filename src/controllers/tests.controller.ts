@@ -36,14 +36,25 @@ export class TestsController {
   // GET /tests
   @Get()
   @ApiPaginatedResponse(ToeicTestDto)
-  async findAllTests(@Query() query: PaginationDto): Promise<ResponseDto<ToeicTestDto[]>> {
+  async findAllTests(
+    @Request() req,
+    @Query() query: PaginationDto
+  ): Promise<ResponseDto<ToeicTestDto[]>> {
     const { items, pagination } =
       await this.testsService.getAllTestsPagination(query);
+
+    const progressMap =
+      await this.toeicTestPracticeService.getTestWithProgress(req.user);
+
+    const itemsWithProgress = items.map(test => ({
+      ...test,
+      userProgress: progressMap.get(test.id) ?? null,
+    }));
 
     return {
       success: true,
       message: 'Fetched tests successfully',
-      data: items,
+      data: itemsWithProgress,
       pagination,
     };
   }

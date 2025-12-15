@@ -14,6 +14,7 @@ import { calculateToeicScore } from '../utils/calculateScore.util';
 import { ToeicTestService } from '../modules/toeic/services/toeic-test.service';
 import { UserAnswer } from '../entities/user-answer.entity';
 import { User } from '../entities/user.entity';
+import { UserProgressPartDto } from '../dtos/user-test-progress.dto';
 
 @Injectable()
 export class ToeicTestPracticeService {
@@ -23,8 +24,36 @@ export class ToeicTestPracticeService {
     private readonly progressService: UserProgressService,
     private readonly userService: UserService,
     private readonly userStatService: UserStatService,
-    private readonly testService: ToeicTestService
+    private readonly testService: ToeicTestService,
+    private readonly userProgressService: UserProgressService
   ) { }
+
+  async getTestWithProgress(
+    user: UserInterface
+  ): Promise<Map<number, UserProgressPartDto[]>> {
+    const { userMezonId } = user;
+    const userProgress = await this.userProgressService.getProgressByUserId(userMezonId);
+
+    const progressMap = new Map<number, UserProgressPartDto[]>();
+
+    for (const progress of userProgress) {
+      const testId = progress.testId;
+
+      if (!progressMap.has(testId)) {
+        progressMap.set(testId, []);
+      }
+
+      progressMap.get(testId)!.push({
+        partId: progress.partId,
+        partNumber: progress.part.partNumber,
+        currentQuestionNumber: progress.currentQuestionNumber,
+        currentPassageNumber: progress.currentPassageNumber,
+        isCompleted: progress.isCompleted,
+      });
+    }
+
+    return progressMap;
+  }
 
   async getQuestionsForTestPart(
     user: UserInterface,
