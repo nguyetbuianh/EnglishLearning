@@ -12,4 +12,4 @@ import { appConfig } from '../appConfig';
   providers: [JwtStrategy],
   exports: [JwtModule],
 })
-export class AuthModule { }
+export class AuthJWTModule { }

@@ -29,7 +29,11 @@ const EnvSchema = z.object({
 
   CORS_ORIGIN: z.string().optional(),
 
-  JWT_SECRET: z.string().min(1, "JWT_SECRET is required")
+  JWT_SECRET: z.string().min(1, "JWT_SECRET is required"),
+  CLIENT_ID: z.string().min(1, "CLIENT_ID is required"),
+  CLIENT_SECRET: z.string().min(1, "CLIENT_SECRET is required"),
+  REDIRECT_URI: z.string().min(1, "REDIRECT_URI is required"),
+  BASE_URI: z.string().min(1, "BASE_URI is required"),
 });
 
 
@@ -71,5 +75,11 @@ export const appConfig = {
   },
   jwt: {
     secret: env.JWT_SECRET
+  },
+  oauth: {
+    clientId: env.CLIENT_ID,
+    clientSecret: env.CLIENT_SECRET,
+    redirectUri: env.REDIRECT_URI,
+    baseUri: env.BASE_URI
   }
 };
