@@ -8,15 +8,10 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { DailyModule } from './modules/daily/daily.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { RedisCacheConfigService } from './config/redis-cache.config';
-import { TestsController } from './controllers/tests.controller';
-import { AuthModule } from './auth/auth.module';
-import { UsersController } from './controllers/users.controller';
-import { VocabsController } from './controllers/vocabs.controller';
+import { AuthJWTModule } from './auth/auth-jwt.module';
 import { TopicModule } from './modules/topic-vocabulary/topic.module';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/jwt.guard';
-import { ToeicTestPracticeService } from './services/toeic-test-practice.service';
-import { UserProcessService } from './services/user-process.service';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -31,16 +26,9 @@ import { UserProcessService } from './services/user-process.service';
     ToeicModule,
     DailyModule,
     AuthModule,
-    TopicModule
-  ],
-  controllers: [
-    TestsController,
-    UsersController,
-    VocabsController
-  ],
-  providers: [
-    ToeicTestPracticeService,
-    UserProcessService
+    TopicModule,
+    JwtModule,
+    AuthJWTModule
   ]
 })
 export class AppModule { }
