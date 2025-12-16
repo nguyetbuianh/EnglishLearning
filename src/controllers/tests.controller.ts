@@ -5,147 +5,105 @@ import {
   Param,
   Body,
   Query,
-  BadRequestException,
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ToeicTestService } from '../modules/toeic/services/toeic-test.service';
 import { PaginationDto } from '../dtos/pagination.dto';
 import { ContinueProgressDto, TestPartParamsDto } from '../dtos/test-part.dto';
 import { UserAnswersDto } from '../dtos/user-answer.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { QuestionWithUserAnswerDto } from '../dtos/question-answer.dto';
-import { ApiPaginatedResponse } from '../decorators/api-paginated-response.decorator';
-import { ToeicTestDto } from '../dtos/toeic-test.dto';
 import { ToeicTestPracticeService } from '../services/toeic-test-practice.service';
 import { UserResultDto } from '../dtos/user-result.dto';
-import { ResponseDto } from '../dtos/response.dto';
-import { ApiResponseData } from '../decorators/api-data-response.decorator';
-import { ApiResponseEmpty } from '../decorators/api-empty-response.decorator';
 import { JwtAuthGuard } from '../auth/jwt.guard';
-import { UserProgressService } from '../modules/toeic/services/user-progress.service';
 import { PartProgressDetailDto } from '../dtos/part-progress-detail.dto';
+import { TestPaginationResponseDto } from '../dtos/user-progress.dto';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
 @Controller('tests')
 export class TestsController {
   constructor(
-    private readonly testsService: ToeicTestService,
-    private readonly toeicTestPracticeService: ToeicTestPracticeService,
-    private readonly progressService: UserProgressService
+    private readonly toeicTestPracticeService: ToeicTestPracticeService
   ) { }
 
   // GET /tests
   @Get()
-  @ApiPaginatedResponse(ToeicTestDto)
+  @ApiOkResponse({
+    type: TestPaginationResponseDto,
+  })
   async findAllTests(
     @Request() req,
     @Query() query: PaginationDto
-  ): Promise<ResponseDto<ToeicTestDto[]>> {
-    const { items, pagination } =
-      await this.testsService.getAllTestsPagination(query);
-
-    const progressMap =
-      await this.toeicTestPracticeService.getTestWithProgress(req.user);
-
-    const itemsWithProgress = items.map(test => ({
-      ...test,
-      partsProcess: progressMap.get(test.id) ?? null,
-    }));
-
-    return {
-      success: true,
-      message: 'Fetched tests successfully',
-      data: itemsWithProgress,
-      pagination,
-    };
+  ): Promise<TestPaginationResponseDto> {
+    return this.toeicTestPracticeService.findAllTestsWithProgress(
+      query,
+      req.user,
+    );
   }
 
   //GET /tests/:testId
   @Get(':testId/detail')
-  @ApiResponseData(PartProgressDetailDto, true)
+  @ApiOkResponse({
+    type: PartProgressDetailDto,
+    isArray: true,
+  })
   async findTestDetail(
     @Request() req,
     @Param() params: TestPartParamsDto
-  ): Promise<ResponseDto<PartProgressDetailDto[]>> {
+  ): Promise<PartProgressDetailDto[]> {
     const { testId } = params;
     const { userMezonId } = req.user;
 
-    if (!testId || !userMezonId) {
-      throw new BadRequestException("Missing required parameters");
-    }
-    const testProgress = await this.progressService.getProgressTest(testId, userMezonId);
-
-    const result: PartProgressDetailDto[] = testProgress!.map(p => ({
-      partId: p.partId,
-      partNumber: p.part.partNumber,
-      partTitle: p.part.title,
-      currentQuestionNumber: p.currentQuestionNumber,
-      currentPassageNumber: p.currentPassageNumber,
-      isCompleted: p.isCompleted,
-    }));
-
-    return {
-      success: true,
-      message: 'Fetched tests successfully',
-      data: result
-    }
+    return this.toeicTestPracticeService.getTestDetailProgress(
+      testId,
+      userMezonId,
+    );
   }
 
   // GET /:testId/parts/:partId
   @Get(':testId/parts/:partId')
-  @ApiResponseData(QuestionWithUserAnswerDto, true)
+  @ApiOkResponse({
+    type: PartProgressDetailDto,
+    isArray: true,
+  })
   async findQuestionTestPart(
     @Request() req,
     @Param() params: TestPartParamsDto,
     @Query() query: ContinueProgressDto
-  ): Promise<ResponseDto<QuestionWithUserAnswerDto[]>> {
-    const questions = await this.toeicTestPracticeService.getQuestionsForTestPart(req.user, params, query);
-    return {
-      success: true,
-      message: 'Fetched questions successfully',
-      data: questions
-    };
+  ): Promise<QuestionWithUserAnswerDto[]> {
+    return this.toeicTestPracticeService.getQuestionsForTestPart(req.user, params, query);
   }
 
   // POST /tests/:testId/parts/:partId/submit
   @Post(':testId/parts/:partId/submit')
-  @ApiResponseEmpty()
+  @ApiCreatedResponse()
   async submitTestAnswers(
     @Request() req,
     @Param() params: TestPartParamsDto,
     @Body() submitAnswers: UserAnswersDto[]
-  ): Promise<ResponseDto<null>> {
+  ): Promise<void> {
     const { testId, partId } = params;
     const { userId, userMezonId } = req.user;
 
-    if (!testId || !partId || !userId || !userMezonId) {
-      throw new BadRequestException("Missing required parameters");
-    }
-
-    await this.toeicTestPracticeService.handleSubmitAnswers({
+    return this.toeicTestPracticeService.handleSubmitAnswers({
       testId,
-      partId,
+      partId: partId!,
       userId,
       userMezonId,
       submitAnswers,
     });
-
-    return {
-      success: true,
-      message: 'Created record successfully',
-      data: null
-    };
   }
 
   // GET /tests/:testId/results
   @Get(':testId/results')
-  @ApiResponseData(UserResultDto)
+  @ApiOkResponse({
+    type: UserResultDto,
+  })
   async getUserTestResult(
     @Request() req,
     @Param() param: TestPartParamsDto,
-  ): Promise<ResponseDto<UserResultDto>> {
+  ): Promise<UserResultDto> {
     const { userId } = req.user;
     const testId = param.testId;
 
@@ -154,10 +112,6 @@ export class TestsController {
       testId,
     );
 
-    return {
-      success: true,
-      message: 'Fetched result successfully',
-      data: result
-    }
+    return result;
   }
 }

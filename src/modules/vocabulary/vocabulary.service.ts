@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Vocabulary } from "../../entities/vocabulary.entity";
 import { In, IsNull, Not, Repository } from "typeorm";
+import { PaginationResponse } from "../../interfaces/pagination.interface";
 
 @Injectable()
 export class VocabularyService {
@@ -14,7 +15,7 @@ export class VocabularyService {
     topicId: number,
     page: number,
     limit: number
-  ): Promise<{ data: Vocabulary[]; total: number }> {
+  ): Promise<PaginationResponse<Vocabulary>> {
 
     const [data, total] = await this.vocabularyRepo.findAndCount({
       where: {
@@ -26,7 +27,17 @@ export class VocabularyService {
       take: limit,
     });
 
-    return { data, total };
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      items: data,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages,
+      },
+    };
   }
 
   async findVocabularyById(vocabularyId: number): Promise<Vocabulary | null> {
