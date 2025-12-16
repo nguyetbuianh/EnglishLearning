@@ -4,8 +4,8 @@ import { BaseHandler, MChannelMessage } from "./base";
 import { CommandType } from "../enums/commands.enum";
 import { MezonClient } from "mezon-sdk";
 import { VocabularyService } from "../../vocabulary/vocabulary.service";
-import { ImportWordService } from "../../translaste/import-word.service";
 import { MessageBuilder } from "../builders/message.builder";
+import { TranslateService } from "../../translaste/translate.service";
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.COMMAND_TRANSLATE)
@@ -13,7 +13,7 @@ export class TranslateHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,
     private readonly vocabularyService: VocabularyService,
-    private readonly importWordService: ImportWordService
+    private readonly translateService: TranslateService,
   ) {
     super(client);
   }
@@ -33,7 +33,7 @@ export class TranslateHandler extends BaseHandler<MChannelMessage> {
       const existingWord = await this.vocabularyService.getVocabByWord(textToTranslate);
 
       if (!existingWord) {
-        const translaste = await this.importWordService.importWord(textToTranslate);
+        const translaste = await this.translateService.ingestVocabulary(textToTranslate);
 
         const messagePayload = new MessageBuilder()
           .createEmbed({

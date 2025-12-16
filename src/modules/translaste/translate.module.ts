@@ -1,24 +1,27 @@
 import { Module } from "@nestjs/common";
 import { TranslateService } from "./translate.service";
-import { ImportWordService } from "./import-word.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Vocabulary } from "../../entities/vocabulary.entity";
 import { Topic } from "../../entities/topic.entity";
+import { TranslateController } from "../../controllers/translate.controller";
+import { VocabularyModule } from "../vocabulary/vocabulary.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Vocabulary,
       Topic
-    ])
+    ]),
+    VocabularyModule
   ],
   providers: [
-    TranslateService,
-    ImportWordService
+    TranslateService
+  ],
+  controllers: [
+    TranslateController
   ],
   exports: [
-    TranslateService,
-    ImportWordService
+    TranslateService
   ],
 })
 export class TrasnlateModule { }
