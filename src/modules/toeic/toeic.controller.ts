@@ -25,7 +25,7 @@ import { plainToInstance } from 'class-transformer';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
-@Controller('tests/toeic')
+@Controller('toeic/tests')
 export class ToeicController {
   constructor(
     private readonly toeicTestService: ToeicTestService,
@@ -34,7 +34,7 @@ export class ToeicController {
     private readonly userAnswerService: UserAnswerService
   ) { }
 
-  // GET /tests
+  // GET toeic/tests
   @Get()
   @ApiOkResponse({
     type: TestPaginationResponseResponse,
@@ -49,8 +49,8 @@ export class ToeicController {
     );
   }
 
-  //GET /tests/:testId
-  @Get(':testId/detail')
+  //GET toeic/tests/:testId
+  @Get(':testId')
   @ApiOkResponse({
     type: ProgressDetailResponse,
     isArray: true,
@@ -68,7 +68,7 @@ export class ToeicController {
     );
   }
 
-  // GET /:testId/parts/:partId
+  // GET toeic/:testId/parts/:partId
   @Get(':testId/parts/:partId')
   @ApiOkResponse({
     type: PartProgressDetailResponse,
@@ -92,7 +92,8 @@ export class ToeicController {
       { excludeExtraneousValues: true }
     );
   }
-  // POST /tests/:testId/parts/:partId/submit
+  
+  // POST toeic/tests/:testId/parts/:partId/submit
   @Post(':testId/parts/:partId/submit')
   @ApiCreatedResponse()
   async submitTestAnswers(
@@ -112,7 +113,7 @@ export class ToeicController {
     });
   }
 
-  // GET /tests/:testId/results
+  // GET toeic/tests/:testId/results
   @Get(':testId/results')
   @ApiOkResponse({
     type: UserResultDto,
