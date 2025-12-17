@@ -7,7 +7,8 @@ import { VocabularyService } from "../vocabulary/vocabulary.service";
 import { PaginationDto } from "../../dtos/pagination.dto";
 import { plainToInstance } from "class-transformer";
 import { VocabularyResponse } from "../../responses/vocab.response.";
-import { TopicResponse, VocabPaginationResponse } from "../../responses/topic-response";
+import { TopicResponse } from "../../responses/topic-response";
+import { DataResponse } from "../../responses/data.response";
 
 
 @ApiBearerAuth('access-token')
@@ -21,29 +22,36 @@ export class TopicController {
 
   // GET /topics
   @Get()
-  @ApiOkResponse({ type: TopicResponse })
-  async findAllTopics(): Promise<TopicResponse[]> {
+  @ApiOkResponse({ type: DataResponse<TopicResponse> })
+  async findAllTopics(): Promise<DataResponse<TopicResponse[]>> {
     const topic = await this.topicService.getAllTopics();
-    return topic;
+    return {
+      data: topic
+    };
   }
 
   //GET /:topicId/vocab
   @Get('/:topicId/vocab')
-  @ApiOkResponse({ type: VocabPaginationResponse })
+  @ApiOkResponse({
+    type: DataResponse<VocabularyResponse>,
+    isArray: true
+  })
   async findVocabsOfTopic(
     @Param() topicParams: TopicIdParamDto,
     @Query() paginationQuery: PaginationDto
-  ): Promise<VocabPaginationResponse> {
+  ): Promise<DataResponse<VocabularyResponse[]>> {
     const topicId = topicParams.topicId;
     const { page, limit } = paginationQuery;
     const { items, pagination } = await this.vocabService.getVocabulariesByTopic(topicId, page, limit);
 
+    const vocabTransform = plainToInstance(VocabularyResponse, items, {
+      excludeExtraneousValues: true,
+    });
+
     return {
-      items: plainToInstance(VocabularyResponse, items, {
-        excludeExtraneousValues: true,
-      }),
-      pagination,
-    };
+      data: vocabTransform,
+      pagination
+    }
   }
 
 }

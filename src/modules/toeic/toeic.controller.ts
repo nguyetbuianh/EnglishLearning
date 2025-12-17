@@ -13,8 +13,8 @@ import { UserAnswersDto } from '../../dtos/user-answer.dto';
 import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { QuestionWithUserAnswerResponse } from '../../responses/question-answer.response';
 import { JwtAuthGuard } from '../../auth/jwt.guard';
-import { PartProgressDetailResponse, ProgressDetailResponse } from '../../responses/part-progress-detail.response';
-import { TestPaginationResponseResponse } from '../../responses/user-progress.response';
+import { ProgressDetailResponse } from '../../responses/part-progress-detail.response';
+import { TestWithProgressResponse } from '../../responses/user-progress.response';
 import { ContinueProgressDto, TesParamsDto, TestPartParamsDto } from '../../dtos/test-part.dto';
 import { ToeicTestService } from './services/toeic-test.service';
 import { UserProgressService } from './services/user-progress.service';
@@ -22,6 +22,7 @@ import { ToeicQuestionService } from './services/toeic-question.service';
 import { UserAnswerService } from './services/user-answer.service';
 import { UserResultDto } from '../../dtos/user-result.dto';
 import { plainToInstance } from 'class-transformer';
+import { DataResponse } from '../../responses/data.response';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -37,62 +38,75 @@ export class ToeicController {
   // GET toeic/tests
   @Get()
   @ApiOkResponse({
-    type: TestPaginationResponseResponse,
+    type: DataResponse<TestWithProgressResponse>,
   })
   async findAllTests(
     @Request() req,
     @Query() query: PaginationDto
-  ): Promise<TestPaginationResponseResponse> {
-    return this.toeicTestService.findAllTestsWithProgress(
+  ): Promise<DataResponse<TestWithProgressResponse>> {
+    const { items, pagination } = await this.toeicTestService.findAllTestsWithProgress(
       query,
       req.user,
     );
+
+    return {
+      data: items,
+      pagination
+    }
   }
 
   //GET toeic/tests/:testId
   @Get(':testId')
   @ApiOkResponse({
-    type: ProgressDetailResponse,
+    type: DataResponse<ProgressDetailResponse>,
     isArray: true,
   })
   async findTestDetail(
     @Request() req,
     @Param() params: TesParamsDto
-  ): Promise<ProgressDetailResponse> {
+  ): Promise<DataResponse<ProgressDetailResponse>> {
     const { testId } = params;
     const { userMezonId } = req.user;
 
-    return this.userProgressService.getTestDetailProgress(
+    const progressDetail = await this.userProgressService.getTestDetailProgress(
       testId,
       userMezonId,
     );
+
+    return {
+      data: progressDetail
+    }
   }
 
   // GET toeic/:testId/parts/:partId
   @Get(':testId/parts/:partId')
   @ApiOkResponse({
-    type: PartProgressDetailResponse,
+    type: DataResponse<QuestionWithUserAnswerResponse>,
     isArray: true,
   })
   async findQuestionTestPart(
     @Request() req,
     @Param() params: TestPartParamsDto,
     @Query() query: ContinueProgressDto
-  ): Promise<QuestionWithUserAnswerResponse[]> {
-    const data =
+  ): Promise<DataResponse<QuestionWithUserAnswerResponse[]>> {
+    const question =
       await this.questionService.getQuestionsForTestPart(
         req.user,
         params,
         query
       );
 
-    return plainToInstance(
+    const questionTransform = plainToInstance(
       QuestionWithUserAnswerResponse,
-      data,
+      question,
       { excludeExtraneousValues: true }
     );
+
+    return {
+      data: questionTransform
+    }
   }
-  
+
   // POST toeic/tests/:testId/parts/:partId/submit
   @Post(':testId/parts/:partId/submit')
   @ApiCreatedResponse()
@@ -116,12 +130,12 @@ export class ToeicController {
   // GET toeic/tests/:testId/results
   @Get(':testId/results')
   @ApiOkResponse({
-    type: UserResultDto,
+    type: DataResponse<UserResultDto>,
   })
   async getUserTestResult(
     @Request() req,
     @Param() param: TesParamsDto,
-  ): Promise<UserResultDto> {
+  ): Promise<DataResponse<UserResultDto>> {
     const { userId } = req.user;
     const testId = param.testId;
 
@@ -130,6 +144,8 @@ export class ToeicController {
       testId,
     );
 
-    return result;
+    return {
+      data: result
+    };
   }
 }

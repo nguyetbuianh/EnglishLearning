@@ -14,6 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './modules/auth/auth.module';
 import { VocabularyModule } from './modules/vocabulary/vocabulary.module';
 import { StatModule } from './modules/stat/stat.module';
+import { UserProcessModule } from './modules/user-process/user-process.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { StatModule } from './modules/stat/stat.module';
     JwtModule,
     AuthJWTModule,
     VocabularyModule,
-    StatModule
+    StatModule,
+    UserProcessModule
   ]
 })
 export class AppModule { }
