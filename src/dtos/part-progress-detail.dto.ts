@@ -16,13 +16,5 @@ export class PartProgressDetailDto {
 
   @ApiProperty()
   @Expose()
-  currentQuestionNumber: number;
-
-  @ApiProperty({ nullable: true })
-  @Expose()
-  currentPassageNumber: number | null;
-
-  @ApiProperty()
-  @Expose()
   isCompleted: boolean;
 }

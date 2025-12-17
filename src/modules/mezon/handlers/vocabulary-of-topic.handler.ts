@@ -53,7 +53,8 @@ export class ShowVocabularyHandler extends BaseHandler<MMessageButtonClicked> {
       const { topicId, page } = parsed;
 
       const limit = 3;
-      const { data: vocabularies, total } = await this.vocabularyService.getVocabulariesByTopic(topicId, page, limit);
+      const { items: vocabularies, pagination } = await this.vocabularyService.getVocabulariesByTopic(topicId, page, limit);
+      const total = pagination.total;
       if (!vocabularies?.length) {
         return;
       }
