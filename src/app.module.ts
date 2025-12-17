@@ -13,6 +13,7 @@ import { TopicModule } from './modules/topic-vocabulary/topic.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './modules/auth/auth.module';
 import { VocabularyModule } from './modules/vocabulary/vocabulary.module';
+import { StatModule } from './modules/stat/stat.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { VocabularyModule } from './modules/vocabulary/vocabulary.module';
     TopicModule,
     JwtModule,
     AuthJWTModule,
-    VocabularyModule
+    VocabularyModule,
+    StatModule
   ]
 })
 export class AppModule { }

@@ -1,18 +1,17 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserStats } from "../../../entities/user-stat.entity";
-import { User } from "../../../entities/user.entity";
-import { BadgeEnum } from "../../../enum/badge.enum";
-import { UserAnswerService } from "../../toeic/services/user-answer.service";
+import { UserStats } from "../../entities/user-stat.entity";
+import { User } from "../../entities/user.entity";
+import { BadgeEnum } from "../../enum/badge.enum";
 import { Repository } from "typeorm";
+import { UserAnswer } from "../../entities/user-answer.entity";
 
 @Injectable()
-export class UserStatService {
+export class StatService {
   private readonly POINT_CHANGE = 5;
   constructor(
     @InjectRepository(UserStats)
-    private readonly userStatsRepo: Repository<UserStats>,
-    private readonly userAnswerService: UserAnswerService
+    private readonly userStatsRepo: Repository<UserStats>
   ) { }
 
   private toDateString(date: Date | string): string {
@@ -159,18 +158,16 @@ export class UserStatService {
     return Array.from(badges);
   }
 
-  async addPartScore(testId: number, partId: number, userId: number): Promise<string[]> {
+  async addPartScoreByAnswers(
+    userId: number,
+    answers: UserAnswer[],
+  ): Promise<string[]> {
+    if (answers.length === 0) return [];
+
     const userStat = await this.userStatsRepo.findOne({
       where: { user: { id: userId } },
     });
     if (!userStat) return [];
-
-    const answers = await this.userAnswerService.getUserAnswersByPartAndTest(
-      testId,
-      partId,
-      userId
-    );
-    if (answers.length === 0) return [];
 
     const correctCount = answers.filter(a => a.isCorrect).length;
     const totalCount = answers.length;
@@ -185,28 +182,29 @@ export class UserStatService {
 
     if (accuracy === 100) {
       userStat.badges = Array.from(
-        new Set([...(userStat.badges || []), BadgeEnum.PERFECT_PART])
+        new Set([...userStat.badges, BadgeEnum.PERFECT_PART]),
       );
     } else {
       userStat.badges = Array.from(
-        new Set([...(userStat.badges || []), BadgeEnum.PART_FINISHER])
+        new Set([...userStat.badges, BadgeEnum.PART_FINISHER]),
       );
     }
 
     await this.userStatsRepo.save(userStat);
 
-    const newBadges = userStat.badges.filter(b => !oldBadges.has(b));
-    return newBadges;
+    return userStat.badges.filter(b => !oldBadges.has(b));
   }
 
-  async addTestScore(testId: number, userId: number): Promise<string[]> {
+  async addTestScoreByAnswers(
+    userId: number,
+    answers: UserAnswer[],
+  ): Promise<string[]> {
+    if (!answers || answers.length === 0) return [];
+
     const userStat = await this.userStatsRepo.findOne({
       where: { user: { id: userId } },
     });
     if (!userStat) return [];
-
-    const answers = await this.userAnswerService.getUserAnswersByTest(userId, testId);
-    if (answers.length === 0) return [];
 
     const correctCount = answers.filter(a => a.isCorrect).length;
     const totalCount = answers.length;
@@ -222,17 +220,16 @@ export class UserStatService {
 
     if (accuracy === 100) {
       userStat.badges = Array.from(
-        new Set([...(userStat.badges || []), BadgeEnum.PERFECT_TEST])
+        new Set([...userStat.badges, BadgeEnum.PERFECT_TEST]),
       );
     } else {
       userStat.badges = Array.from(
-        new Set([...(userStat.badges || []), BadgeEnum.TEST_FINISHER])
+        new Set([...userStat.badges, BadgeEnum.TEST_FINISHER]),
       );
     }
 
     await this.userStatsRepo.save(userStat);
 
-    const newBadges = userStat.badges.filter(b => !oldBadges.has(b));
-    return newBadges;
+    return userStat.badges.filter(b => !oldBadges.has(b));
   }
 }

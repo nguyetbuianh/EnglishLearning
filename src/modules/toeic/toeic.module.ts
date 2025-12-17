@@ -14,8 +14,11 @@ import { Passage } from '../../entities/passage.entity';
 import { UserAnswer } from '../../entities/user-answer.entity';
 import { UserProgress } from '../../entities/progress.entity';
 import { QuestionOption } from '../../entities/question-option.entity';
-import { TestsController } from '../../controllers/tests.controller';
-import { ToeicTestPracticeService } from '../../services/toeic-test-practice.service';
+import { UserModule } from '../user/user.module';
+import { ToeicController } from './toeic.controller';
+import { StatService } from '../stat/stat.service';
+import { UserStats } from '../../entities/user-stat.entity';
+import { StatModule } from '../stat/stat.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -25,10 +28,14 @@ import { ToeicTestPracticeService } from '../../services/toeic-test-practice.ser
     Passage,
     UserAnswer,
     UserProgress,
-    QuestionOption
-  ])],
+    QuestionOption,
+    UserStats
+  ]),
+    UserModule,
+    StatModule
+  ],
   controllers: [
-    TestsController
+    ToeicController
   ],
   providers: [
     ToeicPartService,
@@ -38,7 +45,7 @@ import { ToeicTestPracticeService } from '../../services/toeic-test-practice.ser
     UserAnswerService,
     UserProgressService,
     QuestionOptionService,
-    ToeicTestPracticeService
+    StatService
   ],
   exports: [
     ToeicPartService,
@@ -48,7 +55,7 @@ import { ToeicTestPracticeService } from '../../services/toeic-test-practice.ser
     UserAnswerService,
     UserProgressService,
     QuestionOptionService,
-    ToeicTestPracticeService
+    StatService
   ],
 })
 export class ToeicModule { }

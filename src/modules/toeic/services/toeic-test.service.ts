@@ -1,15 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ToeicTest } from '../../../entities/toeic-test.entity';
 import { PaginationDto } from '../../../dtos/pagination.dto';
-import { PaginationResponse } from '../../../interfaces/pagination.interface';
+import { PaginationInterface, PaginationResponse } from '../../../interfaces/pagination.interface';
+import { UserInterface } from '../../../interfaces/user.interface';
+import { TestPaginationResponseResponse } from '../../../responses/user-progress.response';
+import { UserProgressService } from './user-progress.service';
 
 @Injectable()
 export class ToeicTestService {
   constructor(
     @InjectRepository(ToeicTest)
     private readonly testRepo: Repository<ToeicTest>,
+    private readonly userProgressService: UserProgressService
   ) { }
 
   async getAllTests(): Promise<ToeicTest[]> {
@@ -45,5 +49,32 @@ export class ToeicTestService {
         totalPages,
       },
     };
+  }
+
+  async findAllTestsWithProgress(
+    query: PaginationInterface,
+    user: UserInterface,
+  ): Promise<TestPaginationResponseResponse> {
+    const { items, pagination } =
+      await this.getAllTestsPagination(query);
+
+    const progressMap =
+      await this.userProgressService.getTestWithProgress(user);
+
+    const itemsWithProgress = items.map(test => ({
+      ...test,
+      partsProcess: progressMap.get(test.id) ?? null,
+    }));
+
+    return {
+      items: itemsWithProgress,
+      pagination,
+    };
+  }
+
+  async getValidatedTest(testId: number) {
+    const test = await this.findTestById(testId);
+    if (!test) throw new NotFoundException("Test not found");
+    return test;
   }
 }

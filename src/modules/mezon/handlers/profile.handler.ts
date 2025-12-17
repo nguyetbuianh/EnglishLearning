@@ -5,7 +5,7 @@ import { CommandType } from "../enums/commands.enum";
 import { BaseHandler, MChannelMessage } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
 import { UserService } from "../../user/user.service";
-import { UserStatService } from "../../daily/services/user-stat.service";
+import { StatService } from "../../stat/stat.service";
 import { getJoinAt } from "../utils/date.util";
 
 @Injectable({ scope: Scope.TRANSIENT })
@@ -14,7 +14,7 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
   constructor(
     protected readonly client: MezonClient,
     private readonly userService: UserService,
-    private readonly userStatService: UserStatService
+    private readonly statService: StatService
   ) {
     super(client);
   }
@@ -31,7 +31,7 @@ export class ProfileHandler extends BaseHandler<MChannelMessage> {
       }
 
       const formattedJoinDate = await getJoinAt(user.joinedAt);
-      const userStat = await this.userStatService.findUserStats(user.id);
+      const userStat = await this.statService.findUserStats(user.id);
 
       const badges = userStat ? userStat.badges.slice(-3) : [];
       const points = userStat ? userStat.points : 0;

@@ -14,7 +14,7 @@ import { UserService } from "../../user/user.service";
 import { UserAnswerService } from "../../toeic/services/user-answer.service";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
 import { Passage } from "../../../entities/passage.entity";
-import { UserStatService } from "../../daily/services/user-stat.service";
+import { StatService } from "../../stat/stat.service";
 
 interface PartWithPassageParams {
   mezonUserId: string;
@@ -60,7 +60,7 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
     private readonly userProgressService: UserProgressService,
     private readonly userService: UserService,
     private readonly userAnswerService: UserAnswerService,
-    private readonly userStatService: UserStatService
+    private readonly statService: StatService
   ) {
     super(client);
   }
@@ -250,7 +250,9 @@ export class NextQuestionHandler extends BaseHandler<MMessageButtonClicked> {
       userAnswers: userAnswers,
     });
 
-    const newBadges = await this.userStatService.addPartScore(testId, partId, userId);
+    const answers =
+      await this.userAnswerService.getUserAnswersByPartAndTest(testId, partId, userId);
+    const newBadges = await this.statService.addPartScoreByAnswers(userId, answers);
     if (newBadges && newBadges.length > 0) {
       await sendAchievementBadgeReply(newBadges, this.mezonMessage);
     }

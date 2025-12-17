@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class VocabularyResponseDto {
+export class VocabularyResponse {
   @Expose()
   id: number;
 

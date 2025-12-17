@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DailyPracticeAnswer } from "../../../entities/daily-practice-answer.entity";
-import { Question } from "../../../entities/question.entity";
-import { User } from "../../../entities/user.entity";
-import { OptionEnum } from "../../../enum/option.enum";
+import { DailyPracticeAnswer } from "../../entities/daily-practice-answer.entity";
+import { Question } from "../../entities/question.entity";
+import { User } from "../../entities/user.entity";
+import { OptionEnum } from "../../enum/option.enum";
 import { Repository } from "typeorm";
-import { CachedUser } from "../../../types/caches/user.cache";
+import { CachedUser } from "../../types/caches/user.cache";
 
 @Injectable()
 export class DailyAnswerService {
