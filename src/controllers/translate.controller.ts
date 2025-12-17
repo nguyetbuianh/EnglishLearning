@@ -1,9 +1,8 @@
 import { Body, Controller, Post, UseGuards } from "@nestjs/common";
-import { ApiBearerAuth } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOkResponse } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/jwt.guard";
 import { TranslateDto } from "../dtos/translate.dto";
 import { TranslateResponse } from "../responses/translate.response";
-import { ApiResponseData } from "../decorators/api-data-response.decorator";
 import { TranslateService } from "../modules/translaste/translate.service";
 
 @ApiBearerAuth('access-token')
@@ -14,7 +13,7 @@ export class TranslateController {
     private readonly translateService: TranslateService,
   ) { }
   @Post()
-  @ApiResponseData(TranslateResponse)
+  @ApiOkResponse({ type: TranslateResponse })
   async createTranslate(
     @Body() translateDto: TranslateDto
   ): Promise<TranslateResponse> {
