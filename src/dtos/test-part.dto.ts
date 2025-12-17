@@ -8,11 +8,17 @@ export class TestPartParamsDto {
   @Min(1)
   testId: number;
 
-  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  partId?: number;
+  partId: number;
+}
+
+export class TesParamsDto {
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  testId: number;
 }
 
 export class ContinueProgressDto {

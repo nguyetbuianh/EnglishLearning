@@ -1,15 +1,21 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Question } from '../../../entities/question.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
-import { TestPartParamsDto } from '../../../dtos/test-part.dto';
+import { ContinueProgressDto, TestPartParamsDto } from '../../../dtos/test-part.dto';
+import { UserInterface } from '../../../interfaces/user.interface';
+import { QuestionWithUserAnswerResponse } from '../../../responses/question-answer.response';
+import { UserAnswerService } from './user-answer.service';
+import { UserProgressService } from './user-progress.service';
 @Injectable()
 export class ToeicQuestionService {
   constructor(
     @InjectRepository(Question)
     private readonly questionRepo: Repository<Question>,
+    private readonly answerService: UserAnswerService,
+    private readonly progressService: UserProgressService,
     @Inject(CACHE_MANAGER) private cache: Cache
   ) { }
 
@@ -186,5 +192,53 @@ export class ToeicQuestionService {
       order: { id: 'ASC' },
       relations: ["options", "passage"]
     });
+  }
+
+  async getQuestionsForTestPart(
+    user: UserInterface,
+    routeParams: TestPartParamsDto,
+    query: ContinueProgressDto
+  ): Promise<QuestionWithUserAnswerResponse[]> {
+
+    const { userId, userMezonId } = user;
+    const { testId, partId } = routeParams;
+
+    if (!testId || !partId || !userId || !userMezonId) {
+      throw new BadRequestException("Missing required parameters");
+    }
+
+    if (query.isContinue) {
+      return this.handleContinueMode(testId, partId, userId);
+    }
+
+    return this.handleRestartMode(testId, partId, userId, userMezonId);
+  }
+
+  private async handleContinueMode(testId: number, partId: number, userId: number): Promise<QuestionWithUserAnswerResponse[]> {
+    const userAnswers = await this.answerService.getUserAnswersByPartAndTest(testId, partId, userId);
+    const questions = await this.getQuestionTestPart({ testId, partId });
+
+    const answerMap = new Map(userAnswers.map(a => [a.questionId, a.chosenOption]));
+
+    const result = questions.map(q => ({
+      ...q,
+      userAnswer: answerMap.get(q.id) ?? null,
+    }));
+
+    return result;
+  }
+
+  private async handleRestartMode(testId: number, partId: number, userId: number, userMezonId: string): Promise<QuestionWithUserAnswerResponse[]> {
+    await this.progressService.deleteProgress(testId, partId, userMezonId);
+    await this.answerService.deleteUserAnswersByPartAndTest(testId, partId, userId);
+
+    const questions = await this.getQuestionTestPart({ testId, partId });
+
+    const result = questions.map(q => ({
+      ...q,
+      userAnswer: null,
+    }));
+
+    return result;
   }
 }

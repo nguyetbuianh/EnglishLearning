@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ToeicTestDto {
+export class ToeicTestResponse {
   @ApiProperty()
   id: number;
 

@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsInt, IsNotEmpty, IsString, IsOptional } from 'class-validator';
 import { OptionEnum } from '../enum/option.enum';
-
 export class UserAnswersDto {
   @IsNotEmpty()
   @IsString()

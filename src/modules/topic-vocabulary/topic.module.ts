@@ -2,16 +2,18 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Topic } from "../../entities/topic.entity";
 import { TopicService } from "./topic.service";
-import { TopicsController } from "../../controllers/topics.controller";
+import { TopicController } from "./topic.controller";
+import { VocabularyModule } from "../vocabulary/vocabulary.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Topic
-    ])
+    ]),
+    VocabularyModule
   ],
   controllers: [
-    TopicsController
+    TopicController
   ],
   providers: [
     TopicService

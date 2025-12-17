@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserProgress } from '../../../entities/progress.entity';
+import { UserInterface } from '../../../interfaces/user.interface';
+import { PartProgressDetailResponse } from '../../../responses/part-progress-detail.response';
 
 @Injectable()
 export class UserProgressService {
@@ -114,4 +116,65 @@ export class UserProgressService {
       )
       .execute();
   }
+
+  async getTestWithProgress(
+    user: UserInterface
+  ): Promise<Map<number, number | null>> {
+
+    const { userMezonId } = user;
+
+    const userProgress =
+      await this.getProgressByUserId(userMezonId);
+
+    const progressMap = new Map<number, number | null>();
+
+    const grouped = new Map<number, { total: number; completed: number }>();
+
+    for (const progress of userProgress) {
+      const testId = progress.testId;
+
+      if (!grouped.has(testId)) {
+        grouped.set(testId, { total: 0, completed: 0 });
+      }
+
+      const stat = grouped.get(testId)!;
+      stat.total += 1;
+
+      if (progress.isCompleted) {
+        stat.completed += 1;
+      }
+    }
+
+    for (const [testId, stat] of grouped.entries()) {
+      if (stat.total === 0) {
+        progressMap.set(testId, null);
+      } else if (stat.completed === 0) {
+        progressMap.set(testId, 0);
+      } else {
+        progressMap.set(testId, stat.completed);
+      }
+    }
+
+    return progressMap;
+  }
+
+  async getTestDetailProgress(
+    testId: number,
+    userMezonId: string,
+  ): Promise<PartProgressDetailResponse[]> {
+    const testProgress =
+      await this.getProgressTest(testId, userMezonId);
+
+    if (!testProgress || testProgress.length === 0) {
+      return [];
+    }
+
+    return testProgress.map(p => ({
+      partId: p.partId,
+      partNumber: p.part.partNumber,
+      partTitle: p.part.title,
+      isCompleted: p.isCompleted,
+    }));
+  }
+
 }

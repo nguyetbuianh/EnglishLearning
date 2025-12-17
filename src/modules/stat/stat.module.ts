@@ -2,17 +2,17 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DailyPracticeAnswer } from "../../entities/daily-practice-answer.entity";
 import { UserStats } from "../../entities/user-stat.entity";
-import { DailyAnswerService } from "./daily-answer.service";
+import { StatService } from "./stat.service";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([DailyPracticeAnswer, UserStats]),
   ],
   providers: [
-    DailyAnswerService,
+    StatService
   ],
   exports: [
-    DailyAnswerService,
+    StatService
   ],
 })
-export class DailyModule { }
+export class StatModule { }

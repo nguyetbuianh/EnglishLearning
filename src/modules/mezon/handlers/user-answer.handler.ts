@@ -7,19 +7,17 @@ import { UserService } from "../../user/user.service";
 import { ToeicQuestionService } from "../../toeic/services/toeic-question.service";
 import { ToeicPartService } from "../../toeic/services/toeic-part.service";
 import { ToeicTestService } from "../../toeic/services/toeic-test.service";
-import { UserAnswer } from "../../../entities/user-answer.entity";
 import { OptionEnum } from "../../../enum/option.enum";
 import { parseOption } from "../../../utils/option.util";
 import { Question } from "../../../entities/question.entity";
 import { CommandType } from "../enums/commands.enum";
-import { DailyAnswerService } from "../../daily/services/daily-answer.service";
+import { DailyAnswerService } from "../../daily/daily-answer.service";
 import { QuestionOptionService } from "../../toeic/services/question-option.service";
-import { UserStatService } from "../../daily/services/user-stat.service";
+import { StatService } from "../../stat/stat.service";
 import { sendAchievementBadgeReply } from "../utils/reply-message.util";
 import { QuestionOption } from "../../../entities/question-option.entity";
 import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
-import { th } from "zod/v4/locales";
 
 interface ParsedButtonId {
   type?: string;
@@ -55,7 +53,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     private readonly toeicTestService: ToeicTestService,
     private readonly userAnswerService: UserAnswerService,
     private readonly dailyAnswerService: DailyAnswerService,
-    private readonly userStatService: UserStatService,
+    private readonly statService: StatService,
     private readonly questionOptionService: QuestionOptionService
   ) {
     super(client);
@@ -121,7 +119,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
     });
     await this.sendAnswerDailyResponse(question, isCorrect, chosenOption);
 
-    const newBadges = await this.userStatService.updateUserStats(user.id, isCorrect);
+    const newBadges = await this.statService.updateUserStats(user.id, isCorrect);
     if (newBadges && newBadges.length > 0) {
       await sendAchievementBadgeReply(newBadges, this.mezonMessage);
     }
@@ -159,7 +157,7 @@ export class UserAnswerHandler extends BaseHandler<MMessageButtonClicked> {
       questionId: question.id
     });
 
-    const newBadges = await this.userStatService.updateUserStats(existingUser.id, isCorrect);
+    const newBadges = await this.statService.updateUserStats(existingUser.id, isCorrect);
 
     if (newBadges && newBadges.length > 0) {
       await Promise.all([

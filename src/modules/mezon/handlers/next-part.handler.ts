@@ -7,11 +7,12 @@ import { ToeicSessionStore } from "../session/toeic-session.store";
 import { ToeicQuestionService } from "../../toeic/services/toeic-question.service";
 import { UserProgressService } from "../../toeic/services/user-progress.service";
 import { UserService } from "../../user/user.service";
-import { UserStatService } from "../../daily/services/user-stat.service";
+import { StatService } from "../../stat/stat.service";
 import { ButtonBuilder } from "../builders/button.builder";
 import { MessageBuilder } from "../builders/message.builder";
 import { replyQuestionMessage, sendAchievementBadgeReply, sendCompletionMessage, sendContinueOrRestartMessage, sendNoQuestionsMessage } from "../utils/reply-message.util";
 import { updateSession } from "../utils/update-session.util";
+import { UserAnswerService } from "../../toeic/services/user-answer.service";
 
 @Injectable({ scope: Scope.TRANSIENT })
 @Interaction(CommandType.BUTTON_NEXT_PART)
@@ -21,7 +22,8 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
     private readonly toeicQuestionService: ToeicQuestionService,
     private readonly userProgressService: UserProgressService,
     private readonly userService: UserService,
-    private readonly userStatService: UserStatService
+    private readonly statService: StatService,
+    private readonly userAnswerService: UserAnswerService
   ) {
     super(client);
   }
@@ -77,7 +79,8 @@ export class NextPartHandler extends BaseHandler<MMessageButtonClicked> {
 
           const user = await this.userService.getUser(mezonUserId);
           if (user) {
-            const newBadges = await this.userStatService.addTestScore(testId, user.id);
+            const answers = await this.userAnswerService.getUserAnswersByTest(user.id, testId);
+            const newBadges = await this.statService.addTestScoreByAnswers(testId, answers);
             if (newBadges && newBadges.length > 0) {
               await sendAchievementBadgeReply(newBadges, this.mezonMessage);
             }

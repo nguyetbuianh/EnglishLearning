@@ -5,15 +5,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
-import { UserProcessService } from '../services/user-process.service';
-import { UserProgressByTestDto } from '../dtos/user-progress.dto';
-import { UserProfileDto } from '../dtos/user-profile.dto';
-import { JwtAuthGuard } from '../auth/jwt.guard';
+import { UserProgressByTestResponse } from '../../responses/user-progress.response';
+import { UserProfileReponse } from '../../responses/user-profile.response';
+import { JwtAuthGuard } from '../../auth/jwt.guard';
+import { UserProcessService } from './user-process.service';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
 @Controller('users')
-export class UsersController {
+export class UserProcessController {
   constructor(
     private userProcessService: UserProcessService
   ) { }
@@ -21,12 +21,12 @@ export class UsersController {
   // GET /users/progress
   @Get('/progress')
   @ApiOkResponse({
-    type: UserProgressByTestDto,
+    type: UserProgressByTestResponse,
     isArray: true
   })
   async findUserProgress(
     @Request() req,
-  ): Promise<UserProgressByTestDto[]> {
+  ): Promise<UserProgressByTestResponse[]> {
     const { userId, userMezonId } = req.user;
     const userProgress = await this.userProcessService.buildUserProgress({ userId, userMezonId });
     return userProgress;
@@ -34,10 +34,10 @@ export class UsersController {
 
   // GET /users/profile
   @Get('/profile')
-  @ApiOkResponse({ type: UserProfileDto })
+  @ApiOkResponse({ type: UserProfileReponse })
   async findUserProfile(
     @Request() req,
-  ): Promise<UserProfileDto> {
+  ): Promise<UserProfileReponse> {
     const { userId, userMezonId } = req.user;
     const userProfile = await this.userProcessService.getUserProfile({ userId, userMezonId });
     return userProfile;

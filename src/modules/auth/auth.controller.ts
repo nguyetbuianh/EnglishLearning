@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from "@nestjs/common";
-import { AuthService } from "../modules/auth/auth.service";
-import { SignInResponse } from "../responses/sign-in.response";
-import { AuthDto } from "../dtos/auth.dto";
+import { AuthService } from "./auth.service";
+import { SignInResponse } from "../../responses/sign-in.response";
+import { AuthDto } from "../../dtos/auth.dto";
 import { ApiOkResponse } from "@nestjs/swagger";
 
 @Controller('auth')

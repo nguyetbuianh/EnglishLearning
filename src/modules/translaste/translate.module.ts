@@ -3,7 +3,7 @@ import { TranslateService } from "./translate.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Vocabulary } from "../../entities/vocabulary.entity";
 import { Topic } from "../../entities/topic.entity";
-import { TranslateController } from "../../controllers/translate.controller";
+import { TranslateController } from "./translate.controller"; 
 import { VocabularyModule } from "../vocabulary/vocabulary.module";
 
 @Module({

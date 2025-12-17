@@ -6,7 +6,7 @@ import { BaseHandler, MMessageButtonClicked } from "./base";
 import { MessageBuilder } from "../builders/message.builder";
 import { Vocabulary } from "../../../entities/vocabulary.entity";
 import { VocabularyService } from "../../vocabulary/vocabulary.service";
-import { UserStatService } from "../../daily/services/user-stat.service";
+import { StatService } from "../../stat/stat.service";
 import { sendAchievementBadgeReply } from "../utils/reply-message.util";
 import { UserService } from "../../user/user.service";
 
@@ -29,7 +29,7 @@ export class GuessWordAnswerHandler extends BaseHandler<MMessageButtonClicked> {
   constructor(
     protected readonly client: MezonClient,
     protected readonly vocabService: VocabularyService,
-    protected readonly userStatService: UserStatService,
+    protected readonly statService: StatService,
     protected readonly userService: UserService
   ) {
     super(client);
@@ -67,7 +67,7 @@ export class GuessWordAnswerHandler extends BaseHandler<MMessageButtonClicked> {
         return;
       }
       const isCorrect = answerValue.trim().toLowerCase() === word.trim().toLowerCase();
-      const newBadges = await this.userStatService.updateUserStats(user.id, isCorrect);
+      const newBadges = await this.statService.updateUserStats(user.id, isCorrect);
       if (newBadges && newBadges.length > 0) {
         await sendAchievementBadgeReply(newBadges, this.mezonMessage);
       }

@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Parts } from "../interfaces/parts.interface";
-import { UserProgressService } from "../modules/toeic/services/user-progress.service";
-import { UserAnswerService } from "../modules/toeic/services/user-answer.service";
-import { TOEIC_PART } from "../contants/toeic-part.contant";
-import { UserProgress } from "../entities/progress.entity";
-import { UserInterface } from "../interfaces/user.interface";
-import { UserProgressByTest } from "../interfaces/user-progress.interface";
-import { UserService } from "../modules/user/user.service";
-import { getJoinAt } from "../modules/mezon/utils/date.util";
-import { UserStatService } from "../modules/daily/services/user-stat.service";
-import { UserProgressByTestDto } from "../dtos/user-progress.dto";
-import { UserProfileDto } from "../dtos/user-profile.dto";
+import { Parts } from "../../interfaces/parts.interface"; 
+import { UserProgressService } from "../toeic/services/user-progress.service"; 
+import { UserAnswerService } from "../toeic/services/user-answer.service";
+import { TOEIC_PART } from "../../contants/toeic-part.contant";
+import { UserProgress } from "../../entities/progress.entity";
+import { UserInterface } from "../../interfaces/user.interface"; 
+import { UserProgressByTest } from "../../interfaces/user-progress.interface"; 
+import { UserService } from "../user/user.service";
+import { getJoinAt } from "../mezon/utils/date.util"; 
+import { StatService } from "../stat/stat.service"; 
+import { UserProgressByTestResponse } from "../../responses/user-progress.response"; 
+import { UserProfileReponse } from "../../responses/user-profile.response"; 
 
 @Injectable()
 export class UserProcessService {
@@ -18,10 +18,10 @@ export class UserProcessService {
     private readonly userProgressService: UserProgressService,
     private readonly userAnswerService: UserAnswerService,
     private readonly userService: UserService,
-    private readonly userStatService: UserStatService
+    private readonly statService: StatService
   ) { }
 
-  async buildUserProgress(userParams: UserInterface): Promise<UserProgressByTestDto[]> {
+  async buildUserProgress(userParams: UserInterface): Promise<UserProgressByTestResponse[]> {
     const { userId, userMezonId } = userParams;
     const userProgress = await this.userProgressService.getProgressByUserId(userMezonId);
 
@@ -76,7 +76,7 @@ export class UserProcessService {
     map.get(testId)!.parts.push(part);
   }
 
-  async getUserProfile(userParams: UserInterface): Promise<UserProfileDto> {
+  async getUserProfile(userParams: UserInterface): Promise<UserProfileReponse> {
     const { userId, userMezonId } = userParams;
     const user = await this.userService.getUser(userMezonId);
     if (!user) {
@@ -85,7 +85,7 @@ export class UserProcessService {
 
     const formattedJoinDate = getJoinAt(user.joinedAt);
 
-    const userStat = await this.userStatService.findUserStats(userId);
+    const userStat = await this.statService.findUserStats(userId);
     const badges = userStat?.badges ?? [];
     const points = userStat?.points ?? 0;
 
