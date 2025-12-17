@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserProgress } from '../../../entities/progress.entity';
 import { UserInterface } from '../../../interfaces/user.interface';
-import { PartProgressDetailResponse } from '../../../responses/part-progress-detail.response';
+import { PartProgressDetailResponse, ProgressDetailResponse } from '../../../responses/part-progress-detail.response';
 
 @Injectable()
 export class UserProgressService {
@@ -161,20 +161,24 @@ export class UserProgressService {
   async getTestDetailProgress(
     testId: number,
     userMezonId: string,
-  ): Promise<PartProgressDetailResponse[]> {
+  ): Promise<ProgressDetailResponse> {
     const testProgress =
       await this.getProgressTest(testId, userMezonId);
 
     if (!testProgress || testProgress.length === 0) {
-      return [];
+      throw NotFoundException;
     }
 
-    return testProgress.map(p => ({
-      partId: p.partId,
-      partNumber: p.part.partNumber,
-      partTitle: p.part.title,
-      isCompleted: p.isCompleted,
-    }));
-  }
+    const test = testProgress[0].test;
 
+    return {
+      test,
+      parts: testProgress.map(p => ({
+        partId: p.partId,
+        partNumber: p.part.partNumber,
+        partTitle: p.part.title,
+        isCompleted: p.isCompleted,
+      })),
+    };
+  }
 }

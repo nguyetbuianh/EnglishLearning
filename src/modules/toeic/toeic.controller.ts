@@ -13,7 +13,7 @@ import { UserAnswersDto } from '../../dtos/user-answer.dto';
 import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { QuestionWithUserAnswerResponse } from '../../responses/question-answer.response';
 import { JwtAuthGuard } from '../../auth/jwt.guard';
-import { PartProgressDetailResponse } from '../../responses/part-progress-detail.response';
+import { PartProgressDetailResponse, ProgressDetailResponse } from '../../responses/part-progress-detail.response';
 import { TestPaginationResponseResponse } from '../../responses/user-progress.response';
 import { ContinueProgressDto, TesParamsDto, TestPartParamsDto } from '../../dtos/test-part.dto';
 import { ToeicTestService } from './services/toeic-test.service';
@@ -21,10 +21,11 @@ import { UserProgressService } from './services/user-progress.service';
 import { ToeicQuestionService } from './services/toeic-question.service';
 import { UserAnswerService } from './services/user-answer.service';
 import { UserResultDto } from '../../dtos/user-result.dto';
+import { plainToInstance } from 'class-transformer';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
-@Controller('tests')
+@Controller('tests/toeic')
 export class ToeicController {
   constructor(
     private readonly toeicTestService: ToeicTestService,
@@ -51,13 +52,13 @@ export class ToeicController {
   //GET /tests/:testId
   @Get(':testId/detail')
   @ApiOkResponse({
-    type: PartProgressDetailResponse,
+    type: ProgressDetailResponse,
     isArray: true,
   })
   async findTestDetail(
     @Request() req,
     @Param() params: TesParamsDto
-  ): Promise<PartProgressDetailResponse[]> {
+  ): Promise<ProgressDetailResponse> {
     const { testId } = params;
     const { userMezonId } = req.user;
 
@@ -78,9 +79,19 @@ export class ToeicController {
     @Param() params: TestPartParamsDto,
     @Query() query: ContinueProgressDto
   ): Promise<QuestionWithUserAnswerResponse[]> {
-    return this.questionService.getQuestionsForTestPart(req.user, params, query);
-  }
+    const data =
+      await this.questionService.getQuestionsForTestPart(
+        req.user,
+        params,
+        query
+      );
 
+    return plainToInstance(
+      QuestionWithUserAnswerResponse,
+      data,
+      { excludeExtraneousValues: true }
+    );
+  }
   // POST /tests/:testId/parts/:partId/submit
   @Post(':testId/parts/:partId/submit')
   @ApiCreatedResponse()

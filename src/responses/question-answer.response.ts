@@ -4,7 +4,7 @@ import { QuestionOption } from "../entities/question-option.entity";
 import { ToeicPart } from "../entities/toeic-part.entity";
 import { ToeicTest } from "../entities/toeic-test.entity";
 import { OptionEnum } from "../enum/option.enum";
-import { Expose } from "class-transformer";
+import { Expose, Type } from "class-transformer";
 
 export class QuestionWithUserAnswerResponse {
   @ApiProperty()
@@ -33,10 +33,6 @@ export class QuestionWithUserAnswerResponse {
 
   @ApiProperty()
   @Expose()
-  correctOption: OptionEnum;
-
-  @ApiProperty()
-  @Expose()
   explanation: string;
 
   @ApiProperty()
@@ -47,12 +43,22 @@ export class QuestionWithUserAnswerResponse {
   @Expose()
   audioUrl: string | null;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => QuestionOptionResponse })
   @Expose()
-  options: QuestionOption[];
+  @Type(() => QuestionOptionResponse)
+  options: QuestionOptionResponse[];
 
   @ApiProperty()
   @Expose()
   userAnswer: OptionEnum | null;
 }
 
+export class QuestionOptionResponse {
+  @ApiProperty()
+  @Expose()
+  optionLabel: OptionEnum;
+
+  @ApiProperty()
+  @Expose()
+  optionText: string;
+}
