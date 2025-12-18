@@ -52,28 +52,22 @@ export class AuthService {
       }),
     });
 
-    if (!res.ok) {
+    console.log({
+      grant_type: 'authorization_code',
+      code,
+      state,
+      client_id: appConfig.oauth.clientId,
+      client_secret: appConfig.oauth.clientSecret,
+      redirect_uri: appConfig.oauth.redirectUri,
+      scope: 'openid offline',
+    })
+
+    if (res.ok === false) {
       throw new BadRequestException('OAuth token exchange failed');
     }
     const data: ExchangeCodeData = await res.json();
 
     return data
-  }
-
-  async signIn(
-    mezonUserId: string,
-    displayName: string
-  ): Promise<{ access_token: string }> {
-    const user = await this.userRepo.findOne({ where: { mezonUserId } });
-    if (!user) {
-      await this.userService.createUserByMezonId(mezonUserId, displayName);
-    }
-
-    const payload = { sub: user?.id, username: user?.mezonUserId };
-
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
   }
 
   async userInfo(accessToken: string): Promise<UserInfoData> {
@@ -96,5 +90,21 @@ export class AuthService {
     const data: UserInfoData = await userRes.json();
 
     return data;
+  }
+
+  async signIn(
+    mezonUserId: string,
+    displayName: string
+  ): Promise<{ access_token: string }> {
+    const user = await this.userRepo.findOne({ where: { mezonUserId } });
+    if (!user) {
+      await this.userService.createUserByMezonId(mezonUserId, displayName);
+    }
+
+    const payload = { sub: user?.id, username: user?.mezonUserId };
+
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }

@@ -1,29 +1,25 @@
-import { Controller, Get, Query } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, Redirect, Res } from "@nestjs/common";
 import { AuthService } from "../modules/auth/auth.service";
-import { SignInResponse } from "../responses/sign-in.response";
 import { AuthDto } from "../dtos/auth.dto";
-import { ApiOkResponse } from "@nestjs/swagger";
 
-@Controller('auth')
+@Controller('oauth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService
   ) { }
 
-  @Get('/login/callback')
-  @ApiOkResponse({ type: SignInResponse })
+  @Post('/login')
   async login(
-    @Query() authDto: AuthDto,
-  ): Promise<SignInResponse> {
-    const { code, state, scope } = authDto;
-
-    const returnData = await this.authService.exchangeCode(code, state);
+    @Body() body: {
+      code: string;
+      state: string;
+    },
+  ) {
+    const returnData = await this.authService.exchangeCode(body.code, body.state);
 
     const userRes = await this.authService.userInfo(returnData.access_token);
 
-    const jwt = await this.authService.signIn(userRes.user_id, userRes.display_name);
-
-    return jwt;
+    return await this.authService.signIn(userRes.user_id, userRes.display_name);
   }
 
 }
