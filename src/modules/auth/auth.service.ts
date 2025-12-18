@@ -52,9 +52,6 @@ export class AuthService {
       }),
     });
 
-    if (!res.ok) {
-      throw new BadRequestException('OAuth token exchange failed');
-    }
     const data: ExchangeCodeData = await res.json();
 
     return data
