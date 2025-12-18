@@ -15,6 +15,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { VocabularyModule } from './modules/vocabulary/vocabulary.module';
 import { StatModule } from './modules/stat/stat.module';
 import { UserProcessModule } from './modules/user-process/user-process.module';
+import { FavoriteVocabularyModule } from './modules/favorite-vocabulary/favorite_vocabulary.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { UserProcessModule } from './modules/user-process/user-process.module';
     AuthJWTModule,
     VocabularyModule,
     StatModule,
-    UserProcessModule
+    UserProcessModule,
+    FavoriteVocabularyModule
   ]
 })
 export class AppModule { }
