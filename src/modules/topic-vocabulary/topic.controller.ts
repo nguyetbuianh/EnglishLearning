@@ -8,7 +8,7 @@ import { PaginationDto } from "../../dtos/pagination.dto";
 import { plainToInstance } from "class-transformer";
 import { TopicResponse } from "../../responses/topic-response";
 import { DataResponse } from "../../responses/data.response";
-import { VocabularyResponse } from "../../responses/vocab.response";
+import { VocabularyResponse } from "../../responses/vocab.response.";
 
 
 @ApiBearerAuth('access-token')
