@@ -4,7 +4,7 @@ import { FavoriteVocabulary } from "../../entities/favorite-vocabulary.entity";
 import { In, Repository } from "typeorm";
 import { VocabularyService } from "../vocabulary/vocabulary.service";
 import { PaginationResponse } from "../../interfaces/pagination.interface";
-import { FavVocabResponse } from "../../responses/vocab.response";
+import { FavVocabResponse } from "../../responses/vocab.response."; 
 import { plainToInstance } from "class-transformer";
 
 @Injectable()
