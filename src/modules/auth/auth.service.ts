@@ -94,4 +94,17 @@ export class AuthService {
 
     return data;
   }
+
+  getOauthUrl(): string {
+    const params = new URLSearchParams({
+      client_id: appConfig.oauth.clientId,
+      redirect_uri: appConfig.oauth.redirectUri,
+      response_type: 'code',
+      scope: 'openid offline',
+      state: crypto.randomUUID().substring(0, 10),
+    });
+
+    return `${appConfig.oauth.baseUri}/oauth2/auth?${params.toString()}`;
+  }
+
 }

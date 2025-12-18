@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
   Param,
-  Body,
+  Post,
   Query,
   Request,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { PaginationDto } from '../../dtos/pagination.dto';
 import { UserAnswersDto } from '../../dtos/user-answer.dto';
@@ -17,12 +18,14 @@ import { ProgressDetailResponse } from '../../responses/part-progress-detail.res
 import { TestWithProgressResponse } from '../../responses/user-progress.response';
 import { ContinueProgressDto, TesParamsDto, TestPartParamsDto } from '../../dtos/test-part.dto';
 import { ToeicTestService } from './services/toeic-test.service';
+import { ToeicPartService } from './services/toeic-part.service';
 import { UserProgressService } from './services/user-progress.service';
 import { ToeicQuestionService } from './services/toeic-question.service';
 import { UserAnswerService } from './services/user-answer.service';
 import { UserResultDto } from '../../dtos/user-result.dto';
 import { plainToInstance } from 'class-transformer';
 import { DataResponse } from '../../responses/data.response';
+import { PartQuestionResponse } from '../../responses/part-question.response';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -32,7 +35,8 @@ export class ToeicController {
     private readonly toeicTestService: ToeicTestService,
     private readonly userProgressService: UserProgressService,
     private readonly questionService: ToeicQuestionService,
-    private readonly userAnswerService: UserAnswerService
+    private readonly userAnswerService: UserAnswerService,
+    private readonly toeicPartService: ToeicPartService,
   ) { }
 
   // GET toeic/tests
@@ -66,30 +70,35 @@ export class ToeicController {
     @Param() params: TesParamsDto
   ): Promise<DataResponse<ProgressDetailResponse>> {
     const { testId } = params;
-    const { userMezonId } = req.user;
 
-    const progressDetail = await this.userProgressService.getTestDetailProgress(
-      testId,
-      userMezonId,
-    );
+    const test = await this.toeicTestService.findTestById(testId);
+    const parts = await this.toeicPartService.getAllParts();
+
 
     return {
-      data: progressDetail
-    }
+      data: {
+        test,
+        parts: parts.map(part => ({
+          partId: part.id,
+          partNumber: part.partNumber,
+          partTitle: part.title,
+          isCompleted: false,
+        })),
+      }
+    };
   }
 
   // GET toeic/:testId/parts/:partId
   @Get(':testId/parts/:partId')
   @ApiOkResponse({
-    type: DataResponse<QuestionWithUserAnswerResponse>,
-    isArray: true,
+    type: DataResponse<PartQuestionResponse>,
   })
   async findQuestionTestPart(
     @Request() req,
     @Param() params: TestPartParamsDto,
     @Query() query: ContinueProgressDto
-  ): Promise<DataResponse<QuestionWithUserAnswerResponse[]>> {
-    const question =
+  ): Promise<DataResponse<PartQuestionResponse>> {
+    const questions =
       await this.questionService.getQuestionsForTestPart(
         req.user,
         params,
@@ -98,13 +107,21 @@ export class ToeicController {
 
     const questionTransform = plainToInstance(
       QuestionWithUserAnswerResponse,
-      question,
+      questions,
       { excludeExtraneousValues: true }
     );
 
+    const part = await this.toeicPartService.findPartById(params.partId);
+
+    const partQuestion: PartQuestionResponse = {
+      partId: params.partId,
+      partNumber: part.partNumber,
+      questions: questionTransform,
+    };
+
     return {
-      data: questionTransform
-    }
+      data: [partQuestion],
+    };
   }
 
   // POST toeic/tests/:testId/parts/:partId/submit

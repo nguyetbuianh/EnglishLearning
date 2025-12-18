@@ -20,10 +20,12 @@ export class ToeicTestService {
     return this.testRepo.find({ order: { id: 'ASC' } });
   }
 
-  async findTestById(testId: number): Promise<ToeicTest | null> {
-    return await this.testRepo.findOne({
+  async findTestById(testId: number): Promise<ToeicTest> {
+    const test = await this.testRepo.findOne({
       where: { id: testId }
     });
+    if (!test) throw new NotFoundException("Test not found");
+    return test;
   }
 
   async getAllTestsPagination(
