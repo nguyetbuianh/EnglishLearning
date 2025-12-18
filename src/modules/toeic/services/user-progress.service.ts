@@ -3,13 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserProgress } from '../../../entities/progress.entity';
 import { UserInterface } from '../../../interfaces/user.interface';
-import { PartProgressDetailResponse, ProgressDetailResponse } from '../../../responses/part-progress-detail.response';
+import { ProgressDetailResponse } from '../../../responses/part-progress-detail.response';
+import { plainToInstance } from 'class-transformer';
+import { ToeicTestResponse } from '../../../responses/toeic-test.response';
+import { ToeicTest } from '../../../entities/toeic-test.entity';
 
 @Injectable()
 export class UserProgressService {
   constructor(
     @InjectRepository(UserProgress)
     private readonly userProgressRepo: Repository<UserProgress>,
+    @InjectRepository(ToeicTest)
+    private readonly testRepo: Repository<ToeicTest>,
   ) { }
 
   async getProgress(
@@ -162,18 +167,27 @@ export class UserProgressService {
     testId: number,
     userMezonId: string,
   ): Promise<ProgressDetailResponse> {
+
+    const testEntity = await this.testRepo.findOne({
+      where: { id: testId }
+    });
+
+    if (!testEntity) {
+      throw new NotFoundException('Test not found');
+    }
+
+    const test = plainToInstance(
+      ToeicTestResponse,
+      testEntity,
+      { excludeExtraneousValues: true }
+    );
+
     const testProgress =
       await this.getProgressTest(testId, userMezonId);
 
-    if (!testProgress || testProgress.length === 0) {
-      throw NotFoundException;
-    }
-
-    const test = testProgress[0].test;
-
     return {
       test,
-      parts: testProgress.map(p => ({
+      parts: (testProgress ?? []).map(p => ({
         partId: p.partId,
         partNumber: p.part.partNumber,
         partTitle: p.part.title,
