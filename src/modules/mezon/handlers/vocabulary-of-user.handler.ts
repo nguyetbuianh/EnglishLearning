@@ -16,8 +16,8 @@ import { CommandType } from "../enums/commands.enum";
 import { updateSession } from "../utils/update-session.util";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
-import { FavoriteVocabulary } from "../../../entities/favorite-vocabulary.entity";
 import { sendMessageVocab } from "../utils/reply-message.util";
+import { FavVocabResponse } from "../../../responses/vocab.response."; 
 
 interface BuildPaginationButtonsParams {
   page: number;
@@ -54,7 +54,7 @@ export class VocabularyOfUserHandler extends BaseHandler<
       if (!user) return;
 
       const limit = 3;
-      const { data: favoriteVocabularies, total } =
+      const { items: favoriteVocabularies, pagination } =
         await this.favoriteVocabularyService.getVocabularyOfUser(
           user.id,
           page,
@@ -85,7 +85,7 @@ export class VocabularyOfUserHandler extends BaseHandler<
 
       const paginationButtons: ButtonComponent[] = await this.buildPaginationButtons({
         page: page,
-        total: total,
+        total: pagination.total,
         mezonUserId: mezonUserId
       });
 
@@ -94,7 +94,7 @@ export class VocabularyOfUserHandler extends BaseHandler<
           color: "#3498db",
           title: `📚 Your Saved Vocabulary — Page ${page}`,
           description: `🧠 *Select the vocabulary you want to manage:*`,
-          footer: `📖 Page ${page}/${Math.ceil(total / limit)}`,
+          footer: `📖 Page ${page}/${Math.ceil(pagination.total / limit)}`,
           fields: [
             {
               name: "Select Vocabulary",
@@ -159,7 +159,7 @@ export class VocabularyOfUserHandler extends BaseHandler<
     }
   }
 
-  private async buildRadioOptions(favoriteVocabularies: FavoriteVocabulary[], page: number, limit: number): Promise<RadioFieldOption[]> {
+  private async buildRadioOptions(favoriteVocabularies: FavVocabResponse[], page: number, limit: number): Promise<RadioFieldOption[]> {
     const radioOptions: RadioFieldOption[] = favoriteVocabularies.map(
       (favVocab, index) => {
         const number = (page - 1) * limit + index + 1;

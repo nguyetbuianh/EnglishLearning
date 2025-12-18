@@ -6,9 +6,9 @@ import { TopicIdParamDto } from "../../dtos/topic-response.dto";
 import { VocabularyService } from "../vocabulary/vocabulary.service";
 import { PaginationDto } from "../../dtos/pagination.dto";
 import { plainToInstance } from "class-transformer";
-import { VocabularyResponse } from "../../responses/vocab.response.";
 import { TopicResponse } from "../../responses/topic-response";
 import { DataResponse } from "../../responses/data.response";
+import { VocabularyResponse } from "../../responses/vocab.response."; 
 
 
 @ApiBearerAuth('access-token')
