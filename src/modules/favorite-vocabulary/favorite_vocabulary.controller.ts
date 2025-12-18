@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '../../auth/jwt.guard';
 import { FavoriteVocabularyService } from './favorite-vocabulary.service';
 import { DataResponse } from '../../responses/data.response';
 import { PaginationDto } from '../../dtos/pagination.dto';
-import { FavVocabResponse } from '../../responses/vocab.response.';
+import { FavVocabResponse } from '../../responses/vocab.response.'; 
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
