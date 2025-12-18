@@ -17,11 +17,7 @@ import { updateSession } from "../utils/update-session.util";
 import { Message } from "mezon-sdk/dist/cjs/mezon-client/structures/Message";
 import { TextChannel } from "mezon-sdk/dist/cjs/mezon-client/structures/TextChannel";
 import { sendMessageVocab } from "../utils/reply-message.util";
-<<<<<<< Updated upstream
-import { FavVocabResponse } from "../../../responses/vocab.response."; 
-=======
 import { FavVocabResponse } from "../../../responses/vocab.response.";
->>>>>>> Stashed changes
 
 interface BuildPaginationButtonsParams {
   page: number;
