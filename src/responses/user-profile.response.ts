@@ -12,4 +12,7 @@ export class UserProfileReponse {
 
   @ApiProperty()
   points: number;
+
+  @ApiProperty()
+  streakDays?: number;
 }
