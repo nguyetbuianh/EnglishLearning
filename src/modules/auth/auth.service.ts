@@ -66,7 +66,7 @@ export class AuthService {
       await this.userService.createUserByMezonId(mezonUserId, displayName);
     }
 
-    const payload = { sub: user?.id, username: user?.mezonUserId };
+    const payload = { userId: user?.id, mezonUserId: user?.mezonUserId };
 
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -108,3 +108,4 @@ export class AuthService {
   }
 
 }
+
