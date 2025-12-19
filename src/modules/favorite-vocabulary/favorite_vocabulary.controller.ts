@@ -14,9 +14,9 @@ import {
 import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/jwt.guard';
 import { FavoriteVocabularyService } from './favorite-vocabulary.service';
-import { DataResponse } from '../../responses/data.response';
 import { PaginationDto } from '../../dtos/pagination.dto';
 import { FavVocabResponse } from '../../responses/vocab.response.'; 
+import { PaginationResponse } from '../../responses/pagination.response';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -42,23 +42,23 @@ export class FavoriteVocabularyController {
   // GET 
   @Get()
   @ApiOkResponse({
-    type: DataResponse<FavVocabResponse>,
+    type: PaginationResponse<FavVocabResponse>,
   })
   async findFavVocabs(
     @Request() req,
     @Query() paginationQuery: PaginationDto
-  ): Promise<DataResponse<FavVocabResponse>> {
+  ): Promise<PaginationResponse<FavVocabResponse>> {
     const { userId } = req.user;
     const { page, limit } = paginationQuery;
 
-    const { items, pagination } = await this.favVocabService.getVocabularyOfUser(
+    const { data, pagination } = await this.favVocabService.getVocabularyOfUser(
       userId,
       page,
       limit
     );
 
     return {
-      data: items,
+      data,
       pagination
     }
   }

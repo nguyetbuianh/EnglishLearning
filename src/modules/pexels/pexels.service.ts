@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { appConfig } from '../../../appConfig';
-import { Vocabulary } from '../../../entities/vocabulary.entity';
+import { appConfig } from '../../appConfig';
+import { Vocabulary } from '../../entities/vocabulary.entity';
 
 interface PexelsPhoto {
   src: {

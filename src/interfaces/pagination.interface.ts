@@ -9,7 +9,4 @@ export interface PaginationMeta {
   totalPages: number;
 }
 
-export interface PaginationResponse<T> {
-  items: T[];
-  pagination: PaginationMeta;
-}
+

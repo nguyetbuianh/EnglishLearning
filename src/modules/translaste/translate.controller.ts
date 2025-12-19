@@ -4,7 +4,7 @@ import { JwtAuthGuard } from "../../auth/jwt.guard";
 import { TranslateDto } from "../../dtos/translate.dto";
 import { TranslateResponse } from "../../responses/translate.response";
 import { TranslateService } from "./translate.service";
-import { DataResponse } from "../../responses/data.response";
+import { SimpleResponse } from "../../responses/pagination.response";
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -14,10 +14,10 @@ export class TranslateController {
     private readonly translateService: TranslateService,
   ) { }
   @Post()
-  @ApiOkResponse({ type: DataResponse<TranslateResponse> })
+  @ApiOkResponse({ type: SimpleResponse<TranslateResponse> })
   async createTranslate(
     @Body() translateDto: TranslateDto
-  ): Promise<DataResponse<TranslateResponse>> {
+  ): Promise<SimpleResponse<TranslateResponse>> {
     const wordData = await this.translateService.getOrCreateTranslation(translateDto.word);
     return {
       data: wordData

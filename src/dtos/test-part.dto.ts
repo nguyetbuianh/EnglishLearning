@@ -14,7 +14,7 @@ export class TestPartParamsDto {
   partId: number;
 }
 
-export class TesParamsDto {
+export class TestParamsDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)

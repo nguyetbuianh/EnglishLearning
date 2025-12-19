@@ -3,9 +3,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { FavoriteVocabulary } from "../../entities/favorite-vocabulary.entity";
 import { In, Repository } from "typeorm";
 import { VocabularyService } from "../vocabulary/vocabulary.service";
-import { PaginationResponse } from "../../interfaces/pagination.interface";
-import { FavVocabResponse } from "../../responses/vocab.response."; 
+import { FavVocabResponse } from "../../responses/vocab.response.";
 import { plainToInstance } from "class-transformer";
+import { PaginationResponse } from "../../responses/pagination.response";
 
 @Injectable()
 export class FavoriteVocabularyService {
@@ -57,7 +57,7 @@ export class FavoriteVocabularyService {
     );
 
     return {
-      items: vocabTransform,
+      data: vocabTransform,
       pagination: {
         total,
         page,

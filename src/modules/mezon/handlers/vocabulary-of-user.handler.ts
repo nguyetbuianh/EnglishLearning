@@ -54,7 +54,7 @@ export class VocabularyOfUserHandler extends BaseHandler<
       if (!user) return;
 
       const limit = 3;
-      const { items: favoriteVocabularies, pagination } =
+      const { data: favoriteVocabularies, pagination } =
         await this.favoriteVocabularyService.getVocabularyOfUser(
           user.id,
           page,
@@ -85,7 +85,7 @@ export class VocabularyOfUserHandler extends BaseHandler<
 
       const paginationButtons: ButtonComponent[] = await this.buildPaginationButtons({
         page: page,
-        total: pagination.total,
+        total: pagination!.total,
         mezonUserId: mezonUserId
       });
 
@@ -94,7 +94,7 @@ export class VocabularyOfUserHandler extends BaseHandler<
           color: "#3498db",
           title: `📚 Your Saved Vocabulary — Page ${page}`,
           description: `🧠 *Select the vocabulary you want to manage:*`,
-          footer: `📖 Page ${page}/${Math.ceil(pagination.total / limit)}`,
+          footer: `📖 Page ${page}/${Math.ceil(pagination!.total / limit)}`,
           fields: [
             {
               name: "Select Vocabulary",
