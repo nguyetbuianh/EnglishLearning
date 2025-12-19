@@ -1,13 +1,10 @@
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { User } from "../../entities/user.entity";
 import { CachedUser } from "../../types/caches/user.cache";
-import { UserProfileReponse } from "../../responses/user-profile.response";
-import { StatService } from "../stat/stat.service";
-import { getJoinAt } from "../mezon/utils/date.util";
 
 @Injectable()
 export class UserService {
@@ -15,7 +12,6 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
     @Inject(CACHE_MANAGER) private cache: Cache,
-    private readonly statService: StatService,
   ) { }
 
   async createUserByMezonId(mezonUserId: string, displayName: string): Promise<User> {
@@ -63,22 +59,5 @@ export class UserService {
     }
 
     return user;
-  }
-
-  async getUserProfile(userId: number): Promise<UserProfileReponse> {
-    const user = await this.findUserById(userId);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    const userStat = await this.statService.findUserStats(userId);
-
-    return {
-      username: user.username,
-      formattedJoinDate: getJoinAt(user.joinedAt),
-      badges: userStat?.badges ?? [],
-      points: userStat?.points ?? 0,
-      streakDays: userStat?.streakDays ?? 0,
-    };
   }
 }

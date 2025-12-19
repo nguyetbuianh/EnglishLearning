@@ -88,12 +88,14 @@ export class UserProcessService {
     const userStat = await this.statService.findUserStats(userId);
     const badges = userStat?.badges ?? [];
     const points = userStat?.points ?? 0;
+    const streakDays = userStat?.streakDays ?? 0;
 
     return {
       username: user.username,
       formattedJoinDate,
       badges,
       points,
+      streakDays,
     };
   }
 }

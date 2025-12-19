@@ -3,24 +3,16 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "../../entities/user.entity";
 import { UserService } from "./user.service";
 import { ToeicModule } from "../toeic/toeic.module";
-import { UserController } from "./user.controller";
-import { StatService } from "../stat/stat.service";
-import { UserStats } from "../../entities/user-stat.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User,
-      UserStats
-    ]),
+    TypeOrmModule.forFeature([User]),
   ],
-  controllers: [UserController],
   providers: [
-    UserService,
-    StatService
+    UserService
   ],
   exports: [
-    UserService,
-    StatService,
+    UserService
   ],
 })
 export class UserModule { }
