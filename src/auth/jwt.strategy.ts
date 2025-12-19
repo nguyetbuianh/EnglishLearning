@@ -5,7 +5,7 @@ import { appConfig } from '../appConfig';
 
 interface PAYLOAD {
   userId: number,
-  userMezonId: string
+  mezonUserId: string
 }
 
 @Injectable()
@@ -18,6 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: PAYLOAD) {
-    return { userId: payload.userId, userMezonId: payload.userMezonId };
+    return { userId: payload.userId, userMezonId: payload.mezonUserId };
   }
 }
