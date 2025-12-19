@@ -9,7 +9,7 @@ import { UserProgressByTestResponse } from '../../responses/user-progress.respon
 import { UserProfileReponse } from '../../responses/user-profile.response';
 import { JwtAuthGuard } from '../../auth/jwt.guard';
 import { UserProcessService } from './user-process.service';
-import { DataResponse } from '../../responses/data.response';
+import { SimpleResponse } from '../../responses/pagination.response';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -22,12 +22,12 @@ export class UserProcessController {
   // GET /users/progress
   @Get('/progress')
   @ApiOkResponse({
-    type: DataResponse<UserProgressByTestResponse>,
+    type: SimpleResponse<UserProgressByTestResponse>,
     isArray: true
   })
   async findUserProgress(
     @Request() req,
-  ): Promise<DataResponse<UserProgressByTestResponse[]>> {
+  ): Promise<SimpleResponse<UserProgressByTestResponse[]>> {
     const { userId, userMezonId } = req.user;
     const userProgress = await this.userProcessService.buildUserProgress({ userId, userMezonId });
     return {
@@ -37,10 +37,10 @@ export class UserProcessController {
 
   // GET /users/profile
   @Get('/profile')
-  @ApiOkResponse({ type: DataResponse<UserProfileReponse> })
+  @ApiOkResponse({ type: SimpleResponse<UserProfileReponse> })
   async findUserProfile(
     @Request() req,
-  ): Promise<DataResponse<UserProfileReponse>> {
+  ): Promise<SimpleResponse<UserProfileReponse>> {
     const { userId, userMezonId } = req.user;
     const userProfile = await this.userProcessService.getUserProfile({ userId, userMezonId });
     return {

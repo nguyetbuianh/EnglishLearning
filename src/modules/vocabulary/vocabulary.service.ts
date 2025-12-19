@@ -1,14 +1,21 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Vocabulary } from "../../entities/vocabulary.entity";
 import { In, IsNull, Not, Repository } from "typeorm";
-import { PaginationResponse } from "../../interfaces/pagination.interface";
+import { GuessWordInterface, VerifyWordInterface } from "../../interfaces/guess-word.interface";
+import { PaginationResponse } from "../../responses/pagination.response";
+import { PexelsService } from "../pexels/pexels.service";
+import { maskWord } from "../../utils/guess-word.util";
+import { StatService } from "../stat/stat.service";
+import { VerifyWordResponse } from "../../responses/guess-word.response";
 
 @Injectable()
 export class VocabularyService {
   constructor(
     @InjectRepository(Vocabulary)
-    private readonly vocabularyRepo: Repository<Vocabulary>
+    private readonly vocabularyRepo: Repository<Vocabulary>,
+    private readonly pexelsService: PexelsService,
+    private readonly statService: StatService
   ) { }
 
   async getVocabulariesByTopic(
@@ -30,7 +37,7 @@ export class VocabularyService {
     const totalPages = Math.ceil(total / limit);
 
     return {
-      items: data,
+      data: data,
       pagination: {
         total,
         page,
@@ -130,5 +137,38 @@ export class VocabularyService {
     await this.vocabularyRepo.delete({
       id: In(vocabIds)
     });
+  }
+
+  async getWordAndImage(): Promise<GuessWordInterface> {
+    const vocab = await this.getRandomVocabulary();
+    if (!vocab) throw new Error("No vocabulary found");
+
+    const imageUrl = await this.pexelsService.getImage(vocab);
+
+    const maskedWord = maskWord(vocab.word);
+    return {
+      vocabId: vocab.id,
+      imageUrl,
+      maskedWord
+    }
+  }
+
+  async guessWordVerify(verifyWord: VerifyWordInterface): Promise<VerifyWordResponse> {
+    const { vocabId, wordGuessed, userId } = verifyWord;
+
+    const vocab = await this.findVocabularyById(vocabId);
+    if (!vocab) {
+      throw new NotFoundException('Vocabulary not found');
+    }
+
+    const isCorrect = vocab.word.trim().toLowerCase() ===
+      wordGuessed.trim().toLowerCase();
+
+    await this.statService.updateUserStats(userId, isCorrect);
+
+    return {
+      word: vocab.word,
+      isCorrect
+    }
   }
 }

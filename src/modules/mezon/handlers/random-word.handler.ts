@@ -1,11 +1,12 @@
 import { VocabularyService } from '../../vocabulary/vocabulary.service';
-import { PexelsService } from '../services/pexels.service';
+import { PexelsService } from '../../pexels/pexels.service';
 import { MessageBuilder } from '../builders/message.builder';
 import { ChannelMessageContent, EButtonMessageStyle, EMessageComponentType, MezonClient } from 'mezon-sdk';
 import { Cron } from '@nestjs/schedule';
 import { Injectable } from '@nestjs/common';
 import { ButtonBuilder } from '../builders/button.builder';
 import { ChannelService } from '../../channel/channel.service';
+import { maskWord } from '../../../utils/guess-word.util';
 
 @Injectable()
 export class RandomWordHandler {
@@ -32,7 +33,7 @@ export class RandomWordHandler {
           channels.map(async (channel) => {
             try {
               const { word, imageUrl } = await this.getRandomWordImage();
-              const maskedWord = this.maskWord(word);
+              const maskedWord = maskWord(word);
               const messagePayload = this.guessWordMessage(word, imageUrl, maskedWord);
               await this.sendMessage(channel.channelId, messagePayload);
             } catch (err) {
@@ -70,28 +71,6 @@ export class RandomWordHandler {
     const imageUrl = await this.pexelsService.getImage(vocab);
 
     return { word: vocab.word, imageUrl: imageUrl };
-  }
-
-  private maskWord(word: string): string {
-    const words = word.split(' ');
-
-    const maskedWords = words.map(w => {
-      if (w.length <= 2) return w;
-
-      const chars = w.split('');
-      const hideCount = Math.max(1, Math.floor(w.length * 0.4));
-
-      const indices = [...Array(w.length).keys()];
-      const hiddenIndices = indices.sort(() => 0.5 - Math.random()).slice(0, hideCount);
-
-      hiddenIndices.forEach(i => {
-        chars[i] = '_';
-      });
-
-      return chars.join('');
-    });
-
-    return maskedWords.join(' ');
   }
 
   private guessWordMessage(word: string, imageUrl: string, maskedWord: string) {

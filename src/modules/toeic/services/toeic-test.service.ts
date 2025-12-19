@@ -3,10 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ToeicTest } from '../../../entities/toeic-test.entity';
 import { PaginationDto } from '../../../dtos/pagination.dto';
-import { PaginationInterface, PaginationResponse } from '../../../interfaces/pagination.interface';
+import { PaginationInterface } from '../../../interfaces/pagination.interface';
 import { UserInterface } from '../../../interfaces/user.interface';
-import { TestPaginationResponseResponse } from '../../../responses/user-progress.response';
 import { UserProgressService } from './user-progress.service';
+import { PaginationResponse } from '../../../responses/pagination.response';
+import { TestWithProgressResponse } from '../../../responses/user-progress.response';
 
 @Injectable()
 export class ToeicTestService {
@@ -20,10 +21,12 @@ export class ToeicTestService {
     return this.testRepo.find({ order: { id: 'ASC' } });
   }
 
-  async findTestById(testId: number): Promise<ToeicTest | null> {
-    return await this.testRepo.findOne({
+  async findTestById(testId: number): Promise<ToeicTest> {
+    const test = await this.testRepo.findOne({
       where: { id: testId }
     });
+    if (!test) throw new NotFoundException("Test not found");
+    return test;
   }
 
   async getAllTestsPagination(
@@ -41,7 +44,7 @@ export class ToeicTestService {
     const totalPages = Math.ceil(total / limit);
 
     return {
-      items: data,
+      data: data,
       pagination: {
         total,
         page,
@@ -54,20 +57,20 @@ export class ToeicTestService {
   async findAllTestsWithProgress(
     query: PaginationInterface,
     user: UserInterface,
-  ): Promise<TestPaginationResponseResponse> {
-    const { items, pagination } =
+  ): Promise<PaginationResponse<TestWithProgressResponse>> {
+    const { data, pagination } =
       await this.getAllTestsPagination(query);
 
     const progressMap =
       await this.userProgressService.getTestWithProgress(user);
 
-    const itemsWithProgress = items.map(test => ({
+    const itemsWithProgress = data.map(test => ({
       ...test,
       partsProcess: progressMap.get(test.id) ?? null,
     }));
 
     return {
-      items: itemsWithProgress,
+      data: itemsWithProgress,
       pagination,
     };
   }

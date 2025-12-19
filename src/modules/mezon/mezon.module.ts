@@ -38,7 +38,6 @@ import { ToeicImportModule } from '../toeic-import/toeic-import.module';
 import { GoogleAIModule } from '../google-ai/google-ai.module';
 import { UserProgressHandler } from './handlers/user-progress.handler';
 import { RandomWordHandler } from './handlers/random-word.handler';
-import { PexelsService } from './services/pexels.service';
 import { GuessWordAnswerHandler } from './handlers/guess-word-answer.handler';
 import { ChannelModule } from '../channel/channel.module';
 import { ELaKoTheHandler } from './handlers/elakhongthe.handler';
@@ -56,6 +55,7 @@ import { GetWordHandler } from './handlers/get-word.handler';
 import { TextToSpeechHandler } from './handlers/text-to-speech.handler';
 import { ConvertTTSHandler } from './handlers/form-convert-tts.handler';
 import { SpeechToTextHandler } from './handlers/audio-to-text.handler';
+import { PexelsModule } from '../pexels/pexels.module';
 
 const commandHandlers = [
   StartTestHandler,
@@ -116,12 +116,12 @@ const commandHandlers = [
     ToeicImportModule,
     GoogleAIModule,
     ChannelModule,
-    TrasnlateModule
+    TrasnlateModule,
+    PexelsModule
   ],
   providers: [
     MezonService,
     EventRouter,
-    PexelsService,
     ...commandHandlers,
     {
       provide: MezonClient,
