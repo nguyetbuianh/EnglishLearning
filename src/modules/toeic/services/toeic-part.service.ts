@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ToeicPart } from '../../../entities/toeic-part.entity';
@@ -14,9 +14,11 @@ export class ToeicPartService {
     return this.partRepo.find({ order: { id: 'ASC' } });
   }
 
-  async findPartById(partId: number): Promise<ToeicPart | null> {
-    return await this.partRepo.findOne({
+  async findPartById(partId: number): Promise<ToeicPart> {
+    const part = await this.partRepo.findOne({
       where: { id: partId }
     });
+    if (!part) throw new NotFoundException("Part not found");
+    return part;
   }
 }

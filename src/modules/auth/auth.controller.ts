@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, Post } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { SignInResponse } from "../../responses/sign-in.response";
 import { AuthDto } from "../../dtos/auth.dto";
+import { ApiOkResponse } from "@nestjs/swagger";
+import { DataResponse } from "../../responses/data.response";
 
 @Controller('oauth')
 export class AuthController {
@@ -13,10 +15,19 @@ export class AuthController {
   async login(
     @Body() authDto: AuthDto,
   ): Promise<SignInResponse> {
-    const returnData = await this.authService.exchangeCode(authDto.code, authDto.state);
+    const { code, state } = authDto;
+
+    const returnData = await this.authService.exchangeCode(code, state);
 
     const userRes = await this.authService.userInfo(returnData.access_token);
     return await this.authService.signIn(userRes.user_id, userRes.display_name);;
   }
 
+  @Get('/redirect-oauth')
+  async redirectOauth(): Promise<{ url: string }> {
+    const oauthUrl = this.authService.getOauthUrl();
+    return {
+      url: oauthUrl
+    };
+  }
 }
