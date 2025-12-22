@@ -161,7 +161,7 @@ export class UserAnswerService {
     if (!partInfo) return;
 
     const isTotal = partAnsweredCount === partInfo.total;
-    const isEndQuestion = partInfo.end === lastAnswer.questionId;
+    const isEndQuestion = Number(partInfo.end) === Number(lastAnswer.questionId);
 
     const progressPayload: SaveProgressInterface = {
       userMezonId,
