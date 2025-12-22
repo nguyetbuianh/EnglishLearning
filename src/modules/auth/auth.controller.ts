@@ -3,7 +3,6 @@ import { AuthService } from "./auth.service";
 import { SignInResponse } from "../../responses/sign-in.response";
 import { AuthDto } from "../../dtos/auth.dto";
 import { ApiOkResponse } from "@nestjs/swagger";
-import { DataResponse } from "../../responses/data.response";
 
 @Controller('oauth')
 export class AuthController {

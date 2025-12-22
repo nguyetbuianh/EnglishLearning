@@ -60,12 +60,14 @@ export class MyFlashCardHandler extends BaseHandler<
       }
 
       const limit = 3;
-      const { data: vocabularies, total } =
+      const { data: vocabularies, pagination } =
         await this.vocabularyService.getVocabularyOfUser(
           user.id,
-          page,
-          limit
+          { page, limit }
         );
+
+      const total = pagination?.total ?? 1;
+
 
       if (!vocabularies?.length) {
         await this.mezonChannel.sendEphemeral(
@@ -88,6 +90,7 @@ export class MyFlashCardHandler extends BaseHandler<
         .setLabel("❌ Cancel")
         .setStyle(EButtonMessageStyle.DANGER)
         .build();
+
 
       const paginationButtons: ButtonComponent[] = await this.buildPaginationButtons({
         page: page,
