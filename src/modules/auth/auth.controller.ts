@@ -2,7 +2,6 @@ import { Body, Controller, Get, Post } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { SignInResponse } from "../../responses/sign-in.response";
 import { AuthDto } from "../../dtos/auth.dto";
-import { ApiOkResponse } from "@nestjs/swagger";
 
 @Controller('oauth')
 export class AuthController {
