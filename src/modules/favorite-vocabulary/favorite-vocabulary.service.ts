@@ -105,7 +105,7 @@ export class FavoriteVocabularyService {
 
     const existed = await this.favoriteVocabularyRepo.findOne({
       where: {
-        userId,
+        user: { id: userId },
         vocabulary: { id: vocabId },
       },
     });
@@ -113,7 +113,7 @@ export class FavoriteVocabularyService {
 
     await this.favoriteVocabularyRepo.save(
       this.favoriteVocabularyRepo.create({
-        userId,
+        user: { id: userId },
         vocabulary: vocab,
       }),
     );
