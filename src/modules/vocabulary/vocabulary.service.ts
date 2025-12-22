@@ -8,6 +8,9 @@ import { PexelsService } from "../pexels/pexels.service";
 import { maskWord } from "../../utils/guess-word.util";
 import { StatService } from "../stat/stat.service";
 import { VerifyWordResponse } from "../../responses/guess-word.response";
+import { PaginationInterface } from "../../interfaces/pagination.interface";
+import { FlashcardResponse } from "../../responses/flashcard.response";
+
 
 @Injectable()
 export class VocabularyService {
@@ -70,27 +73,38 @@ export class VocabularyService {
     })
   }
 
-  async createVocab(vocab: Partial<Vocabulary>): Promise<Vocabulary | null> {
+  async createVocab(vocab: Partial<Vocabulary>): Promise<Vocabulary> {
     return this.vocabularyRepo.save(vocab)
   }
 
   async getVocabularyOfUser(
     userId: number,
-    page: number,
-    limit: number
-  ): Promise<{ data: Vocabulary[]; total: number }> {
-    const [data, total] = await this.vocabularyRepo.findAndCount({
+    pagination: PaginationInterface
+  ): Promise<PaginationResponse<FlashcardResponse>> {
+
+    const [items, total] = await this.vocabularyRepo.findAndCount({
       where: {
         user: { id: userId },
       },
       order: {
         createdAt: 'ASC',
       },
-      skip: (page - 1) * limit,
-      take: limit,
+      skip: (pagination.page - 1) * pagination.limit,
+      take: pagination.limit,
     });
 
-    return { data, total };
+    const totalPages = Math.ceil(total / pagination.limit);
+
+
+    return {
+      data: items,
+      pagination: {
+        total,
+        page: pagination.page,
+        limit: pagination.limit,
+        totalPages: totalPages
+      }
+    };
   }
 
   async deleteVocabularyOfUser(vocabIds: number[], userId: number): Promise<void> {

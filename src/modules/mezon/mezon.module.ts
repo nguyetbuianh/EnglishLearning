@@ -126,12 +126,12 @@ const commandHandlers = [
     {
       provide: MezonClient,
       useFactory: async () => {
-        const client = new MezonClient({
-          botId: appConfig.bot.id,
-          token: appConfig.bot.token,
-        });
-        await client.login();
-        return client;
+        // const client = new MezonClient({
+        //   botId: appConfig.bot.id,
+        //   token: appConfig.bot.token,
+        // });
+        // await client.login();
+        // return client;
       },
     },
     {

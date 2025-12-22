@@ -39,7 +39,7 @@ export class DeleteMyFlashcardHandler extends BaseHandler<MMessageButtonClicked>
 
       const page = 1;
       const limit = 3;
-      const remaining = await this.vocabularyService.getVocabularyOfUser(user.id, page, limit);
+      const remaining = await this.vocabularyService.getVocabularyOfUser(user.id, { page, limit });
 
       if (!remaining || remaining.data.length === 0) {
         await this.mezonChannel.sendEphemeral(

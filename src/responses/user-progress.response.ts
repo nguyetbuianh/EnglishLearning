@@ -14,3 +14,4 @@ export class UserProgressByTestResponse {
 export class TestWithProgressResponse extends ToeicTestResponse {
   partsProcess: number | null;
 }
+

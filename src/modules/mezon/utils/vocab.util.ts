@@ -1,6 +1,7 @@
 import { EButtonMessageStyle, RadioFieldOption } from "mezon-sdk";
 import { MChannelMessage, MMessageButtonClicked } from "../handlers/base";
 import { Vocabulary } from "../../../entities/vocabulary.entity";
+import { FlashcardResponse } from "../../../responses/flashcard.response";
 
 export async function parseVocabId(
   event: MMessageButtonClicked
@@ -49,7 +50,7 @@ export async function parseButtonId(event: MMessageButtonClicked | MChannelMessa
   }
 }
 
-export async function buildRadioOptions(vocabularies: Vocabulary[], page: number, limit: number): Promise<RadioFieldOption[]> {
+export async function buildRadioOptions(vocabularies: FlashcardResponse[], page: number, limit: number): Promise<RadioFieldOption[]> {
   const radioOptions: RadioFieldOption[] = vocabularies
     .map((vocab, index) => {
       const number = (page - 1) * limit + index + 1;
