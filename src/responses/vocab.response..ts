@@ -33,3 +33,21 @@ export class FavVocabResponse {
   @Type(() => VocabularyResponse)
   vocabulary: VocabularyResponse;
 }
+
+export class TestVocabResponse {
+  @ApiProperty()
+  @Expose()
+  id: number;
+
+  @ApiProperty()
+  @Expose()
+  word: string;
+
+  @ApiProperty()
+  @Expose()
+  pronounce: string;
+
+  @ApiProperty()
+  @Expose()
+  partOfSpeech: string;
+}

@@ -1,4 +1,4 @@
-import { UserAnswersDto } from "../dtos/user-answer.dto";
+import { TopicTestAnswersDto, UserAnswersDto } from "../dtos/user-answer.dto";
 
 export interface SubmitTestInterface {
   testId: number;
@@ -24,5 +24,12 @@ export interface SaveProgressInterface {
   currentPassageNumber?: number;
   isCompleted?: boolean;
 };
+
+export interface SubmitTopicTestInterface {
+  topicId: number;
+  userId: number;
+  userMezonId: string;
+  submitAnswers: TopicTestAnswersDto[];
+}
 
 

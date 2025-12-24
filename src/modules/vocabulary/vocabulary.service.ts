@@ -10,6 +10,7 @@ import { StatService } from "../stat/stat.service";
 import { VerifyWordResponse } from "../../responses/guess-word.response";
 import { PaginationInterface } from "../../interfaces/pagination.interface";
 import { FlashcardResponse } from "../../responses/flashcard.response";
+import { TestVocabResponse, VocabularyResponse } from "../../responses/vocab.response.";
 
 
 @Injectable()
@@ -184,5 +185,55 @@ export class VocabularyService {
       word: vocab.word,
       isCorrect
     }
+  }
+
+  async getVocabsByTopicId(
+    topicId: number,
+  ): Promise<VocabularyResponse[]> {
+
+    const data = await this.vocabularyRepo.find({
+      where: {
+        topic: { id: topicId },
+        isActive: true
+      },
+      order: { createdAt: "ASC" },
+    });
+
+    const result = data.map(v => {
+      return {
+        id: v.id,
+        word: v.word,
+        pronounce: v.pronounce,
+        partOfSpeech: v.partOfSpeech,
+        meaning: v.meaning,
+        exampleSentence: v.exampleSentence,
+      }
+    });
+
+    return result;
+  }
+
+  async getTestVocabulariesByTopic(
+    topicId: number,
+  ): Promise<TestVocabResponse[]> {
+
+    const data = await this.vocabularyRepo.find({
+      where: {
+        topic: { id: topicId },
+        isActive: true
+      },
+      order: { createdAt: "ASC" },
+    });
+
+    const result = data.map(v => {
+      return {
+        id: v.id,
+        word: v.word,
+        pronounce: v.pronounce,
+        partOfSpeech: v.partOfSpeech,
+      }
+    });
+
+    return result;
   }
 }

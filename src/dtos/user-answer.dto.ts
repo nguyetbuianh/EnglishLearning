@@ -16,3 +16,19 @@ export class UserAnswersDto {
   @IsInt()
   passageId?: number;
 }
+
+export class TopicTestParamsDto {
+  @Type(() => Number)
+  @IsInt()
+  topicId: number;
+}
+
+export class TopicTestAnswersDto {
+  @Type(() => Number)
+  @IsInt()
+  id: number;
+
+  @IsNotEmpty()
+  @IsString()
+  answer: string;
+}
