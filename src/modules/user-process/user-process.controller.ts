@@ -10,6 +10,7 @@ import { UserProfileReponse } from '../../responses/user-profile.response';
 import { JwtAuthGuard } from '../../auth/jwt.guard';
 import { UserProcessService } from './user-process.service';
 import { SimpleResponse } from '../../responses/pagination.response';
+import { UserStatsResponse } from '../../responses/user-stats.reponse';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -46,5 +47,23 @@ export class UserProcessController {
     return {
       data: userProfile
     };
+  }
+
+  @Get('/points')
+  @ApiOkResponse({ type: SimpleResponse<UserStatsResponse> })
+  async getTop10Scores(): Promise<SimpleResponse<UserStatsResponse[]>> {
+    const userStats = await this.userProcessService.getTop10HighestScores();
+    return {
+      data: userStats
+    }
+  }
+
+  @Get('/streak-day')
+  @ApiOkResponse({ type: SimpleResponse<UserStatsResponse> })
+  async getTop10StreakDays(): Promise<SimpleResponse<UserStatsResponse[]>> {
+    const userStats = await this.userProcessService.getTop10HighestStreakDay();
+    return {
+      data: userStats
+    }
   }
 }
