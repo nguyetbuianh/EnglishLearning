@@ -26,7 +26,7 @@ export class TopicTestParamsDto {
 export class TopicTestAnswersDto {
   @Type(() => Number)
   @IsInt()
-  id: number;
+  questionId: number;
 
   @IsNotEmpty()
   @IsString()

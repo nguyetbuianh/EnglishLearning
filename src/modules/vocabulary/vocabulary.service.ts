@@ -30,7 +30,7 @@ export class VocabularyService {
 
     const [data, total] = await this.vocabularyRepo.findAndCount({
       where: {
-        topic: { id: topicId },
+        topicId: topicId,
         isActive: true
       },
       order: { createdAt: "ASC" },

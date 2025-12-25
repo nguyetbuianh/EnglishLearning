@@ -82,7 +82,7 @@ export class TopicService {
 
     const normalize = (value?: string) => value?.trim().toLowerCase() ?? '';
 
-    const vocabIds = submitAnswers.map(a => Number(a.id));
+    const vocabIds = submitAnswers.map(a => Number(a.questionId));
 
     const vocabularies = await this.vocabularyRepo.find({
       where: {
@@ -106,7 +106,7 @@ export class TopicService {
     const questions: TopicTestQuestionResult[] = [];
 
     submitAnswers.forEach((ans) => {
-      const ansId = Number(ans.id);
+      const ansId = Number(ans.questionId);
       const vocab = vocabMap.get(ansId);
       if (!vocab) return;
 
