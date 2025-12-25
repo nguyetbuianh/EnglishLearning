@@ -64,7 +64,7 @@ export class TextToSpeechHandler extends BaseHandler<MMessageButtonClicked> {
 
     let createRes = await axios.post(`${this.BASE_URL}/createby`, createBody, {
       headers: {
-        "X-API-Key": appConfig.TTSForFree.API_KEY,
+        "X-API-Key": appConfig.TTSForFree.apiKey,
         "Content-Type": "application/json",
       },
     });
@@ -77,11 +77,11 @@ export class TextToSpeechHandler extends BaseHandler<MMessageButtonClicked> {
 
     if (Status === "PENDING") {
       for (let i = 0; i < 15; i++) {
-        await new Promise(r => setTimeout(r, 2000)); 
+        await new Promise(r => setTimeout(r, 2000));
 
         createRes = await axios.post(`${this.BASE_URL}/createby`, createBody, {
           headers: {
-            "X-API-Key": appConfig.TTSForFree.API_KEY,
+            "X-API-Key": appConfig.TTSForFree.apiKey,
             "Content-Type": "application/json",
           },
         });
