@@ -34,8 +34,11 @@ const EnvSchema = z.object({
   CLIENT_SECRET: z.string().min(1, "CLIENT_SECRET is required"),
   REDIRECT_URI: z.string().min(1, "REDIRECT_URI is required"),
   BASE_URI: z.string().min(1, "BASE_URI is required"),
-});
 
+  LK_URL: z.string().min(1, "LK_URL is required"),
+  LK_API_KEY: z.string().min(1, "LK_API_KEY is required"),
+  LK_API_SECRET: z.string().min(1, "LK_API_SECRET is required"),
+});
 
 const env = EnvSchema.parse(process.env);
 
@@ -68,7 +71,7 @@ export const appConfig = {
     password: env.REDIS_PASSWORD
   },
   TTSForFree: {
-    API_KEY: env.TTSForFree_API_KEY
+    apiKey: env.TTSForFree_API_KEY
   },
   cors: {
     origin: env.CORS_ORIGIN
@@ -81,5 +84,10 @@ export const appConfig = {
     clientSecret: env.CLIENT_SECRET,
     redirectUri: env.REDIRECT_URI,
     baseUri: env.BASE_URI
+  },
+  livekit: {
+    url: env.LK_URL,
+    apiKey: env.LK_API_KEY,
+    apiSecret: env.LK_API_SECRET
   }
 };
