@@ -6,11 +6,13 @@ import { UserProcessController } from "./user-process.controller";
 import { ToeicModule } from "../toeic/toeic.module";
 import { UserModule } from "../user/user.module";
 import { StatModule } from "../stat/stat.module";
+import { UserStats } from "../../entities/user-stat.entity";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Vocabulary
+      Vocabulary,
+      UserStats
     ]),
     ToeicModule,
     UserModule,

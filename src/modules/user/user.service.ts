@@ -5,12 +5,14 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { User } from "../../entities/user.entity";
 import { CachedUser } from "../../types/caches/user.cache";
+import { UserStats } from "../../entities/user-stat.entity";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+
     @Inject(CACHE_MANAGER) private cache: Cache,
   ) { }
 
@@ -60,4 +62,6 @@ export class UserService {
 
     return user;
   }
+
+
 }

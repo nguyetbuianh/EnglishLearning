@@ -1,16 +1,20 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Parts } from "../../interfaces/parts.interface"; 
-import { UserProgressService } from "../toeic/services/user-progress.service"; 
+import { Parts } from "../../interfaces/parts.interface";
+import { UserProgressService } from "../toeic/services/user-progress.service";
 import { UserAnswerService } from "../toeic/services/user-answer.service";
 import { TOEIC_PART } from "../../contants/toeic-part.contant";
 import { UserProgress } from "../../entities/progress.entity";
-import { UserInterface } from "../../interfaces/user.interface"; 
-import { UserProgressByTest } from "../../interfaces/user-progress.interface"; 
+import { UserInterface } from "../../interfaces/user.interface";
+import { UserProgressByTest } from "../../interfaces/user-progress.interface";
 import { UserService } from "../user/user.service";
-import { getJoinAt } from "../mezon/utils/date.util"; 
-import { StatService } from "../stat/stat.service"; 
-import { UserProgressByTestResponse } from "../../responses/user-progress.response"; 
-import { UserProfileReponse } from "../../responses/user-profile.response"; 
+import { getJoinAt } from "../mezon/utils/date.util";
+import { StatService } from "../stat/stat.service";
+import { UserProgressByTestResponse } from "../../responses/user-progress.response";
+import { UserProfileReponse } from "../../responses/user-profile.response";
+import { InjectRepository } from "@nestjs/typeorm";
+import { UserStats } from "../../entities/user-stat.entity";
+import { Repository } from "typeorm";
+import { UserStatsResponse } from "../../responses/user-stats.reponse";
 
 @Injectable()
 export class UserProcessService {
@@ -18,7 +22,9 @@ export class UserProcessService {
     private readonly userProgressService: UserProgressService,
     private readonly userAnswerService: UserAnswerService,
     private readonly userService: UserService,
-    private readonly statService: StatService
+    private readonly statService: StatService,
+    @InjectRepository(UserStats)
+    private readonly userStatsRepo: Repository<UserStats>,
   ) { }
 
   async buildUserProgress(userParams: UserInterface): Promise<UserProgressByTestResponse[]> {
@@ -97,5 +103,25 @@ export class UserProcessService {
       points,
       streakDays,
     };
+  }
+
+  async getTop10HighestScores(): Promise<UserStatsResponse[]> {
+    return await this.userStatsRepo.find({
+      order: {
+        points: "DESC"
+      },
+      relations: ['user'],
+      take: 10
+    });
+  }
+
+  async getTop10HighestStreakDay(): Promise<UserStatsResponse[]> {
+    return await this.userStatsRepo.find({
+      order: {
+        streakDays: "DESC"
+      },
+      relations: ['user'],
+      take: 10
+    });
   }
 }
