@@ -11,3 +11,8 @@ export class UserStatsResponse {
   lastAnswerDate: Date;
   badges: string[];
 }
+
+export class UserStreakResponse {
+  streakDays: number;
+  todayStreak: boolean;
+}
