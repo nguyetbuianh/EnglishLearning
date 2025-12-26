@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserStats } from "../../entities/user-stat.entity";
 import { User } from "../../entities/user.entity";
@@ -14,7 +14,7 @@ export class StatService {
     private readonly userStatsRepo: Repository<UserStats>
   ) { }
 
-  private toDateString(date: Date | string): string {
+  toDateString(date: Date | string): string {
     if (typeof date === "string") return date;
     return date.toISOString().split("T")[0];
   }
@@ -51,10 +51,12 @@ export class StatService {
     }
   }
 
-  async findUserStats(userId: number): Promise<UserStats | null> {
-    return this.userStatsRepo.findOne({
+  async findUserStats(userId: number): Promise<UserStats> {
+    const stat = await this.userStatsRepo.findOne({
       where: { user: { id: userId } },
     });
+    if (!stat) throw new NotFoundException('User stats not found');
+    return stat;
   }
 
   private async createNewUserStats(
@@ -231,5 +233,13 @@ export class StatService {
     await this.userStatsRepo.save(userStat);
 
     return userStat.badges.filter(b => !oldBadges.has(b));
+  }
+
+  async updateDailyStreak(stats: UserStats, today: Date, userId: number): Promise<UserStats> {
+    this.updateStreak(stats, today);
+    stats.lastAnswerDate = today;
+    await this.userStatsRepo.save(stats);
+    const updatedStats = await this.findUserStats(userId);
+    return updatedStats;
   }
 }
