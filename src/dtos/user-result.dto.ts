@@ -49,3 +49,40 @@ export class UserResultDto {
   @ApiProperty({ type: [PartResultDto] })
   parts: PartResultDto[];
 }
+
+export class TopicTestQuestionResultDto {
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty()
+  word: string;
+
+  @ApiProperty()
+  pronounce: string;
+
+  @ApiProperty()
+  partOfSpeech: string;
+
+  @ApiProperty()
+  isCorrect: boolean;
+}
+
+export class TopicTestResultDto {
+  @ApiProperty()
+  topicId: number;
+
+  @ApiProperty()
+  topicName: string;
+
+  @ApiProperty()
+  totalQuestions: number;
+
+  @ApiProperty()
+  correctCount: number;
+
+  @ApiProperty()
+  scoreChange: number;
+
+  @ApiProperty({ type: [TopicTestQuestionResultDto] })
+  questions: TopicTestQuestionResultDto[];
+}
