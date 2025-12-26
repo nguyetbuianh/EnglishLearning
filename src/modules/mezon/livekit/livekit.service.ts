@@ -1,6 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import {
   AccessToken,
+  Room,
   RoomServiceClient,
 } from 'livekit-server-sdk';
 import { appConfig } from '../../../appConfig';
@@ -10,6 +11,7 @@ import { v4 as uuid } from 'uuid';
 @Injectable()
 export class LivekitService {
   private roomService: RoomServiceClient;
+  private readonly maxParticipantsPerRoom = 50;
 
   constructor(
     private readonly userService: UserService
@@ -26,7 +28,7 @@ export class LivekitService {
     await this.roomService.createRoom({
       name: roomName,
       emptyTimeout: 10 * 60,
-      maxParticipants: 50,
+      maxParticipants: this.maxParticipantsPerRoom,
     });
     return roomName;
   }
@@ -35,6 +37,11 @@ export class LivekitService {
     const user = await this.userService.findUserById(userId);
     if (!user) {
       throw new HttpException('User not found', 404);
+    }
+
+    const numberOfParticipants = await this.getRoomParticipantCount(roomName);
+    if (numberOfParticipants >= this.maxParticipantsPerRoom) {
+      throw new HttpException('Room is locked.', 423);
     }
 
     const token = new AccessToken(
@@ -56,4 +63,15 @@ export class LivekitService {
 
     return token.toJwt();
   }
+
+  async getRoomParticipantCount(roomName: string): Promise<number> {
+    const rooms = await this.roomService.listRooms().then((rooms: Room[]) => {
+      return rooms.filter((room) => room.name === roomName);
+    });
+
+    if (!rooms.length) return 0;
+
+    return rooms[0].numParticipants ?? 0;
+  }
+
 }
