@@ -23,10 +23,10 @@ export class FavoriteVocabularyService {
     userId: number,
     vocabularyId: number
   ): Promise<boolean> {
-    return await this.favoriteVocabularyRepo.exists({
+    return await this.favoriteVocabularyRepo.exist({
       where: {
         user: { id: userId },
-        vocabulary: { id: vocabularyId }
+        vocabulary: { id: vocabularyId },
       },
     });
   }
