@@ -19,7 +19,7 @@ export class VocabularyController {
   ) { }
 
   // GET 
-  @Get()
+  @Get('get-word-to-guess')
   @ApiOkResponse({
     type: SimpleResponse<GuessWordResponse>,
   })
