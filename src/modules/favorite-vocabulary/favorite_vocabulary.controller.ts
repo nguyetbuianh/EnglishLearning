@@ -15,8 +15,10 @@ import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse 
 import { JwtAuthGuard } from '../../auth/jwt.guard';
 import { FavoriteVocabularyService } from './favorite-vocabulary.service';
 import { PaginationDto } from '../../dtos/pagination.dto';
-import { FavVocabResponse } from '../../responses/vocab.response.'; 
+import { FavVocabResponse } from '../../responses/vocab.response.';
 import { PaginationResponse } from '../../responses/pagination.response';
+import { FavoriteVocabularyDto } from '../../dtos/favorite-vocabulary.dto';
+import { boolean } from 'zod';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -74,5 +76,19 @@ export class FavoriteVocabularyController {
     const { userId } = req.user;
 
     await this.favVocabService.deleteVocab(vocabId, userId);
+  }
+
+  @Get(':vocabularyId')
+  async findVocabularyOfUser(
+    //@Param('vocabularyId', ParseIntPipe) vocabularyId: number,
+    @Param() favVocabularyDto: FavoriteVocabularyDto,
+    @Request() req,
+  ): Promise<boolean> {
+    const { userId } = req.user;
+    console.log(favVocabularyDto.vocabularyId)
+
+    return await this.favVocabService.existingVocabularyAndUserId(
+      userId, favVocabularyDto.vocabularyId
+    );
   }
 }
