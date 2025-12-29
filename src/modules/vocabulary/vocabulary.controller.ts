@@ -12,7 +12,7 @@ import { PaginationDto } from "../../dtos/pagination.dto";
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
-@Controller('guess-word')
+@Controller('vocabulary')
 export class VocabularyController {
   constructor(
     private readonly vocabService: VocabularyService
