@@ -8,6 +8,7 @@ import { User } from "../../entities/user.entity";
 import { StatService } from "../stat/stat.service";
 import { Vocabulary } from "../../entities/vocabulary.entity";
 import { TopicTestResultResponse, TopicTestQuestionResult } from "../../responses/topic-response";
+import { TopicDto } from "../../dtos/topic.dto";
 
 @Injectable()
 export class TopicService {
@@ -151,5 +152,42 @@ export class TopicService {
       scoreChange,
       questions
     };
+  }
+
+  async getTopicsByUser(userId: number): Promise<Topic[]> {
+    const topics = await this.topicVocabularyRepo.find({
+      where: { userId },
+      order: { id: 'ASC' },
+    });
+    if (!topics) throw new NotFoundException('Topics not found');
+    return topics;
+  }
+
+  async createTopic(createTopicDto: TopicDto, userId: number): Promise<Topic> {
+    const topic = this.topicVocabularyRepo.create({
+      name: createTopicDto.name,
+      type: createTopicDto.type,
+      description: createTopicDto.description,
+      userId: userId
+    });
+
+    return await this.topicVocabularyRepo.save(topic);
+  }
+
+  async updateTopic(topicId: number, updateTopicDto: TopicDto, userId: number): Promise<Topic> {
+    const topic = await this.topicVocabularyRepo.findOne({
+      where: { id: topicId, userId }
+    });
+    if (!topic) throw new NotFoundException('Topic not found');
+
+    topic.name = updateTopicDto.name;
+    topic.type = updateTopicDto.type;
+    topic.description = updateTopicDto.description;
+
+    return await this.topicVocabularyRepo.save(topic);
+  }
+
+  async deleteTopic(topicId: number, userId: number): Promise<void> {
+    await this.topicVocabularyRepo.delete({ id: topicId, userId });
   }
 }

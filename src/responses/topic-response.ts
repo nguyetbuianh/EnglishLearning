@@ -10,6 +10,9 @@ export class TopicResponse {
 
   @ApiProperty()
   type: string;
+
+  @ApiProperty()
+  description: string;
 }
 
 export class TopicDetailResponse<T> extends TopicResponse {

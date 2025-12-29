@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../../auth/jwt.guard";
 import { GuessWordResponse, VerifyWordResponse } from "../../responses/guess-word.response";
@@ -6,7 +6,7 @@ import { VocabularyService } from "./vocabulary.service";
 import { PaginationResponse, SimpleResponse } from "../../responses/pagination.response";
 import { GuessWordDto } from "../../dtos/guess-word.dto";
 import { FlashcardResponse } from "../../responses/flashcard.response";
-import { FlashcardDto, VocabularyIdDto } from "../../dtos/flashcard.dto";
+import { FlashcardDto, UpdateFlashcardDto, VocabularyIdDto } from "../../dtos/flashcard.dto";
 import { UserDto } from "../../dtos/user.dto";
 import { PaginationDto } from "../../dtos/pagination.dto";
 
@@ -55,8 +55,24 @@ export class VocabularyController {
   @ApiOkResponse({ type: FlashcardResponse })
   async createFlashCard(
     @Body() flashcardDto: FlashcardDto
-  ): Promise<FlashcardResponse> {
-    return await this.vocabService.createVocab(flashcardDto);
+  ): Promise<SimpleResponse<FlashcardResponse>> {
+    const flashcard = await this.vocabService.createVocab(flashcardDto);
+    return {
+      data: flashcard
+    };
+  }
+
+  //PUT /flashcard/:id
+  @Put('/flashcard/:id')
+  @ApiOkResponse({ type: SimpleResponse<FlashcardResponse> })
+  async updateFlashCard(
+    @Param('id') id: number,
+    @Body() flashcardDto: UpdateFlashcardDto
+  ): Promise<SimpleResponse<FlashcardResponse>> {
+    const flashcard = await this.vocabService.updateVocab(id, flashcardDto);
+    return {
+      data: flashcard
+    };
   }
 
   @Get('/user/:userId')
@@ -74,7 +90,10 @@ export class VocabularyController {
   @Delete('/flashcard')
   async DeleteMyFlashcard(
     @Body() vocabularyDto: VocabularyIdDto
-  ): Promise<void> {
-    await this.vocabService.deleteVocab(vocabularyDto.vocabIds)
+  ): Promise<SimpleResponse<number[]>> {
+    await this.vocabService.deleteVocab(vocabularyDto.vocabIds);
+    return {
+      data: vocabularyDto.vocabIds
+    };
   }
 }

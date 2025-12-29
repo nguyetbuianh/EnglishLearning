@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from "@nestjs/common";
 import { TopicService } from "./topic.service";
 import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../../auth/jwt.guard";
@@ -10,6 +10,7 @@ import { TopicDetailResponse, TopicResponse, TopicTestResultResponse } from "../
 import { TestVocabResponse, VocabularyResponse } from "../../responses/vocab.response.";
 import { PaginationResponse, SimpleResponse } from "../../responses/pagination.response";
 import { TopicTestAnswersDto, TopicTestParamsDto } from "../../dtos/user-answer.dto";
+import { TopicDto } from "../../dtos/topic.dto";
 
 
 @ApiBearerAuth('access-token')
@@ -20,6 +21,17 @@ export class TopicController {
     private readonly topicService: TopicService,
     private readonly vocabService: VocabularyService
   ) { }
+
+  //GET /topics/user
+  @Get('/user')
+  @ApiOkResponse({ type: SimpleResponse<TopicResponse[]> })
+  async getTopicsByUser(
+    @Request() req,
+  ): Promise<SimpleResponse<TopicResponse[]>> {
+    const { userId } = req.user;
+    const topics = await this.topicService.getTopicsByUser(userId);
+    return { data: topics };
+  }
 
   // GET /topics
   @Get()
@@ -72,6 +84,7 @@ export class TopicController {
         id: topicId,
         name: topic.name,
         type: topic.type,
+        description: topic.description,
         vocabs: data
       }
     }
@@ -94,6 +107,7 @@ export class TopicController {
         id: topicId,
         name: topic.name,
         type: topic.type,
+        description: topic.description,
         vocabs: data
       }
     }
@@ -118,5 +132,61 @@ export class TopicController {
     });
 
     return { data: result };
+  }
+
+  //POST /topics
+  @Post()
+  @ApiCreatedResponse({ type: SimpleResponse<TopicResponse> })
+  async createTopic(
+    @Request() req,
+    @Body() createTopicDto: TopicDto
+  ): Promise<SimpleResponse<TopicResponse>> {
+    const { userId } = req.user;
+    const topic = await this.topicService.createTopic(createTopicDto, userId);
+
+    return {
+      data: {
+        id: topic.id,
+        name: topic.name,
+        type: topic.type,
+        description: topic.description
+      }
+    };
+  }
+
+  //PUT /topics/:topicId
+  @Put('/:topicId')
+  @ApiOkResponse({ type: SimpleResponse<TopicResponse> })
+  async updateTopic(
+    @Request() req,
+    @Param() topicParams: TopicIdParamDto,
+    @Body() updateTopicDto: TopicDto
+  ): Promise<SimpleResponse<TopicResponse>> {
+    const { topicId } = topicParams;
+    const { userId } = req.user;
+    const topic = await this.topicService.updateTopic(topicId, updateTopicDto, userId);
+
+    return {
+      data: {
+        id: topic.id,
+        name: topic.name,
+        type: topic.type,
+        description: topic.description
+      }
+    };
+  }
+
+  //DELETE /topics/:topicId
+  @Delete('/:topicId')
+  async deleteTopic(
+    @Request() req,
+    @Param() topicParams: TopicIdParamDto
+  ): Promise<SimpleResponse<number>> {
+    const { topicId } = topicParams;
+    const { userId } = req.user;
+    await this.topicService.deleteTopic(topicId, userId);
+    return {
+      data: topicId
+    };
   }
 }

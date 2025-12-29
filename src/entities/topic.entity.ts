@@ -20,4 +20,7 @@ export class Topic {
 
   @OneToMany(() => Vocabulary, (vocabulary) => vocabulary.topic)
   public vocabularies: Vocabulary[];
+
+  @Column({ name: "user_id", type: "bigint", nullable: true })
+  public userId: number;
 }

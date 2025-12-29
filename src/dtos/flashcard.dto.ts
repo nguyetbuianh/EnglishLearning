@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsString, Min, ValidateNested } from "class-validator";
+import { ArrayMinSize, IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min, ValidateNested } from "class-validator";
 
 export class FlashcardDto {
   @IsString()
@@ -6,7 +6,7 @@ export class FlashcardDto {
   word: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'pronounce is required' })
+  @IsOptional()
   pronounce: string;
 
   @IsString()
@@ -18,7 +18,7 @@ export class FlashcardDto {
   meaning: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'example sentence is required' })
+  @IsOptional()
   exampleSentence: string;
 
   @IsNumber()
@@ -27,12 +27,33 @@ export class FlashcardDto {
   topicId: number;
 }
 
+export class UpdateFlashcardDto {
+  @IsString()
+  @IsOptional()
+  word: string;
+
+  @IsString()
+  @IsOptional()
+  pronounce: string;
+
+  @IsString()
+  @IsOptional()
+  partOfSpeech: string;
+
+  @IsString()
+  @IsOptional()
+  meaning: string;
+
+  @IsString()
+  @IsOptional()
+  exampleSentence: string;
+}
+
 
 export class VocabularyIdDto {
   @IsArray()
   @ArrayMinSize(1)
-  @IsNumber()
-  @ValidateNested({ each: true })
+  @IsInt({ each: true })
   vocabIds: number[];
 }
 

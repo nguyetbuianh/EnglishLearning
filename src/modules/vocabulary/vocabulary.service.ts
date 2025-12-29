@@ -11,6 +11,7 @@ import { VerifyWordResponse } from "../../responses/guess-word.response";
 import { PaginationInterface } from "../../interfaces/pagination.interface";
 import { FlashcardResponse } from "../../responses/flashcard.response";
 import { TestVocabResponse, VocabularyResponse } from "../../responses/vocab.response.";
+import { UpdateFlashcardDto } from "../../dtos/flashcard.dto";
 
 
 @Injectable()
@@ -76,6 +77,21 @@ export class VocabularyService {
 
   async createVocab(vocab: Partial<Vocabulary>): Promise<Vocabulary> {
     return this.vocabularyRepo.save(vocab)
+  }
+
+  async updateVocab(
+    id: number,
+    dto: UpdateFlashcardDto
+  ): Promise<Vocabulary> {
+    const vocab = await this.vocabularyRepo.findOne({ where: { id } });
+
+    if (!vocab) {
+      throw new NotFoundException('Vocabulary not found');
+    }
+
+    Object.assign(vocab, dto);
+
+    return this.vocabularyRepo.save(vocab);
   }
 
   async getVocabularyOfUser(
