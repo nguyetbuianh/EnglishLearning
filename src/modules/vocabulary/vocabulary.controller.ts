@@ -9,6 +9,7 @@ import { FlashcardResponse } from "../../responses/flashcard.response";
 import { FlashcardDto, UpdateFlashcardDto, VocabularyIdDto } from "../../dtos/flashcard.dto";
 import { UserDto } from "../../dtos/user.dto";
 import { PaginationDto } from "../../dtos/pagination.dto";
+import { VocabularyResponse } from "../../responses/vocab.response.";
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -48,6 +49,18 @@ export class VocabularyController {
 
     return {
       data: responseData
+    };
+  }
+
+  //GET /flashcards
+  @Get('/flashcards/:topicId')
+  @ApiOkResponse({ type: SimpleResponse<VocabularyResponse[]> })
+  async getFlashcards(
+    @Param('topicId') topicId: number,
+  ): Promise<SimpleResponse<VocabularyResponse[]>> {
+    const flashcards = await this.vocabService.getFlashcardsByTopic(topicId);
+    return {
+      data: flashcards
     };
   }
 

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Topic } from "../../entities/topic.entity";
-import { In, Repository } from "typeorm";
+import { In, IsNull, Repository } from "typeorm";
 import { SubmitTopicTestInterface } from "../../interfaces/submit-test.interface";
 import { UserService } from "../user/user.service";
 import { User } from "../../entities/user.entity";
@@ -43,6 +43,9 @@ export class TopicService {
 
   async getAllTopicsPagination(page: number, limit: number): Promise<{ data: Topic[]; total: number }> {
     const [data, total] = await this.topicVocabularyRepo.findAndCount({
+      where: {
+        userId: IsNull()
+      },
       order: { id: 'ASC' },
       skip: (page - 1) * limit,
       take: limit,

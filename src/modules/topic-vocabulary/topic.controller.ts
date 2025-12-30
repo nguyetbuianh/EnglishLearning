@@ -67,7 +67,7 @@ export class TopicController {
     return { data }
   }
 
-  //GET /:topicId/vocab
+  //GET /:topicId
   @Get('/:topicId')
   @ApiOkResponse({
     type: SimpleResponse<TopicDetailResponse<VocabularyResponse>>

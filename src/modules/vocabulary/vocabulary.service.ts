@@ -76,7 +76,12 @@ export class VocabularyService {
   }
 
   async createVocab(vocab: Partial<Vocabulary>): Promise<Vocabulary> {
-    return this.vocabularyRepo.save(vocab)
+    const { topicId, ...rest } = vocab;
+    const vocabToSave = {
+      ...rest,
+      ...(topicId && { topic: { id: topicId } as any })
+    };
+    return this.vocabularyRepo.save(vocabToSave)
   }
 
   async updateVocab(
@@ -251,5 +256,22 @@ export class VocabularyService {
     });
 
     return result;
+  }
+
+  async getFlashcardsByTopic(
+    topicId: number,
+    isActive: boolean = false
+  ): Promise<VocabularyResponse[]> {
+
+    const data = await this.vocabularyRepo.find({
+      where: {
+        topic: { id: topicId },
+        isActive
+      },
+      order: { createdAt: "ASC" },
+    });
+
+
+    return data;
   }
 }
