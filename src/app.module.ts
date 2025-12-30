@@ -17,6 +17,7 @@ import { StatModule } from './modules/stat/stat.module';
 import { UserProcessModule } from './modules/user-process/user-process.module';
 import { FavoriteVocabularyModule } from './modules/favorite-vocabulary/favorite_vocabulary.module';
 import { LivekitModule } from './modules/mezon/livekit/livekit.module';
+import { FeedbackModule } from './modules/user-feedback/user-feedback.module';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { LivekitModule } from './modules/mezon/livekit/livekit.module';
     StatModule,
     UserProcessModule,
     FavoriteVocabularyModule,
-    LivekitModule
+    LivekitModule,
+    FeedbackModule
   ]
 })
 export class AppModule { }
