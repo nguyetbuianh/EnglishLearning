@@ -79,7 +79,7 @@ export class VocabularyService {
     const { topicId, ...rest } = vocab;
     const vocabToSave = {
       ...rest,
-      ...(topicId && { topic: { id: topicId } as any })
+      ...(topicId && { topic: { id: topicId } })
     };
     return this.vocabularyRepo.save(vocabToSave)
   }
@@ -270,8 +270,6 @@ export class VocabularyService {
       },
       order: { createdAt: "ASC" },
     });
-
-
     return data;
   }
 }
