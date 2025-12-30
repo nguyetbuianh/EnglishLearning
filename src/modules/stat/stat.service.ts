@@ -59,10 +59,9 @@ export class StatService {
     return stat;
   }
 
-  private async createNewUserStats(
+  async createNewUserStats(
     userId: number,
     isCorrect?: boolean,
-    today?: Date
   ): Promise<UserStats> {
     const newStats = this.userStatsRepo.create({
       user: { id: userId } as User,
@@ -70,28 +69,27 @@ export class StatService {
       correctAnswers: isCorrect ? 1 : 0,
       points: isCorrect ? 5 : 0,
       streakDays: 1,
-      lastAnswerDate: today,
+      lastAnswerDate: new Date(),
       badges: [],
     });
-
-    return newStats;
+    const savedStats = await this.userStatsRepo.save(newStats);
+    return savedStats;
   }
 
   private async getOrCreateUserStats(
     userId: number,
     isCorrect?: boolean,
-    today?: Date
   ): Promise<UserStats> {
     let stats = await this.findUserStats(userId);
     if (!stats) {
-      stats = await this.createNewUserStats(userId, isCorrect, today);
+      stats = await this.createNewUserStats(userId, isCorrect);
     }
     return stats;
   }
 
   async updateUserStats(userId: number, isCorrect: boolean): Promise<string[]> {
     const today = new Date();
-    const stats = await this.getOrCreateUserStats(userId, isCorrect, today);
+    const stats = await this.getOrCreateUserStats(userId, isCorrect);
 
     const oldBadges = new Set(stats.badges || []);
 
@@ -122,7 +120,7 @@ export class StatService {
     }
   ): Promise<string[]> {
     const today = new Date();
-    const stats = await this.getOrCreateUserStats(userId, undefined, today);
+    const stats = await this.getOrCreateUserStats(userId, undefined);
 
     const oldBadges = new Set(stats.badges || []);
 

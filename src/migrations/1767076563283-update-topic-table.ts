@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class UpdateTopicTable1766990651051 implements MigrationInterface {
-    name = 'UpdateTopicTable1766990651051'
+export class UpdateTopicTable1767076563283 implements MigrationInterface {
+    name = 'UpdateTopicTable1767076563283'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "topic" ADD "user_id" bigint`);

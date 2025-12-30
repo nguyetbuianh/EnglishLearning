@@ -61,12 +61,16 @@ export class AuthService {
     mezonUserId: string,
     displayName: string
   ): Promise<{ access_token: string }> {
-    const user = await this.userRepo.findOne({ where: { mezonUserId } });
+    let user = await this.userRepo.findOne({ where: { mezonUserId } });
     if (!user) {
-      await this.userService.createUserByMezonId(mezonUserId, displayName);
+      user = await this.userService.createUserByMezonId(mezonUserId, displayName);
     }
 
-    const payload = { userId: user?.id, mezonUserId: user?.mezonUserId };
+    if (!user) {
+      throw new BadRequestException('Login failed');
+    }
+
+    const payload = { userId: user.id, mezonUserId: user.mezonUserId };
 
     return {
       access_token: await this.jwtService.signAsync(payload),

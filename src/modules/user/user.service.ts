@@ -5,20 +5,22 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { User } from "../../entities/user.entity";
 import { CachedUser } from "../../types/caches/user.cache";
-import { UserStats } from "../../entities/user-stat.entity";
+import { StatService } from "../stat/stat.service";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-
+    private readonly statService: StatService,
     @Inject(CACHE_MANAGER) private cache: Cache,
   ) { }
 
   async createUserByMezonId(mezonUserId: string, displayName: string): Promise<User> {
     const newUser = this.userRepo.create({ mezonUserId: mezonUserId, username: displayName });
-    return this.userRepo.save(newUser);
+    const savedUser = await this.userRepo.save(newUser);
+    const newStats = await this.statService.createNewUserStats(savedUser.id);
+    return savedUser;
   }
 
   async findUserById(userId: number): Promise<User | null> {

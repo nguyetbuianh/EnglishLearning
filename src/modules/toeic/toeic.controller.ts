@@ -66,14 +66,15 @@ export class ToeicController {
     isArray: true,
   })
   async findTestDetail(
-    @Request() req,
     @Param() params: TestParamsDto
   ): Promise<SimpleResponse<ProgressDetailResponse>> {
     const { testId } = params;
 
-    const test = await this.toeicTestService.findTestById(testId);
-    const parts = await this.toeicPartService.getAllParts();
 
+    const [test, parts] = await Promise.all([
+      this.toeicTestService.findTestById(testId),
+      this.toeicPartService.getAllParts()
+    ]);
 
     return {
       data: {

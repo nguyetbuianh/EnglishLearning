@@ -2,11 +2,11 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "../../entities/user.entity";
 import { UserService } from "./user.service";
-import { ToeicModule } from "../toeic/toeic.module";
-
+import { StatModule } from "../stat/stat.module";
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
+    StatModule,
   ],
   providers: [
     UserService
