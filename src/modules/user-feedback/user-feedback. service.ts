@@ -3,50 +3,23 @@ import { promises as fs } from "fs";
 import * as path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { FeedbackInterface } from "../../interfaces/feedback.interface";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Feedback } from "../../entities/feedback.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class FeedbackService {
-  private readonly feedbackFile = path.join(
-    process.cwd(),
-    "src/data/feedback.json"
-  );
-
-  private async readFile(): Promise<FeedbackInterface[]> {
-    try {
-      const raw = await fs.readFile(this.feedbackFile, "utf-8");
-
-      if (!raw.trim()) {
-        await fs.writeFile(this.feedbackFile, "[]");
-        return [];
-      }
-
-      return JSON.parse(raw);
-    } catch (error) {
-      await fs.writeFile(this.feedbackFile, "[]");
-      return [];
-    }
-  }
-
-  private async writeFile(data: FeedbackInterface[]): Promise<void> {
-    await fs.writeFile(
-      this.feedbackFile,
-      JSON.stringify(data, null, 2)
-    );
-  }
+  constructor(
+    @InjectRepository(Feedback)
+    private readonly feedbackRepo: Repository<Feedback>,
+  ) { }
 
   async createFeedback(message: string, userId: string): Promise<FeedbackInterface> {
-    const feedbacks = await this.readFile();
-
-    const newFeedback: FeedbackInterface = {
-      id: uuidv4(),
+    const feedback: FeedbackInterface = {
       userId,
-      message,
-      createdAt: new Date().toISOString(),
+      message: message,
+      createdAt: new Date().toDateString(),
     };
-
-    feedbacks.push(newFeedback);
-    await this.writeFile(feedbacks);
-
-    return newFeedback;
+    return this.feedbackRepo.save(feedback);
   }
 }
